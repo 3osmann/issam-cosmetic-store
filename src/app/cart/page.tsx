@@ -8,51 +8,22 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-
-interface CartItem {
-  id: number;
-  name: string;
-  image: string;
-  price: number;
-  salePrice: number;
-  bgColor: string;
-  quantity: number;
-}
-
-const initialCart: CartItem[] = [
-  { id: 1, name: "Nivea Cocoa Nourish", image: "/images/nivea-cocoa-nourish.png", price: 65.01, salePrice: 49.01, bgColor: "#AC5004", quantity: 2 },
-  { id: 5, name: "Maybelline BB Cream", image: "/images/maybelline-bb-cream-foundation.png", price: 65.01, salePrice: 49.01, bgColor: "#EFCAA2", quantity: 1 },
-  { id: 9, name: "Cocooil Organic coconut Oil", image: "/images/deal-pro6.png", price: 65.01, salePrice: 49.01, bgColor: "", quantity: 3 },
-];
+import { useCart } from "@/lib/CartContext";
 
 export default function CartPage() {
   const { t } = useLanguage();
-  const [cartItems, setCartItems] = useState<CartItem[]>(initialCart);
+  const { items, updateQuantity, removeItem, subtotal, shipping, total, itemCount } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [couponApplied, setCouponApplied] = useState(false);
 
-  const updateQuantity = (id: number, delta: number) => {
-    setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
-      )
-    );
-  };
-
-  const removeItem = (id: number) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const subtotal = cartItems.reduce((sum, item) => sum + item.salePrice * item.quantity, 0);
-  const shipping = subtotal >= 50 ? 0 : 5.99;
   const discount = couponApplied ? subtotal * 0.1 : 0;
-  const total = subtotal + shipping - discount;
+  const finalTotal = total - discount;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b">
       <div className="max-w-7xl mx-auto px-4 py-12">
-        
+
           <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
             <Link href="/" className="hover:text-[#FF5894]">{t("nav.home")}</Link>
             <span>/</span>
@@ -62,10 +33,10 @@ export default function CartPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 py-12">
-        {cartItems.length > 0 ? (
+        {items.length > 0 ? (
           <div className="grid lg:grid-cols-3 gap-12">
             <div className="lg:col-span-2 space-y-4">
-              {cartItems.map((item) => (
+              {items.map((item) => (
                 <Card key={item.id} className="overflow-hidden">
                   <CardContent className="p-4">
                     <div className="flex gap-4">
@@ -128,7 +99,7 @@ export default function CartPage() {
                     <div className="border-t pt-3">
                       <div className="flex items-center justify-between text-base">
                         <span className="font-bold text-gray-900">{t("cart.total")}</span>
-                        <span className="font-bold text-[#FF5894]">${total.toFixed(2)}</span>
+                        <span className="font-bold text-[#FF5894]">${finalTotal.toFixed(2)}</span>
                       </div>
                     </div>
                   </div>
@@ -157,9 +128,11 @@ export default function CartPage() {
                     </div>
                   </div>
 
-                  <Button className="w-full mt-4" size="lg">
-                    {t("cart.checkout")}
-                  </Button>
+                  <Link href="/checkout">
+                    <Button className="w-full mt-4" size="lg">
+                      {t("cart.checkout")}
+                    </Button>
+                  </Link>
 
                   <div className="flex items-center gap-2 mt-4 text-xs text-gray-400 justify-center">
                     <Shield className="h-3.5 w-3.5" />

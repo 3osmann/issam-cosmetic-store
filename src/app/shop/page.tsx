@@ -6,6 +6,7 @@ import { Heart, Star } from "lucide-react";
 import React from "react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCart } from "@/lib/CartContext";
 
 interface Product {
   id: number;
@@ -39,6 +40,7 @@ function getCalendarDays(month: number, year: number) {
 
 export default function ShopPage() {
   const { t } = useLanguage();
+  const { addItem } = useCart();
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [categoriesList, setCategoriesList] = useState<CatItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -224,7 +226,7 @@ export default function ShopPage() {
                                   </span>
                                 </span>
                               </Link>
-                              <a href="#" aria-describedby={`woocommerce_loop_add_to_cart_link_describedby_${product.id}`} data-quantity="1" className="button product_type_simple add_to_cart_button ajax_add_to_cart" data-product_id={product.id} data-product_sku="5000" aria-label={`Add to cart: “${product.name}”`} rel="nofollow" role="button">Add to cart</a>
+                              <a href="#" onClick={(e) => { e.preventDefault(); addItem({ id: product.id, name: product.name, image: product.image, price: product.price, salePrice: product.salePrice, bgColor: product.bgColor }); }} aria-describedby={`woocommerce_loop_add_to_cart_link_describedby_${product.id}`} data-quantity="1" className="button product_type_simple add_to_cart_button ajax_add_to_cart" data-product_id={product.id} data-product_sku="5000" aria-label={`Add to cart: “${product.name}”`} rel="nofollow" role="button">Add to cart</a>
                               <span id={`woocommerce_loop_add_to_cart_link_describedby_${product.id}`} className="screen-reader-text"></span>
                               <div className="yith-wcwl-add-to-wishlist add-to-wishlist-{product.id} yith-wcwl-add-to-wishlist--link-style wishlist-fragment on-first-load">
                                 <div className="yith-wcwl-add-button">

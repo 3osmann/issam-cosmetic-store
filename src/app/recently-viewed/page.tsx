@@ -8,6 +8,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCart } from "@/lib/CartContext";
 
 interface RecentlyViewedItem {
   id: number;
@@ -43,6 +44,7 @@ function StarRating({ rating }: { rating: number }) {
 
 export default function RecentlyViewedPage() {
   const { t } = useLanguage();
+  const { addItem } = useCart();
   const [items, setItems] = useState<RecentlyViewedItem[]>(initialItems);
   const [wishlist, setWishlist] = useState<number[]>([]);
 
@@ -116,7 +118,7 @@ export default function RecentlyViewedPage() {
                         <span className="text-xs text-gray-400 line-through">${item.price.toFixed(2)}</span>
                       )}
                     </div>
-                    <Button size="sm" className="w-full mt-2 h-8 text-xs">
+                    <Button size="sm" className="w-full mt-2 h-8 text-xs" onClick={() => addItem({ id: item.id, name: item.name, image: item.image, price: item.price, salePrice: item.salePrice, bgColor: item.bgColor || "" })}>
                       <ShoppingCart className="h-3.5 w-3.5 mr-1" />
                       {t("recently_viewed.add_to_cart")}
                     </Button>

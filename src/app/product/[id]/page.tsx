@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useCart } from "@/lib/CartContext";
 
 function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }) {
   return (
@@ -36,6 +37,7 @@ interface Product {
 
 export default function ProductDetailPage() {
   const { t } = useLanguage();
+  const { addItem } = useCart();
   const params = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
@@ -193,7 +195,9 @@ export default function ProductDetailPage() {
                     <Plus className="h-4 w-4" />
                   </button>
                 </div>
-                <Button size="lg" className="flex-1">
+                <Button size="lg" className="flex-1" onClick={() => {
+                  if (product) addItem({ id: product.id, name: product.name, image: product.image, price: product.price, salePrice: product.salePrice, bgColor: product.bgColor }, quantity)
+                }}>
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   {t("product.add_to_cart")}
                 </Button>

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useCart } from "@/lib/CartContext"
 
 interface WishlistItem {
   name: string
@@ -20,6 +21,7 @@ const initialItems: WishlistItem[] = [
 ]
 
 export default function WishlistPage() {
+  const { addItem } = useCart()
   const [items, setItems] = useState(initialItems)
 
   function removeItem(index: number) {
@@ -74,7 +76,7 @@ export default function WishlistPage() {
                       </span>
                     </td>
                     <td style={{ textAlign: "right" }}>
-                      <button className="admin-btn admin-btn-primary admin-btn-xs" style={{ marginRight: 8 }} disabled={!item.inStock}>
+                      <button className="admin-btn admin-btn-primary admin-btn-xs" style={{ marginRight: 8 }} disabled={!item.inStock} onClick={() => addItem({ id: item.id, name: item.name, image: item.image, price: item.price, salePrice: item.salePrice, bgColor: "" })}>
                         Add to Cart
                       </button>
                       <button className="admin-btn admin-btn-ghost admin-btn-xs" onClick={() => removeItem(i)} style={{ color: "var(--admin-danger)" }}>

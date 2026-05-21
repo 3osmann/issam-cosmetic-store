@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useLanguage, type Locale } from "@/lib/i18n/LanguageContext";
 import { useTheme } from "@/lib/ThemeContext";
+import { useCart } from "@/lib/CartContext";
 
 export function Header() {
   const { t, locale, setLocale } = useLanguage();
   const { theme, toggle: toggleTheme } = useTheme();
+  const { itemCount } = useCart();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -141,7 +143,7 @@ export function Header() {
                       <div className="cart">
                         <Link className="cart-cust" href="/cart">
                           <i className="fal fa-shopping-cart search"></i>
-                          <span className="cart-counter" id="cart-counter">0</span>
+                          <span className="cart-counter" id="cart-counter">{itemCount}</span>
                         </Link>
                       </div>
                     </div>

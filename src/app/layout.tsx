@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { StoreShell } from "@/components/layout/StoreShell";
 import { ThemeProvider } from "@/lib/ThemeContext";
+import { CartProvider } from "@/lib/CartContext";
 import { SeoHead } from "@/components/seo/SeoHead";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 
@@ -55,9 +56,11 @@ export default function RootLayout({
       </head>
       <body className="home page-template" suppressHydrationWarning>
         <ThemeProvider>
-          <SeoHead />
-          <ChatWidget />
-          <StoreShell>{children}</StoreShell>
+          <CartProvider>
+            <SeoHead />
+            <ChatWidget />
+            <StoreShell>{children}</StoreShell>
+          </CartProvider>
         </ThemeProvider>
       </body>
     </html>
