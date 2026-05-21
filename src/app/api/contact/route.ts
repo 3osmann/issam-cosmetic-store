@@ -1,26 +1,7 @@
 import { db } from "@/lib/db";
 import { contactMessages } from "@/lib/schema";
 import { NextResponse } from "next/server";
-import { sendMail } from "@/lib/mail";
-import fs from "fs";
-import path from "path";
-
-const publicDir = path.join(process.cwd(), "public");
-
-function imageToBase64(filename: string): string {
-  try {
-    const filePath = path.join(publicDir, filename);
-    const data = fs.readFileSync(filePath);
-    return data.toString("base64");
-  } catch {
-    return "";
-  }
-}
-
-const logoLightBase64 = imageToBase64("images/logo_light.png");
-const logoDarkBase64 = imageToBase64("images/logo_dark.png");
-const logoLightSrc = logoLightBase64 ? `data:image/png;base64,${logoLightBase64}` : "";
-const logoDarkSrc = logoDarkBase64 ? `data:image/png;base64,${logoDarkBase64}` : "";
+import { sendMail, logoCids } from "@/lib/mail";
 
 function emailLayout(content: string, title: string) {
   return `<!DOCTYPE html>
@@ -47,8 +28,8 @@ function emailLayout(content: string, title: string) {
       <table class="email-card" role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
         <tr>
           <td style="background:linear-gradient(135deg,#d63384,#e83e8c);padding:40px 40px 30px;text-align:center;">
-            <img class="logo-light" src="${logoLightSrc}" alt="Beauty Cosmetic Store" style="height:48px;width:auto;border:0;display:block;margin:0 auto;" />
-            <img class="logo-dark" src="${logoDarkSrc}" alt="Beauty Cosmetic Store" style="height:48px;width:auto;border:0;display:none;margin:0 auto;" />
+            <img class="logo-light" src="cid:${logoCids.light}" alt="Beauty Cosmetic Store" style="height:48px;width:auto;border:0;display:block;margin:0 auto;" />
+            <img class="logo-dark" src="cid:${logoCids.dark}" alt="Beauty Cosmetic Store" style="height:48px;width:auto;border:0;display:none;margin:0 auto;" />
             <h1 style="color:#ffffff;font-size:22px;font-weight:600;margin:16px 0 0;letter-spacing:-0.3px;">${title}</h1>
           </td>
         </tr>
