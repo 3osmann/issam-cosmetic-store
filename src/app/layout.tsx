@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { StoreShell } from "@/components/layout/StoreShell";
 import { ThemeProvider } from "@/lib/ThemeContext";
+import { SeoHead } from "@/components/seo/SeoHead";
 
 export const metadata: Metadata = {
   title: "Beauty Cosmetic Store",
@@ -53,6 +54,7 @@ export default function RootLayout({
       </head>
       <body className="home page-template" suppressHydrationWarning>
         <ThemeProvider>
+          <SeoHead />
           <StoreShell>{children}</StoreShell>
         </ThemeProvider>
       </body>

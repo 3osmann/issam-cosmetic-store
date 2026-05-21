@@ -120,3 +120,13 @@ export const siteSettings = pgTable("site_settings", {
   value: json("value").$type<Record<string, unknown>>().notNull(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
+
+export const seoSettings = pgTable("seo_settings", {
+  id: serial("id").primaryKey(),
+  page: varchar("page", { length: 255 }).notNull().unique(),
+  title: text("title"),
+  description: text("description"),
+  ogImage: text("og_image"),
+  keywords: text("keywords"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});

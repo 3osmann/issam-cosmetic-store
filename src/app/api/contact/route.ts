@@ -5,28 +5,41 @@ import { sendMail } from "@/lib/mail";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
-function emailLayout(content: string, title: string, darkLogo?: boolean) {
-  const logoSrc = darkLogo
-    ? `${siteUrl}/images/logo_dark.png`
-    : `${siteUrl}/images/logo_light.png`;
+function emailLayout(content: string, title: string) {
   return `<!DOCTYPE html>
 <html>
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#f5f5f5;font-family:'Segoe UI',Arial,sans-serif;">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  .logo-light { display:block !important; }
+  .logo-dark { display:none !important; }
+  @media (prefers-color-scheme:dark) {
+    .logo-light { display:none !important; }
+    .logo-dark { display:block !important; }
+    .email-body { background-color:#1a1a1a !important; }
+    .email-card { background-color:#2d2d2d !important; }
+    .email-content { color:#e0e0e0 !important; }
+    .email-label { color:#aaa !important; }
+    .email-field { background-color:#383838 !important; }
+    .email-field p { color:#e0e0e0 !important; }
+    .email-footer { border-top-color:#444 !important; }
+  }
+</style></head>
+<body class="email-body" style="margin:0;padding:0;background-color:#f5f5f5;font-family:'Segoe UI',Arial,sans-serif;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f5f5;padding:40px 20px;">
     <tr><td align="center">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+      <table class="email-card" role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
         <tr>
           <td style="background:linear-gradient(135deg,#d63384,#e83e8c);padding:40px 40px 30px;text-align:center;">
-            <img src="${logoSrc}" alt="Beauty Cosmetic Store" style="height:48px;width:auto;border:0;" />
+            <img class="logo-light" src="${siteUrl}/images/logo_light.png" alt="Beauty Cosmetic Store" style="height:48px;width:auto;border:0;display:block;margin:0 auto;" />
+            <img class="logo-dark" src="${siteUrl}/images/logo_dark.png" alt="Beauty Cosmetic Store" style="height:48px;width:auto;border:0;display:none;margin:0 auto;" />
             <h1 style="color:#ffffff;font-size:22px;font-weight:600;margin:16px 0 0;letter-spacing:-0.3px;">${title}</h1>
           </td>
         </tr>
-        <tr><td style="padding:32px 40px 24px;color:#333333;font-size:15px;line-height:1.6;">
+        <tr><td class="email-content" style="padding:32px 40px 24px;color:#333333;font-size:15px;line-height:1.6;">
           ${content}
         </td></tr>
         <tr>
-          <td style="padding:24px 40px 32px;border-top:1px solid #eeeeee;text-align:center;">
+          <td class="email-footer" style="padding:24px 40px 32px;border-top:1px solid #eeeeee;text-align:center;">
             <p style="margin:0 0 6px;font-size:13px;color:#999999;">&copy; ${new Date().getFullYear()} Beauty Cosmetic Store. All rights reserved.</p>
             <p style="margin:0;font-size:13px;color:#999999;">This is an automated message, please do not reply directly.</p>
           </td>
@@ -101,12 +114,12 @@ export async function POST(req: Request) {
       await sendMail({
         to: process.env.MAIL_FROM_ADDRESS || "",
         subject: `New Contact: ${escapedSubject || "No Subject"} - From ${escapedName}`,
-        html: emailLayout(adminEmailContent(escapedName, escapedEmail, escapedSubject, escapedMessage), "New Contact Message", false),
+        html: emailLayout(adminEmailContent(escapedName, escapedEmail, escapedSubject, escapedMessage), "New Contact Message"),
       });
       await sendMail({
         to: body.email,
         subject: `Thank you for contacting Beauty Cosmetic Store`,
-        html: emailLayout(userAutoReplyContent(escapedName, escapedMessage), "We've Received Your Message", false),
+        html: emailLayout(userAutoReplyContent(escapedName, escapedMessage), "We've Received Your Message"),
       });
     } catch (emailError) {
       console.error("Failed to send email notification:", emailError);
