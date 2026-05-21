@@ -3,6 +3,7 @@ import "./globals.css";
 import { StoreShell } from "@/components/layout/StoreShell";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { SeoHead } from "@/components/seo/SeoHead";
+import { ChatWidget } from "@/components/chat/ChatWidget";
 
 export const metadata: Metadata = {
   title: "Beauty Cosmetic Store",
@@ -55,6 +56,7 @@ export default function RootLayout({
       <body className="home page-template" suppressHydrationWarning>
         <ThemeProvider>
           <SeoHead />
+          <ChatWidget />
           <StoreShell>{children}</StoreShell>
         </ThemeProvider>
       </body>

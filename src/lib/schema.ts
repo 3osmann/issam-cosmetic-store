@@ -114,6 +114,17 @@ export const brands = pgTable("brands", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+export const chatMessages = pgTable("chat_messages", {
+  id: serial("id").primaryKey(),
+  customerId: varchar("customer_id", { length: 255 }).notNull(),
+  customerName: varchar("customer_name", { length: 255 }).default("Visitor"),
+  customerEmail: varchar("customer_email", { length: 255 }),
+  message: text("message").notNull(),
+  isAdmin: boolean("is_admin").default(false),
+  read: boolean("read").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const siteSettings = pgTable("site_settings", {
   id: serial("id").primaryKey(),
   key: varchar("key", { length: 255 }).notNull().unique(),
