@@ -102,7 +102,7 @@ export default function ShopPage() {
   const instagramImages = ["/images/insta1.png", "/images/insta2.png", "/images/insta3.png", "/images/insta4.png", "/images/insta5.png", "/images/insta6.png"];
 
   return (
-    <div id="shop">
+    <div id="shop" style={{ paddingTop: 50 }}>
       <style>{`
         .woocommerce ul.products li.product .star-rating { display: block !important; }
         .woocommerce ul.products li.product .button.add_to_cart_button {
