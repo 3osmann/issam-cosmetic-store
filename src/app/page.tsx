@@ -179,6 +179,18 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
+            <div className="col-lg-4">
+              <div className="beauty-care-details">
+                <img src="/images/beauty-care.png" className="img-fluid" alt="Beauty & Care" />
+                <div className="beauty-care-content">
+                  <h3>Beauty &amp; Care</h3>
+                  <h6>From $299</h6>
+                </div>
+                <div className="discover-button">
+                  <Link href="/shop">Discover Now</Link>
+                </div>
+              </div>
+            </div>
           </div>
           <div className="row mt-3">
             <div className="col-lg-6">
