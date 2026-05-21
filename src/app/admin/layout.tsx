@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 
@@ -30,6 +30,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [userName, setUserName] = useState("Admin")
   const [userEmail, setUserEmail] = useState("admin@beauty.com")
   const [darkMode, setDarkMode] = useState(true)
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [notifications, setNotifications] = useState<any[]>([])
+  const [notifCount, setNotifCount] = useState(0)
+  const notifRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const saved = localStorage.getItem("admin_theme")
@@ -37,7 +41,45 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     setDarkMode(isDark)
     document.documentElement.classList.toggle("admin-light", !isDark)
     checkAuth()
+    fetchNotifications()
+    const interval = setInterval(fetchNotifications, 30000)
+    return () => clearInterval(interval)
   }, [])
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (notifRef.current && !notifRef.current.contains(e.target as Node)) {
+        setNotifOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  async function fetchNotifications() {
+    try {
+      const [ordersRes, messagesRes] = await Promise.all([
+        fetch("/api/orders"),
+        fetch("/api/contact/messages"),
+      ])
+      const orders = await ordersRes.json()
+      const messages = await messagesRes.json()
+      const items: any[] = []
+      if (Array.isArray(orders)) {
+        orders.filter((o: any) => o.status === "pending" || o.status === "processing").slice(0, 5).forEach((o: any) => {
+          items.push({ type: "order", id: o.id, title: `New Order #${o.id}`, desc: `${o.total || "$0.00"} - ${o.status}`, time: o.createdAt, link: `/admin/orders` })
+        })
+      }
+      if (Array.isArray(messages)) {
+        messages.filter((m: any) => !m.answered).slice(0, 5).forEach((m: any) => {
+          items.push({ type: "message", id: m.id, title: `Message from ${m.name}`, desc: m.subject || "No subject", time: m.createdAt, link: `/admin/contact` })
+        })
+      }
+      items.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime())
+      setNotifications(items.slice(0, 8))
+      setNotifCount(items.length)
+    } catch { /* ignore */ }
+  }
 
   useEffect(() => {
     localStorage.setItem("admin_theme", darkMode ? "dark" : "light")
@@ -172,12 +214,53 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </svg>
               )}
             </button>
-            <button className="admin-notif-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-              <span className="admin-notif-dot" />
-            </button>
+            <div ref={notifRef} style={{ position: "relative" }}>
+              <button className="admin-notif-btn" onClick={() => setNotifOpen(!notifOpen)}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                {notifCount > 0 && <span className="admin-notif-dot" />}
+              </button>
+              {notifOpen && (
+                <div className="admin-notif-popup">
+                  <div className="admin-notif-popup-header">
+                    <span className="admin-notif-popup-title">Notifications</span>
+                    <span className="admin-notif-popup-count">{notifCount} new</span>
+                  </div>
+                  <div className="admin-notif-popup-body">
+                    {notifications.length === 0 ? (
+                      <div className="admin-notif-empty">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--admin-text-muted)", marginBottom: 8 }}>
+                          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                        <p style={{ margin: 0, fontSize: 13, color: "var(--admin-text-muted)" }}>No new notifications</p>
+                      </div>
+                    ) : (
+                      notifications.map((n, i) => (
+                        <Link key={i} href={n.link} className="admin-notif-item" onClick={() => setNotifOpen(false)}>
+                          <div className={`admin-notif-item-icon ${n.type === "order" ? "order" : "message"}`}>
+                            {n.type === "order" ? (
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 16v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/><polyline points="17 10 21 14 17 18"/><line x1="9" y1="14" x2="21" y2="14"/></svg>
+                            ) : (
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                            )}
+                          </div>
+                          <div className="admin-notif-item-content">
+                            <div className="admin-notif-item-title">{n.title}</div>
+                            <div className="admin-notif-item-desc">{n.desc}</div>
+                            <div className="admin-notif-item-time">{new Date(n.time).toLocaleDateString()} {new Date(n.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>
+                          </div>
+                        </Link>
+                      ))
+                    )}
+                  </div>
+                  <div className="admin-notif-popup-footer">
+                    <Link href="/admin/orders" className="admin-notif-footer-link" onClick={() => setNotifOpen(false)}>View Orders</Link>
+                    <Link href="/admin/contact" className="admin-notif-footer-link" onClick={() => setNotifOpen(false)}>View Messages</Link>
+                  </div>
+                </div>
+              )}
+            </div>
             <div className="admin-topbar-user">
               <div className="admin-topbar-avatar">{userName.charAt(0).toUpperCase()}</div>
               <div className="admin-topbar-user-text">
