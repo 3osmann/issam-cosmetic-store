@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Elsie:wght@400;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --font-elsie: "Elsie", serif;
+  --font-inter: "Inter", sans-serif;
+  --color-primary: #FF5894;
+  --color-primary-dark: #e64a7e;
+  --color-dark: #1E1E1E;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html body {
+  font-family: "Inter", sans-serif;
+  font-size: 15px;
+  color: #6c6c6c;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; }
+a:hover { color: #FF5894; text-decoration: none !important; }
+ul, ol { margin: 0; padding: 0; }
+section { background-size: cover; background-repeat: no-repeat; position: relative; background-position: center; }
+
+/* Critical overrides for demo compatibility */
+.home .header-wrap { width: 100%; z-index: 1; }
+.main-navigation a { color: #000000; font-family: Elsie; font-size: 16px; font-weight: 400; line-height: 21px; }
+.header-wrap { width: 100%; z-index: 1; }
+.site-header { background: #fff; }
+
+/* Header scroll behavior */
+#masthead { background: #fff !important; }
+#masthead.scrolled { box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+
+/* Constrain deal section */
+#deal-of-the-day .container { max-width: 1320px; }
+
+/* Product card hover effects */
+.product-image.deal-img:hover { background: #051240 !important; }
+.product-image.deal-img:hover .products-meta a { color: #fff; }
+.product-image.deal-img:hover .product-offer-price.price-product { color: #fff !important; }
+.product-image.deal-img:hover .tre-product-regular-price { color: #fff !important; }
+.product-image.deal-img:hover .product-title a { color: #fff !important; }
+#featured-products .our_products-box:hover { background: #051240 !important; }
+#featured-products .our_products-box:hover .product-title a { color: #fff; }
+#featured-products .our_products-box:hover .product-offer-price.price-product { color: #fff; }
+#featured-products .our_products-box:hover .tre-product-regular-price { color: #fff; }
+
+/* Counter hover */
+.counter_box:hover { background: #FF5894 !important; transition: 1s ease; }
+.counter_box:hover p, .counter_box:hover h6 { color: #fff !important; }
+
+/* Instagram hover overlay */
+#instagram-feed .position-relative:hover .position-absolute { opacity: 1 !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #FF5894; border-radius: 10px; }
+
+.text-pink-500 { color: #FF5894; }
+.bg-pink-500 { background: #FF5894; }
+.font-elsie { font-family: Elsie, serif; }
+.header-wrapper { background: #fff; }
+
+/* Dark mode */
+html.dark { color-scheme: dark; }
+html.dark body { background: #121212; color: #e0e0e0; }
+html.dark .site-header { background: #1e1e1e !important; }
+html.dark #masthead { background: #1e1e1e !important; }
+html.dark .header-wrapper { background: #1e1e1e; }
+html.dark .main-navigation a { color: #e0e0e0; }
+html.dark #topabr { background: #1a1a1a; }
+html.dark .hotline-number h5,
+html.dark .hotline-number h6 a,
+html.dark .order-tracking span,
+html.dark .recently-view-menu span { color: #e0e0e0; }
+html.dark .currency select,
+html.dark .language select { background: #2a2a2a; color: #e0e0e0; border-color: #444; }
+html.dark #mySidenav { background: #1e1e1e; }
+html.dark #mySidenav ul li a { color: #e0e0e0; }
+html.dark .cart-cust .cart-counter { background: #FF5894; color: #fff; }
+html.dark footer { background: #1a1a1a; }
+html.dark footer p, footer span, footer h4 { color: #ccc; }
+html.dark .woocommerce ul.products li.product .price { color: #e0e0e0; }
+html.dark .woocommerce div.product .product_title { color: #e0e0e0; }
+html.dark .woocommerce div.product p.price { color: #e0e0e0; }
+html.dark .product_meta a { color: #ccc; }
+html.dark .our_products-box { background: #1e1e1e; }
+html.dark .blog-item { background: #1e1e1e; }
+html.dark .single-post-item { background: #1e1e1e; }
+html.dark .widget-title { color: #e0e0e0; }
+html.dark input, html.dark textarea, html.dark select { background: #2a2a2a; color: #e0e0e0; border-color: #444; }
+html.dark .breadcrumb { background: #1e1e1e; }
+html.dark .breadcrumb a { color: #ccc; }
+html.dark section { background-color: #121212; }
+html.dark .container, html.dark .row { background-color: transparent; }
+html.dark .btn { color: #e0e0e0; }
+html.dark .counter_box { background: #1e1e1e; }

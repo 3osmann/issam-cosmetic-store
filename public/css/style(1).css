@@ -1,0 +1,163 @@
+/*
+Theme Name: Beauty Cosmetic Store Pro
+Theme URI: https://www.themagnifico.net/products/cosmetic-store-wordpress-theme
+Author: Themagnifico
+Author URI: https://www.themagnifico.net/
+Description: 
+templates, pagination option and multiple inner page templates. You also have enable-disable option on all sections.
+Version: 0.0.2
+Requires at least: 5.0
+Tested up to: 6.1
+Requires PHP: 5.2.4
+License: GNU General Public License v3 or later
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
+Text Domain: beauty-cosmetic-store-pro
+Tags: one-column, right-sidebar, custom-menu, editor-style, featured-images, full-width-template, sticky-post, theme-options, threaded-comments
+Beauty Cosmetic Store Pro WordPress Theme has been created by Themagnifico(themagnifico.net), 2023.
+Beauty Cosmetic Store Pro WordPress Theme is released under the terms of GNU GPL
+
+/* Basic Style */
+
+
+@import url('https://fonts.googleapis.com/css2?family=Elsie:wght@400;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Elsie:wght@400;900&family=Inter:wght@100..900&display=swap');
+.bypostauthor {
+  font-weight: 600;
+}
+/*--------- Site Loader --------------*/
+.preloader {
+  background: #f4f9ff;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  top: 0;
+  position: fixed;
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+}
+
+/* .load {
+  filter: saturate(3);
+  width: 0.1px;
+  height: 0.1px;
+  border: 40px solid transparent;
+  border-radius: 5px;
+  animation: loader 3s ease-in infinite, spin 1s linear infinite;
+}
+.load::before {
+  filter: saturate(0.3);
+  display: block;
+  position: absolute;
+  z-index: -1;
+  margin-left: -40px;
+  margin-top: -40px;
+  content:'';
+  height:0.1;
+  width:0.1;
+  border: 40px solid transparent;
+  border-radius: 5px;
+  animation: loader 2s ease-in infinite reverse, spin 0.8s linear infinite reverse;
+}
+.load::after {
+  display: block;
+  position: absolute;
+  z-index: 2;
+  margin-left: -10px;
+  margin-top: -10px;
+  content:'';
+  height:20px;
+  width:20px;
+  border-radius: 20px;
+  background-color: #FFF;
+}
+@keyframes loader {
+  0% {border-top-color:#FFB2B24D}
+  25% {border-right-color:#FF91AD4D}
+  50% {border-bottom-color:#FFBDD3}
+  75% {border-left-color:#FF91AD4D}
+  100% {border-top-color:#FFB2B24D}
+}
+@keyframes spin {
+  0% {transform: rotate(0deg)}
+  100% {transform: rotate(-360deg)}
+} */
+
+
+
+.load {
+  /* filter: saturate(3); */
+  width: 0.1px;
+  height: 0.1px;
+  border: 40px solid transparent;
+  border-radius: 5px;
+  animation: loader 3s ease-in infinite, spin 1s linear infinite;
+}
+.load::before {
+  /* filter: saturate(0.3); */
+  display: block;
+  position: absolute;
+  z-index: -1;
+  margin-left: -40px;
+  margin-top: -40px;
+  content:'';
+  height:0.1;
+  width:0.1;
+  border: 40px solid transparent;
+  border-radius: 5px;
+  animation: loader 2s ease-in infinite reverse, spin 0.8s linear infinite reverse;
+}
+.load::after {
+  display: block;
+  position: absolute;
+  z-index: 2;
+  margin-left: -10px;
+  margin-top: -10px;
+  content:'';
+  height:20px;
+  width:20px;
+  border-radius: 20px;
+  background-color: #000;
+}
+@keyframes loader {
+  0% {border-bottom-color:transparent;border-top-color:#051240}
+  25% {border-left-color:transparent;border-right-color:#FF5894}
+  50% {border-top-color:transparent;border-bottom-color:#FFB2B280}
+  75% {border-right-color:transparent;border-left-color:#FF5894}
+  100% {border-bottom-color:transparent;border-top-color:#051240}
+}
+@keyframes spin {
+  0% {transform: rotate(0deg)}
+  100% {transform: rotate(-360deg)}
+}
+/* .load{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  width:100px;
+  height:100px;
+}
+.load hr{
+  border:0;
+  margin:0;
+  width:40%;
+  height:40%;
+  position:absolute;
+  border-radius:50%;
+  animation:spind 2s ease infinite;
+  opacity: 1;
+}
+.load :first-child{background:#362829;animation-delay:-1.5s}
+.load :nth-child(2){background: #E2809F;;animation-delay:-1s}
+.load :nth-child(3){background:#362829;animation-delay:-0.5s}
+.load :last-child{background: #E2809F;}
+
+@keyframes spind{
+  0%,100%{transform:translate(0)}
+  25%{transform:translate(160%)}
+  50%{transform:translate(160%, 160%)}
+  75%{transform:translate(0, 160%)}
+} */
