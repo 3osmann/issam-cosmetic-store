@@ -4,11 +4,13 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Truck, RotateCcw, Shield, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useTheme } from "@/lib/ThemeContext";
 
 const icons = [<Truck size={30} />, <RotateCcw size={30} />, <Shield size={30} />, <MessageCircle size={30} />];
 
 export function Footer() {
   const { t } = useLanguage();
+  const { theme } = useTheme();
   const [settings, setSettings] = useState<any>(null);
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export function Footer() {
         <div className="container">
           <div className="row">
             <div className="col-lg-3 col-md-6 mb-4">
-              <img src={s.logo || "/images/logo(1).png"} alt="Beauty Cosmetic Store" className="mb-3" style={{ maxHeight: "40px" }} />
+              <img src={theme === "dark" ? "/images/logo_dark.png" : "/images/logo_light.png"} alt="Beauty Cosmetic Store" className="mb-3" style={{ maxHeight: "40px" }} />
               <p className="text-muted small">{s.aboutText || "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut elit tellus, luctus nec ullamcorper mattis, pulvinar dapibus leo."}</p>
               <div className="phone">
                 <ul className="foot-flex">
