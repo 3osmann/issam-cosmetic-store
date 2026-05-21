@@ -65,6 +65,7 @@ section { background-size: cover; background-repeat: no-repeat; position: relati
 .bg-pink-500 { background: #FF5894; }
 .font-elsie { font-family: Elsie, serif; }
 .header-wrapper { background: #fff; }
+#banner .carousel-item img { width: 100%; height: 400px; object-fit: cover; border-radius: 20px; }
 
 /* Dark mode */
 html.dark { color-scheme: dark; }

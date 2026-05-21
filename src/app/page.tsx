@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
+import { motion } from "framer-motion";
 
 const instagramFeed = ["/images/insta1.png", "/images/insta2.png", "/images/insta3.png", "/images/insta4.png", "/images/insta5.png", "/images/insta6.png"];
 
@@ -137,17 +138,17 @@ export default function HomePage() {
 
   return (
     <>
-      <section id="banner">
+      <section id="banner" style={{ paddingTop: 150 }}>
         <div className="container">
           <div className="popular-category" style={{ marginBottom: 40 }}>
             <h3 className="heading">Popular Categories</h3>
-            <div className="cat-images">
+            <div className="cat-images" style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
               {categories.map((cat) => (
                 <div key={cat.slug} className="up-to-off">
-                  <div className="cat-box">
+                  <div className="cat-box" style={{ textAlign: "center" }}>
                     <Link href={`/shop?category=${cat.slug}`}>
-                      <img src={cat.image} className="cat-image" alt="" width="100" height="100" />
-                      <p className="category text-center">{cat.name}</p>
+                      <img src={cat.image} className="cat-image" alt="" style={{ width: 100, height: 100, objectFit: "contain" }} />
+                      <p className="category text-center" style={{ marginTop: 8 }}>{cat.name}</p>
                     </Link>
                   </div>
                 </div>
@@ -175,18 +176,6 @@ export default function HomePage() {
                       </div>
                     </div>
                   ))}
-                </div>
-              </div>
-            </div>
-            <div className="col-lg-4">
-              <div className="beauty-care-details">
-                <img src="/images/beauty-care.png" className="img-fluid" alt="Beauty & Care" />
-                <div className="beauty-care-content">
-                  <h3>Beauty &amp; Care</h3>
-                  <h6>From $299</h6>
-                </div>
-                <div className="discover-button">
-                  <Link href="/shop">Discover Now</Link>
                 </div>
               </div>
             </div>
@@ -234,19 +223,19 @@ export default function HomePage() {
       <section id="best-seller">
         <div className="container tests">
           <div className="row" style={{ justifyContent: "center" }}>
-            <div className="our_products-head wow fadeInUp" data-wow-duration="2s">
+            <motion.div className="our_products-head" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
               <div className="our_products-tag">
                 <h2 className="main_heading">Best Seller Of Cosmetics</h2>
               </div>
               <div className="view-all-products">
                 <Link href="/shop">View All Product</Link>
               </div>
-            </div>
+            </motion.div>
             <div className="col-lg-12 p-0 m-0">
-              <div className="p-0 our_products-info wow zoomInUp" data-wow-duration="2s">
+              <motion.div className="p-0 our_products-info" initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
                 <div className="row">
                   {bestSellers.map((product, i) => (
-                    <div key={i} className="col-lg-3 mt-5 col-md-6 items-our_products">
+                    <motion.div key={i} className="col-lg-3 mt-5 col-md-6 items-our_products" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }}>
                       <div className="our_products-box">
                         <div className="products-center" style={{ display: "flex", alignItems: "center" }}>
                           <div className="products-image">
@@ -276,10 +265,10 @@ export default function HomePage() {
                           <Link href="/shop" className="button product_type_simple add_to_cart_button ajax_add_to_cart">Add to cart</Link>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
           <div className="cart-container">
@@ -372,19 +361,19 @@ export default function HomePage() {
       <section id="shop-new-arrival">
         <div className="container tests">
           <div className="row" style={{ justifyContent: "center" }}>
-            <div className="trending_products-head wow fadeInUp" data-wow-duration="2s">
+            <motion.div className="trending_products-head" initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
               <div className="trending-products">
                 <h2 className="main_heading">Shop New Arrivals</h2>
               </div>
               <div className="view-all-products">
                 <Link href="/shop">View All Product</Link>
               </div>
-            </div>
+            </motion.div>
             <div className="col-lg-12 p-0 m-0">
-              <div className="p-0 trending_products-info wow zoomInUp" data-wow-duration="2s">
+              <motion.div className="p-0 trending_products-info" initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
                 <div className="row">
                   {newArrivals.map((product, i) => (
-                    <div key={i} className="col-lg-3 col-md-6 mt-5 items-trending_products">
+                    <motion.div key={i} className="col-lg-3 col-md-6 mt-5 items-trending_products" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }}>
                       <div className="trending_products-box">
                         <div className="products-center">
                           <div className="products-image">
@@ -400,10 +389,10 @@ export default function HomePage() {
                           <span className="ms-2 tre-product-regular-price"><s>$ {product.salePrice}</s></span>
                         </div>
                       </div>
-                    </div>
+                    </motion.div>
                   ))}
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
