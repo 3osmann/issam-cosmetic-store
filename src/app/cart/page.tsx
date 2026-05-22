@@ -83,49 +83,108 @@ export default function CartPage() {
 
             <div className="col-lg-4">
               <div className="cart-collaterals">
-                <div className="cart_totals" style={{ background: "#fff", border: "1px solid #eee", borderRadius: 12, padding: 28 }}>
-                  <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: "#333" }}>{t("cart.order_summary")}</h2>
-                  <table className="shop_table shop_table_responsive" style={{ width: "100%" }}>
-                    <tbody>
-                      <tr className="cart-subtotal">
-                        <th style={{ fontWeight: 400, color: "#666", padding: "8px 0" }}>{t("cart.subtotal")}</th>
-                        <td style={{ textAlign: "right", fontWeight: 600, padding: "8px 0" }}><span className="woocommerce-Price-amount amount">${subtotal.toFixed(2)}</span></td>
-                      </tr>
-                      <tr className="shipping">
-                        <th style={{ fontWeight: 400, color: "#666", padding: "8px 0" }}>{t("cart.shipping")}</th>
-                        <td style={{ textAlign: "right", fontWeight: 600, padding: "8px 0" }}>
-                          {shipping === 0 ? <span style={{ color: "#10b981" }}>{t("cart.free")}</span> : <span className="woocommerce-Price-amount amount">${shipping.toFixed(2)}</span>}
-                        </td>
-                      </tr>
-                      {couponApplied && (
-                        <tr className="cart-discount">
-                          <th style={{ fontWeight: 400, color: "#10b981", padding: "8px 0" }}>{t("cart.discount")} (10%)</th>
-                          <td style={{ textAlign: "right", fontWeight: 600, color: "#10b981", padding: "8px 0" }}>-${discount.toFixed(2)}</td>
-                        </tr>
-                      )}
-                      <tr className="order-total">
-                        <th style={{ fontWeight: 700, color: "#333", padding: "12px 0", borderTop: "2px solid #eee" }}>{t("cart.total")}</th>
-                        <td style={{ textAlign: "right", fontWeight: 700, color: "#FF5894", fontSize: 20, padding: "12px 0", borderTop: "2px solid #eee" }}>
-                          <span className="woocommerce-Price-amount amount">${finalTotal.toFixed(2)}</span>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  {subtotal < 50 && subtotal > 0 && (
-                    <div style={{ marginTop: 16, padding: "12px 16px", background: "#f0fdf4", borderRadius: 8, fontSize: 13, color: "#166534", display: "flex", alignItems: "center", gap: 8 }}>
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 14h6"/></svg>
-                      Add ${(50 - subtotal).toFixed(2)} more for free shipping
+                <div className="cart_totals" style={{
+                  background: "#fff", borderRadius: 16, overflow: "hidden",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04)",
+                  position: "sticky", top: 220,
+                }}>
+                  <div style={{
+                    background: "linear-gradient(135deg,#FF5894,#e83e8c)", padding: "20px 24px",
+                    display: "flex", alignItems: "center", gap: 12,
+                  }}>
+                    <div style={{
+                      width: 36, height: 36, borderRadius: 10, background: "rgba(255,255,255,0.2)",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                      </svg>
                     </div>
-                  )}
-                  <Link href="/checkout">
-                    <button style={{ width: "100%", marginTop: 20, padding: "14px 24px", background: "#FF5894", color: "#fff", border: "none", borderRadius: 8, fontSize: 15, fontWeight: 600, cursor: "pointer", transition: "background 0.3s" }}
-                      onMouseOver={(e) => (e.currentTarget.style.background = "#e04a7c")}
-                      onMouseOut={(e) => (e.currentTarget.style.background = "#FF5894")}>
-                      {t("cart.checkout")}
-                    </button>
-                  </Link>
-                  <div style={{ marginTop: 12, textAlign: "center" }}>
-                    <Link href="/shop" style={{ color: "#999", fontSize: 13, textDecoration: "none" }}>&larr; {t("cart.continue_shopping")}</Link>
+                    <h2 style={{ fontSize: 16, fontWeight: 700, margin: 0, color: "#fff" }}>{t("cart.order_summary")}</h2>
+                  </div>
+
+                  <div style={{ padding: "20px 24px" }}>
+                    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0" }}>
+                        <span style={{ fontSize: 14, color: "#666" }}>{t("cart.subtotal")} ({itemCount} items)</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: "#333" }}>${subtotal.toFixed(2)}</span>
+                      </div>
+
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderTop: "1px solid #f5f5f5" }}>
+                        <span style={{ fontSize: 14, color: "#666" }}>{t("cart.shipping")}</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: shipping === 0 ? "#10b981" : "#333" }}>
+                          {shipping === 0 ? (
+                            <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>
+                              {t("cart.free")}
+                            </span>
+                          ) : `$${shipping.toFixed(2)}`}
+                        </span>
+                      </div>
+
+                      {couponApplied && (
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderTop: "1px solid #f5f5f5" }}>
+                          <span style={{ fontSize: 14, color: "#10b981", display: "flex", alignItems: "center", gap: 6 }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                            Discount (10%)
+                          </span>
+                          <span style={{ fontSize: 14, fontWeight: 600, color: "#10b981" }}>-${discount.toFixed(2)}</span>
+                        </div>
+                      )}
+
+                      <div style={{
+                        display: "flex", justifyContent: "space-between", alignItems: "center",
+                        padding: "14px 0", marginTop: 4,
+                        borderTop: "2px solid #FF5894", borderBottom: "2px solid #FF5894",
+                      }}>
+                        <span style={{ fontSize: 16, fontWeight: 700, color: "#333" }}>{t("cart.total")}</span>
+                        <span style={{ fontSize: 22, fontWeight: 800, color: "#FF5894" }}>${finalTotal.toFixed(2)}</span>
+                      </div>
+                    </div>
+
+                    {subtotal < 50 && subtotal > 0 && (
+                      <div style={{ marginTop: 16 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, color: "#999", marginBottom: 6 }}>
+                          <span>Free Shipping</span>
+                          <span>${(50 - subtotal).toFixed(2)} away</span>
+                        </div>
+                        <div style={{ width: "100%", height: 6, background: "#f0f0f0", borderRadius: 3, overflow: "hidden" }}>
+                          <div style={{ width: `${Math.min((subtotal / 50) * 100, 100)}%`, height: "100%", background: "linear-gradient(90deg,#10b981,#34d399)", borderRadius: 3, transition: "width 0.3s" }} />
+                        </div>
+                      </div>
+                    )}
+
+                    <Link href="/checkout" style={{ textDecoration: "none", display: "block" }}>
+                      <button style={{
+                        width: "100%", marginTop: 20, padding: "14px 24px",
+                        background: "linear-gradient(135deg,#FF5894,#e83e8c)", color: "#fff",
+                        border: "none", borderRadius: 10, fontSize: 15, fontWeight: 700,
+                        cursor: "pointer", transition: "all 0.3s",
+                        boxShadow: "0 4px 16px rgba(255,88,148,0.3)",
+                        letterSpacing: 0.3,
+                      }}
+                        onMouseOver={(e) => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 24px rgba(255,88,148,0.4)"; }}
+                        onMouseOut={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 16px rgba(255,88,148,0.3)"; }}>
+                        <span style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }}>
+                          {t("cart.checkout")}
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"/></svg>
+                        </span>
+                      </button>
+                    </Link>
+
+                    <div style={{ marginTop: 16, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, fontSize: 12, color: "#aaa" }}>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                      Secure checkout
+                    </div>
+
+                    <div style={{ marginTop: 12, textAlign: "center" }}>
+                      <Link href="/shop" style={{ color: "#999", fontSize: 13, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 4, transition: "color 0.2s" }}
+                        onMouseOver={(e) => e.currentTarget.style.color = "#FF5894"}
+                        onMouseOut={(e) => e.currentTarget.style.color = "#999"}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                        {t("cart.continue_shopping")}
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
