@@ -52,6 +52,48 @@ function Timer() {
   );
 }
 
+const pageStyles = `
+  .our_products-box, .trending_products-box { position: relative; }
+  .products-image {
+    position: relative !important;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .product-bg-circle {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    bottom: auto !important;
+    right: auto !important;
+    margin: 0 !important;
+    width: 130px !important;
+    height: 130px !important;
+  }
+  .products-image img {
+    position: relative;
+    z-index: 2;
+    max-height: 150px;
+    width: auto;
+    object-fit: contain;
+  }
+  .best-wishlist-btn {
+    position: absolute; top: 12px; right: 12px; z-index: 10;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,0.9); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+    opacity: 0;
+  }
+  .products-image:hover .best-wishlist-btn,
+  .our_products-box:hover .best-wishlist-btn,
+  .trending_products-box:hover .best-wishlist-btn { opacity: 1; }
+  .best-wishlist-btn:hover { background: #FF5894; }
+  .best-wishlist-btn:hover svg { stroke: #fff; }
+`;
+
 export default function HomePage() {
   const [activeSlide, setActiveSlide] = useState(0);
   const [categories, setCategories] = useState([
@@ -138,6 +180,7 @@ export default function HomePage() {
 
   return (
     <>
+      <style dangerouslySetInnerHTML={{ __html: pageStyles }} />
       <section id="banner" style={{ paddingTop: 220 }}>
         <div className="container">
           <div className="popular-category" style={{ marginBottom: 40 }}>
@@ -249,6 +292,11 @@ export default function HomePage() {
                   {bestSellers.map((product, i) => (
                     <motion.div key={i} className="col-lg-3 mt-5 col-md-6 items-our_products" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }}>
                       <div className="our_products-box">
+                        <Link href="/wishlist" className="best-wishlist-btn" title="Add to wishlist">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                          </svg>
+                        </Link>
                         <div className="products-center" style={{ display: "flex", alignItems: "center" }}>
                           <div className="products-image">
                             <img src={product.image} className="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" decoding="async" />
@@ -257,16 +305,6 @@ export default function HomePage() {
                         </div>
                         <div className="product-title">
                           <Link href="/shop">{product.name}</Link>
-                        </div>
-                        <div className="wishlist">
-                          <div className="wishlist_text">
-                            <Link href="/wishlist" className="add_to_wishlist">
-                              <svg id="yith-wcwl-icon-heart-outline" className="yith-wcwl-icon-svg" fill="none" strokeWidth="1.5" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                              </svg>
-                              <span>Add to wishlist</span>
-                            </Link>
-                          </div>
                         </div>
                         <div className="price-re-sel">
                           <h5 className="product-offer-price price-product">$ {product.price}</h5>
@@ -387,6 +425,11 @@ export default function HomePage() {
                   {newArrivals.map((product, i) => (
                     <motion.div key={i} className="col-lg-3 col-md-6 mt-5 items-trending_products" initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4, delay: i * 0.1 }}>
                       <div className="trending_products-box">
+                        <Link href="/wishlist" className="best-wishlist-btn" title="Add to wishlist">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                          </svg>
+                        </Link>
                         <div className="products-center">
                           <div className="products-image">
                             <img src={product.image} className="attachment-post-thumbnail size-post-thumbnail wp-post-image" alt="" decoding="async" />
@@ -484,7 +527,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="our-blogs" style={{ padding: "60px 0", background: "#fcfcfc" }}>
+      <section id="our-blogs" style={{ padding: "60px 0", background: "#fff" }}>
         <div className="container">
           <div style={{ textAlign: "center", marginBottom: 40 }}>
             <span style={{ color: "#FF5894", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>Latest News</span>
@@ -570,7 +613,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="testimonial" style={{ padding: "60px 0", background: "#fcfcfc" }}>
+      <section id="testimonial" style={{ padding: "60px 0", background: "#fff" }}>
         <div className="container">
           <div style={{ textAlign: "center", marginBottom: 40 }}>
             <span style={{ color: "#FF5894", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>Testimonials</span>
@@ -580,20 +623,20 @@ export default function HomePage() {
             {testimonials.map((t, i) => (
               <div key={i} className="col-lg-4 col-md-6 mb-4">
                 <div style={{
-                  background: "#fff", borderRadius: 16, padding: "28px 24px",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)", height: "100%",
+                  background: "#FFEBEF", borderRadius: 16, padding: "28px 24px",
+                  boxShadow: "0 4px 20px rgba(255,88,148,0.08)", height: "100%",
                   transition: "all 0.3s ease", position: "relative"
                 }}
-                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.08)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(255,88,148,0.15)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(255,88,148,0.08)"; }}
                 >
                   <div style={{ color: "#FF5894", fontSize: 28, lineHeight: 1, marginBottom: 12, opacity: 0.3 }}>&ldquo;</div>
                   <p style={{ fontSize: 14, color: "#666", lineHeight: 1.7, marginBottom: 20, fontStyle: "italic" }}>{t.text}</p>
-                  <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid #f5f5f5", paddingTop: 16 }}>
-                    <img src={t.image} alt={t.name} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }} />
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid rgba(255,88,148,0.15)", paddingTop: 16 }}>
+                    <img src={t.image} alt={t.name} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover", border: "2px solid #fff" }} />
                     <div>
-                      <h5 style={{ fontSize: 14, fontWeight: 700, color: "#222", margin: 0 }}>{t.name}</h5>
-                      <span style={{ fontSize: 12, color: "#aaa" }}>{t.role}</span>
+                      <h5 style={{ fontSize: 14, fontWeight: 700, color: "#333", margin: 0 }}>{t.name}</h5>
+                      <span style={{ fontSize: 12, color: "#999" }}>{t.role}</span>
                     </div>
                   </div>
                 </div>

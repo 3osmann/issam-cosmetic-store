@@ -4,20 +4,23 @@ import { useState } from "react"
 import { useCart } from "@/lib/CartContext"
 
 interface WishlistItem {
+  id: number
   name: string
   price: number
+  salePrice: number
+  image: string
   inStock: boolean
 }
 
 const initialItems: WishlistItem[] = [
-  { name: "Rose Glow Serum", price: 49.99, inStock: true },
-  { name: "Matte Lipstick Set", price: 29.99, inStock: true },
-  { name: "Hydrating Face Cream", price: 59.99, inStock: true },
-  { name: "Eye Shadow Palette", price: 45.00, inStock: false },
-  { name: "Silk Perfume", price: 89.00, inStock: true },
-  { name: "Nail Art Kit", price: 24.99, inStock: true },
-  { name: "Hair Repair Oil", price: 34.99, inStock: false },
-  { name: "Body Lotion Set", price: 39.99, inStock: true },
+  { id: 1, name: "Rose Glow Serum", price: 49.99, salePrice: 39.99, image: "/images/product1.png", inStock: true },
+  { id: 2, name: "Matte Lipstick Set", price: 29.99, salePrice: 24.99, image: "/images/product2.png", inStock: true },
+  { id: 3, name: "Hydrating Face Cream", price: 59.99, salePrice: 49.99, image: "/images/product3.png", inStock: true },
+  { id: 4, name: "Eye Shadow Palette", price: 45.00, salePrice: 35.00, image: "/images/product4.png", inStock: false },
+  { id: 5, name: "Silk Perfume", price: 89.00, salePrice: 79.00, image: "/images/product5.png", inStock: true },
+  { id: 6, name: "Nail Art Kit", price: 24.99, salePrice: 19.99, image: "/images/product6.png", inStock: true },
+  { id: 7, name: "Hair Repair Oil", price: 34.99, salePrice: 29.99, image: "/images/product7.png", inStock: false },
+  { id: 8, name: "Body Lotion Set", price: 39.99, salePrice: 34.99, image: "/images/product8.png", inStock: true },
 ]
 
 export default function WishlistPage() {

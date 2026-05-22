@@ -13,6 +13,7 @@ export function Header() {
   const { itemCount } = useCart();
   const pathname = usePathname();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [settings, setSettings] = useState<any>(null);
@@ -43,26 +44,85 @@ export function Header() {
     "Skin care", "Uncategorized",
   ];
 
+  const headerStyles = `
+    .header-wrapper { overflow: visible; }
+    #masthead { overflow: visible; }
+    @media (min-width: 1025px) {
+      #mySidenav.nav.sidenav { display: block !important; width: auto !important; position: static !important; height: auto !important; background: transparent !important; }
+      #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: wrap !important; gap: 4px; list-style: none !important; margin: 0 !important; padding: 0 !important; }
+      #mySidenav .main-navigation > .menu > ul > li { display: inline-block !important; position: relative !important; }
+      #mySidenav .main-navigation > .menu > ul > li > a { color: inherit !important; padding: 6px 14px !important; text-decoration: none !important; font-size: 14px !important; white-space: nowrap !important; }
+      #mySidenav .main-navigation > .menu > ul > li > a:hover { color: #FF5894 !important; }
+      #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a { color: #FF5894 !important; font-weight: 600 !important; }
+      #mySidenav .main-navigation ul.sub-menu,
+      #mySidenav .main-navigation ul ul { display: none !important; position: absolute !important; top: 100% !important; left: 0 !important; background: #fff !important; min-width: 180px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; border-radius: 8px !important; padding: 8px 0 !important; list-style: none !important; z-index: 999 !important; }
+      #mySidenav .main-navigation ul li.menu-item-has-children:hover > ul.sub-menu,
+      #mySidenav .main-navigation ul li.menu-item-has-children:hover > ul { display: block !important; }
+      #mySidenav .main-navigation ul.sub-menu li { display: block !important; }
+      #mySidenav .main-navigation ul.sub-menu li a { display: block !important; padding: 8px 20px !important; color: #444 !important; font-size: 13px !important; text-decoration: none !important; }
+      #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894 !important; background: #fff5f8 !important; }
+    }
+    @media (max-width: 1024px) {
+      #mySidenav.nav.sidenav { width: 0; position: fixed; }
+      #mySidenav .main-navigation > .menu > ul { display: block; }
+      #mySidenav .main-navigation > .menu > ul > li { display: block; }
+      #mySidenav .main-navigation > .menu > ul > li > a { display: block; padding: 10px 20px; font-size: 14px; color: #333; text-decoration: none; border-bottom: 1px solid #f0f0f0; }
+      #mySidenav .main-navigation > .menu > ul > li > a:hover { color: #FF5894; }
+      #mySidenav .main-navigation ul.sub-menu { padding-left: 20px; }
+      #mySidenav .main-navigation ul.sub-menu li a { display: block; padding: 8px 20px; font-size: 13px; color: #666; text-decoration: none; }
+      .logo img { max-height: 28px; }
+      #topabr .topbar-contents h4 { font-size: 10px; }
+      #topabr .shop-btn a { font-size: 10px; padding: 2px 6px; }
+
+      .toggle-nav { display: block !important; }
+      a.closebtn { display: block !important; }
+    }
+
+    @media (max-width: 768px) {
+      .main-header-box .row.bg-media { display: flex !important; flex-wrap: wrap !important; align-items: center !important; gap: 0; }
+      .main-header-box .row.bg-media > .col-lg-2 { flex: 0 0 auto !important; width: auto !important; max-width: none !important; padding: 2px 6px !important; margin: 0 !important; }
+      .main-header-box .row.bg-media > .col-lg-5.header-search-flex { flex: 1 1 auto !important; width: auto !important; max-width: none !important; padding: 2px 4px !important; margin: 0 !important; min-width: 0 !important; }
+      .main-header-box .row.bg-media > .col-lg-5.quote-btn { flex: 0 0 auto !important; width: auto !important; max-width: none !important; padding: 2px 4px !important; margin: 0 !important; }
+      .main-header-box .row.bg-media > .col-lg-5.header-nav { flex: 0 0 auto !important; width: auto !important; max-width: none !important; padding: 2px 4px !important; margin: 0 !important; }
+      .main-header-box .row.bg-media > .col-lg-7 { flex: 0 0 100% !important; width: 100% !important; max-width: 100% !important; padding: 2px 8px 4px !important; margin: 0 !important; }
+      .main-header-box .row.bg-media > .col-lg-7.mt-4 { margin-top: 0 !important; }
+      .logo img { max-height: 24px !important; }
+      .quote-btn .hotline-details { display: none !important; }
+      .quote-btn .product-details { display: flex !important; align-items: center !important; gap: 2px !important; }
+      .quote-btn .product-details .account,
+      .quote-btn .product-details .wishlist { display: none !important; }
+      .quote-btn .product-details .cart { display: flex !important; }
+      .quote-btn .product-details .cart a i { font-size: 16px !important; }
+      .cart-counter { top: -6px !important; right: -6px !important; width: 14px !important; height: 14px !important; font-size: 8px !important; line-height: 14px !important; }
+      .header-nav .toggle-nav { display: block !important; float: none !important; position: static !important; width: auto !important; height: auto !important; margin: 0 !important; text-align: center !important; }
+      .header-nav .toggle-nav span i { font-size: 20px !important; color: #333; }
+      .header-search-flex { display: flex !important; flex-direction: row !important; align-items: center !important; }
+      #cat_toggle { display: none !important; }
+      #qnimate.off { display: block !important; }
+      .search-form.searchBox { display: flex !important; align-items: center !important; margin: 0 !important; }
+      .search-form .search-field { font-size: 11px !important; padding: 4px 6px !important; width: 70px !important; height: 24px !important; border: 1px solid #ddd !important; border-radius: 4px 0 0 4px !important; }
+      .search-submit { font-size: 10px !important; padding: 4px 6px !important; height: 24px !important; border-radius: 0 4px 4px 0 !important; }
+      .order-tracking-products, .recently-viewed-products { display: none !important; }
+      .track-main-box { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; justify-content: center !important; }
+      .currency select, .language select { font-size: 10px !important; padding: 1px 3px !important; max-width: 55px !important; height: 20px !important; }
+      #topabr { display: none !important; }
+      .quote-btn > button { font-size: 13px !important; margin-right: 0 !important; padding: 0 2px !important; }
+      .menubar { margin: 0 !important; }
+      .innermenubox { padding-bottom: 0 !important; }
+      #masthead { padding: 0 !important; }
+      .main-header-box { padding: 0 !important; }
+    }
+
+    @media (max-width: 576px) {
+      .main-header-box .row.bg-media > .col-lg-5.header-search-flex { display: none !important; }
+      .main-header-box .row.bg-media > .col-lg-7 { display: none !important; }
+      .main-header-box .row.bg-media { padding: 2px 0 !important; }
+    }
+  `;
+
   return (
-    <>
-      <style>{`
-        .header-wrapper { overflow: visible !important; }
-        #masthead { overflow: visible !important; }
-        #mySidenav.nav.sidenav { display: block !important; width: auto !important; position: static !important; height: auto !important; background: transparent !important; }
-        #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: wrap !important; gap: 4px; list-style: none !important; margin: 0 !important; padding: 0 !important; }
-        #mySidenav .main-navigation > .menu > ul > li { display: inline-block !important; position: relative !important; }
-        #mySidenav .main-navigation > .menu > ul > li > a { color: inherit !important; padding: 6px 14px !important; text-decoration: none !important; font-size: 14px !important; white-space: nowrap !important; }
-        #mySidenav .main-navigation > .menu > ul > li > a:hover { color: #FF5894 !important; }
-        #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a { color: #FF5894 !important; font-weight: 600 !important; }
-        #mySidenav .main-navigation ul.sub-menu,
-        #mySidenav .main-navigation ul ul { display: none !important; position: absolute !important; top: 100% !important; left: 0 !important; background: #fff !important; min-width: 180px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; border-radius: 8px !important; padding: 8px 0 !important; list-style: none !important; z-index: 999 !important; }
-        #mySidenav .main-navigation ul li.menu-item-has-children:hover > ul.sub-menu,
-        #mySidenav .main-navigation ul li.menu-item-has-children:hover > ul { display: block !important; }
-        #mySidenav .main-navigation ul.sub-menu li { display: block !important; }
-        #mySidenav .main-navigation ul.sub-menu li a { display: block !important; padding: 8px 20px !important; color: #444 !important; font-size: 13px !important; text-decoration: none !important; }
-        #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894 !important; background: #fff5f8 !important; }
-      `}</style>
-    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, transition: "transform 0.35s ease", transform: hidden ? `translateY(-100%)` : "translateY(0)" }}>
+    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, transition: "transform 0.35s ease", transform: hidden ? "translateY(-100%)" : "translateY(0)" }}>
+      <style dangerouslySetInnerHTML={{ __html: headerStyles }} />
       <div id="topabr">
         <div className="container">
           <div className="row" style={{ alignItems: "center" }}>
@@ -176,9 +236,10 @@ export function Header() {
                       <div className="right_menu">
                         <div className="innermenubox">
                           <div className="toggle-nav mobile-menu">
-                            <span onClick={() => {}}><i className="fas fa-bars"></i></span>
+                            <span onClick={() => setMobileMenuOpen(!mobileMenuOpen)}><i className="fas fa-bars"></i></span>
                           </div>
-                          <div id="mySidenav" className="nav sidenav">
+                          <div id="mySidenav" className="nav sidenav" style={mobileMenuOpen ? { width: 260, position: "fixed", right: 0, top: 0, height: "100%", background: "#fff", zIndex: 9999999, paddingTop: 60, boxShadow: "-4px 0 30px rgba(0,0,0,0.15)", overflowY: "auto" } : {}}>
+                            <a href="#" className="closebtn" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} style={{ position: "absolute", top: 10, right: 20, fontSize: 36, color: "#999", textDecoration: "none" }}>&times;</a>
                             <nav id="site-navigation" className="main-navigation">
                               <div className="menu clearfix">
                                 <ul id="menu-primary-menu" className="clearfix mobile_nav">
@@ -244,7 +305,9 @@ export function Header() {
           </div>
         </div>
       </header>
+      {mobileMenuOpen && (
+        <div onClick={() => setMobileMenuOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 9999998 }} />
+      )}
     </div>
-    </>
   );
 }

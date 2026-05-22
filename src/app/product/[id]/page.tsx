@@ -3,23 +3,8 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Heart, ShoppingCart, Star, Minus, Plus, ChevronDown, Truck, Shield, RotateCcw, Package } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useCart } from "@/lib/CartContext";
-
-function StarRating({ rating, size = "sm" }: { rating: number; size?: "sm" | "md" }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={cn(size === "md" ? "h-5 w-5" : "h-3.5 w-3.5", i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300")} />
-      ))}
-    </div>
-  );
-}
 
 interface Product {
   id: number;
@@ -90,19 +75,20 @@ export default function ProductDetailPage() {
   }, [params.id]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center bg-gray-50"><div className="text-center"><Package className="h-20 w-20 text-gray-300 mx-auto mb-4 animate-pulse" />            <p className="text-gray-500">{t("shop.filters")}...</p></div></div>;
+    return (
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f9f9f9", paddingTop: 80 }}>
+        <p style={{ color: "#999" }}>Loading...</p>
+      </div>
+    );
   }
 
   if (!product) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <Package className="h-20 w-20 text-gray-300 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">{t("product.not_found")}</h1>
-          <p className="text-gray-500 mb-6">{t("product.not_found_hint")}</p>
-          <Link href="/shop">
-            <Button>{t("product.continue_shopping")}</Button>
-          </Link>
+      <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "#f9f9f9", paddingTop: 80 }}>
+        <div style={{ textAlign: "center" }}>
+          <h2 style={{ fontSize: 22, fontWeight: 700, color: "#333", marginBottom: 8 }}>{t("product.not_found")}</h2>
+          <p style={{ color: "#999", fontSize: 14, marginBottom: 20 }}>{t("product.not_found_hint")}</p>
+          <Link href="/shop" style={{ display: "inline-block", background: "#FF5894", color: "#fff", padding: "10px 24px", borderRadius: 8, textDecoration: "none", fontSize: 14, fontWeight: 600 }}>{t("product.continue_shopping")}</Link>
         </div>
       </div>
     );
@@ -111,167 +97,197 @@ export default function ProductDetailPage() {
   const images = [product.image, product.image, product.image];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-[#FF5894]">Home</Link>
+    <div style={{ background: "#f9f9f9", minHeight: "100vh", paddingTop: 80 }}>
+      <style>{`
+        .product-page-breadcrumb a { color: #888; text-decoration: none; font-size: 13px; }
+        .product-page-breadcrumb a:hover { color: #FF5894; }
+        .product-page-breadcrumb span { color: #bbb; margin: 0 6px; }
+        .product-page-breadcrumb .current { color: #FF5894; font-weight: 600; }
+        .related-card { background: #fff; border-radius: 12px; overflow: hidden; transition: all 0.3s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.04); height: 100%; text-decoration: none; display: block; }
+        .related-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(0,0,0,0.08); }
+        .related-card .thumb { height: 180px; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .related-card .thumb img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s ease; }
+        .related-card:hover .thumb img { transform: scale(1.06); }
+        .related-card .info { padding: 12px 16px 16px; }
+        .related-card .info h4 { font-size: 13px; font-weight: 600; color: #333; margin: 0 0 6px; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .related-card .info .price { font-size: 15px; font-weight: 700; color: #FF5894; }
+        .related-card .info .price del { font-size: 12px; font-weight: 400; color: #bbb; margin-right: 4px; }
+      `}</style>
+
+      <div style={{ background: "#fff", borderBottom: "1px solid #f0f0f0" }}>
+        <div className="container" style={{ padding: "14px 0" }}>
+          <div className="product-page-breadcrumb">
+            <Link href="/">Home</Link>
             <span>/</span>
-            <Link href="/shop" className="hover:text-[#FF5894]">Shop</Link>
+            <Link href="/shop">Shop</Link>
             <span>/</span>
-            <Link href={`/shop?category=${product.category.toLowerCase().replace(" ", "_")}`} className="hover:text-[#FF5894]">{product.category}</Link>
+            <Link href={`/shop?category=${product.category.toLowerCase().replace(" ", "_")}`}>{product.category}</Link>
             <span>/</span>
-            <span className="text-[#FF5894] truncate max-w-[200px]">{product.name}</span>
+            <span className="current">{product.name}</span>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          <div>
-            <div className="aspect-square rounded-xl bg-white border overflow-hidden flex items-center justify-center p-8 mb-4" style={product.bgColor ? { backgroundColor: product.bgColor } : undefined}>
-              <img src={images[selectedImage]} alt={product.name} className="w-full h-full object-contain" />
+      <div className="container" style={{ padding: "40px 0 60px" }}>
+        <div className="row">
+          <div className="col-lg-6 mb-4">
+            <div style={{
+              background: product.bgColor || "#fff",
+              borderRadius: 16, overflow: "hidden",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              padding: 40, aspectRatio: "1/1",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.04)"
+            }}>
+              <img src={images[selectedImage]} alt={product.name} style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
             </div>
-            <div className="flex gap-3">
+            <div style={{ display: "flex", gap: 10, marginTop: 12 }}>
               {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedImage(i)}
-                  className={cn(
-                    "w-20 h-20 rounded-lg border-2 overflow-hidden flex items-center justify-center p-2 transition-colors",
-                    selectedImage === i ? "border-[#FF5894]" : "border-gray-200 hover:border-gray-300"
-                  )}
-                >
-                  <img src={img} alt="" className="w-full h-full object-contain" />
+                <button key={i} onClick={() => setSelectedImage(i)} style={{
+                  width: 72, height: 72, borderRadius: 10, overflow: "hidden", border: selectedImage === i ? "2px solid #FF5894" : "2px solid #eee",
+                  background: "#fff", display: "flex", alignItems: "center", justifyContent: "center", padding: 6, cursor: "pointer"
+                }}>
+                  <img src={img} alt="" style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }} />
                 </button>
               ))}
             </div>
           </div>
 
-          <div>
-            <Badge className="bg-[#FF5894]/10 text-[#FF5894] border-none">{product.category}</Badge>
-            <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mt-3">{product.name}</h1>
+          <div className="col-lg-6">
+            <span style={{ display: "inline-block", background: "rgba(255,88,148,0.1)", color: "#FF5894", fontSize: 11, fontWeight: 600, padding: "3px 10px", borderRadius: 20, textTransform: "uppercase", letterSpacing: 0.5, marginBottom: 10 }}>
+              {product.category}
+            </span>
+            <h1 style={{ fontSize: 26, fontWeight: 700, color: "#222", margin: "0 0 10px", lineHeight: 1.3 }}>{product.name}</h1>
 
-            <div className="flex items-center gap-3 mt-3">
-              <StarRating rating={product.rating} size="md" />
-              <span className="text-sm text-gray-500">({product.reviews} {t("product.reviews")})</span>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
+              <div style={{ display: "flex", gap: 2 }}>
+                {[1,2,3,4,5].map((s) => (
+                  <svg key={s} width="16" height="16" viewBox="0 0 20 20" fill={s <= product.rating ? "#FF5894" : "#e5e5e5"}>
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                  </svg>
+                ))}
+              </div>
+              <span style={{ fontSize: 13, color: "#999" }}>({product.reviews} {t("product.reviews")})</span>
             </div>
 
-            <div className="flex items-baseline gap-3 mt-4">
-              <span className="text-3xl font-bold text-[#FF5894]">${product.salePrice.toFixed(2)}</span>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 16 }}>
+              <span style={{ fontSize: 28, fontWeight: 700, color: "#FF5894" }}>${product.salePrice.toFixed(2)}</span>
               {product.salePrice < product.price && (
-                <span className="text-lg text-gray-400 line-through">${product.price.toFixed(2)}</span>
-              )}
-              {product.salePrice < product.price && (
-                <Badge className="bg-green-100 text-green-700 border-none">
-                  {t("product.save")} ${(product.price - product.salePrice).toFixed(2)}
-                </Badge>
+                <>
+                  <span style={{ fontSize: 16, color: "#bbb", textDecoration: "line-through" }}>${product.price.toFixed(2)}</span>
+                  <span style={{ background: "#e8f5e9", color: "#2e7d32", fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 20 }}>
+                    Save ${(product.price - product.salePrice).toFixed(2)}
+                  </span>
+                </>
               )}
             </div>
 
-            <p className="text-gray-600 mt-4 leading-relaxed">{product.description}</p>
+            <p style={{ fontSize: 14, color: "#666", lineHeight: 1.7, marginBottom: 14 }}>{product.description}</p>
 
-            <div className="flex items-center gap-2 mt-3">
-              <div className={cn("w-2.5 h-2.5 rounded-full", product.inStock ? "bg-green-500" : "bg-red-500")} />
-              <span className={cn("text-sm font-medium", product.inStock ? "text-green-600" : "text-red-600")}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 20 }}>
+              <span style={{ width: 8, height: 8, borderRadius: "50%", background: product.inStock ? "#22c55e" : "#ef4444" }} />
+              <span style={{ fontSize: 13, fontWeight: 500, color: product.inStock ? "#22c55e" : "#ef4444" }}>
                 {product.inStock ? t("product.in_stock") : t("product.out_of_stock")}
               </span>
             </div>
 
             {product.inStock && (
-              <div className="flex items-center gap-4 mt-6">
-                <div className="flex items-center border border-gray-300 rounded-lg">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-2 hover:bg-gray-100 transition-colors"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <span className="px-4 py-2 font-medium min-w-[40px] text-center">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-2 hover:bg-gray-100 transition-colors"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 24 }}>
+                <div style={{ display: "flex", alignItems: "center", border: "1px solid #ddd", borderRadius: 10, overflow: "hidden" }}>
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} style={{ border: "none", background: "none", padding: "8px 12px", cursor: "pointer", fontSize: 16, color: "#555" }}>-</button>
+                  <span style={{ padding: "8px 14px", fontSize: 15, fontWeight: 600, color: "#333", minWidth: 36, textAlign: "center" }}>{quantity}</span>
+                  <button onClick={() => setQuantity(quantity + 1)} style={{ border: "none", background: "none", padding: "8px 12px", cursor: "pointer", fontSize: 16, color: "#555" }}>+</button>
                 </div>
-                <Button size="lg" className="flex-1" onClick={() => {
-                  if (product) addItem({ id: product.id, name: product.name, image: product.image, price: product.price, salePrice: product.salePrice, bgColor: product.bgColor }, quantity)
-                }}>
-                  <ShoppingCart className="h-5 w-5 mr-2" />
+                <button onClick={() => { if (product) addItem({ id: product.id, name: product.name, image: product.image, price: product.price, salePrice: product.salePrice, bgColor: product.bgColor }, quantity) }} style={{
+                  flex: 1, background: "#FF5894", color: "#fff", border: "none", padding: "12px 20px", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, transition: "background 0.2s"
+                }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#e04a7c" }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#FF5894" }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
                   {t("product.add_to_cart")}
-                </Button>
-                <Button variant="outline" size="icon" className="h-12 w-12" onClick={() => setIsWishlisted(!isWishlisted)}>
-                  <Heart className={cn("h-5 w-5", isWishlisted && "fill-red-500 text-red-500")} />
-                </Button>
+                </button>
+                <button onClick={() => setIsWishlisted(!isWishlisted)} style={{
+                  width: 48, height: 48, borderRadius: 10, border: "1px solid #ddd", background: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "all 0.2s", flexShrink: 0
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill={isWishlisted ? "#ef4444" : "none"} stroke={isWishlisted ? "#ef4444" : "#888"} strokeWidth="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </svg>
+                </button>
               </div>
             )}
 
-            <div className="grid grid-cols-3 gap-4 mt-8 p-4 bg-white rounded-xl border">
-              <div className="text-center">
-                <Truck className="h-5 w-5 text-[#FF5894] mx-auto mb-1" />
-                <p className="text-xs font-medium text-gray-900">{t("product.free_shipping")}</p>
-                <p className="text-xs text-gray-500">{t("product.free_shipping_hint")}</p>
-              </div>
-              <div className="text-center">
-                <Shield className="h-5 w-5 text-[#FF5894] mx-auto mb-1" />
-                <p className="text-xs font-medium text-gray-900">{t("product.secure_payment")}</p>
-                <p className="text-xs text-gray-500">{t("product.secure_payment_hint")}</p>
-              </div>
-              <div className="text-center">
-                <RotateCcw className="h-5 w-5 text-[#FF5894] mx-auto mb-1" />
-                <p className="text-xs font-medium text-gray-900">{t("product.easy_returns")}</p>
-                <p className="text-xs text-gray-500">{t("product.easy_returns_hint")}</p>
-              </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, padding: 16, background: "#fff", borderRadius: 12, border: "1px solid #f0f0f0" }}>
+              {[
+                { icon: "truck", title: t("product.free_shipping"), sub: t("product.free_shipping_hint") },
+                { icon: "shield", title: t("product.secure_payment"), sub: t("product.secure_payment_hint") },
+                { icon: "rotate", title: t("product.easy_returns"), sub: t("product.easy_returns_hint") },
+              ].map((feat, i) => (
+                <div key={i} style={{ textAlign: "center" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF5894" strokeWidth="2" style={{ margin: "0 auto 6px", display: "block" }}>
+                    {feat.icon === "truck" ? <><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></> :
+                     feat.icon === "shield" ? <><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></> :
+                     <><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></>}
+                  </svg>
+                  <p style={{ fontSize: 11, fontWeight: 600, color: "#333", margin: 0 }}>{feat.title}</p>
+                  <p style={{ fontSize: 10, color: "#999", margin: 0 }}>{feat.sub}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="mt-12">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">{t("product.customer_reviews")}</h2>
-          <div className="space-y-4">
+        <div style={{ marginTop: 48 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: "#222", marginBottom: 16 }}>{t("product.customer_reviews")}</h3>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {[
               { id: 1, author: "Sarah M.", rating: 5, text: "Absolutely love this product! My skin has never felt better. Will definitely purchase again.", date: "2 weeks ago" },
               { id: 2, author: "Jessica K.", rating: 4, text: "Great quality for the price. Fast shipping too. Would recommend to friends.", date: "1 month ago" },
               { id: 3, author: "Emily R.", rating: 5, text: "This is my third time buying. Consistent quality every time. A staple in my beauty routine.", date: "1 month ago" },
             ].map((review) => (
-              <Card key={review.id}>
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-900">{review.author}</span>
-                    <span className="text-xs text-gray-400">{review.date}</span>
-                  </div>
-                  <StarRating rating={review.rating} />
-                  <p className="text-sm text-gray-600 mt-2">{review.text}</p>
-                </CardContent>
-              </Card>
+              <div key={review.id} style={{ background: "#fff", borderRadius: 12, padding: 16, boxShadow: "0 1px 3px rgba(0,0,0,0.04)" }}>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                  <span style={{ fontWeight: 600, fontSize: 14, color: "#333" }}>{review.author}</span>
+                  <span style={{ fontSize: 12, color: "#bbb" }}>{review.date}</span>
+                </div>
+                <div style={{ display: "flex", gap: 2, marginBottom: 6 }}>
+                  {[1,2,3,4,5].map((s) => (
+                    <svg key={s} width="14" height="14" viewBox="0 0 20 20" fill={s <= review.rating ? "#FF5894" : "#e5e5e5"}>
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                    </svg>
+                  ))}
+                </div>
+                <p style={{ fontSize: 13, color: "#666", lineHeight: 1.6, margin: 0 }}>{review.text}</p>
+              </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-12">
-          <h2 className="text-xl font-bold text-gray-900 mb-6">{t("product.you_may_also_like")}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {relatedProducts.map((p) => (
-              <Link key={p.id} href={`/product/${p.id}`}>
-                <Card className="group overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="aspect-square bg-gray-50 flex items-center justify-center p-4" style={p.bgColor ? { backgroundColor: p.bgColor } : undefined}>
-                    <img src={p.image} alt={p.name} className="w-full h-full object-contain transition-transform group-hover:scale-105" />
-                  </div>
-                  <CardContent className="p-3">
-                    <h3 className="text-sm font-medium text-gray-900 line-clamp-1">{p.name}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-sm font-bold text-[#FF5894]">${p.salePrice.toFixed(2)}</span>
-                      {p.salePrice < p.price && (
-                        <span className="text-xs text-gray-400 line-through">${p.price.toFixed(2)}</span>
-                      )}
+        {relatedProducts.length > 0 && (
+          <div style={{ marginTop: 48 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: "#222", marginBottom: 20 }}>{t("product.you_may_also_like")}</h3>
+            <div className="row">
+              {relatedProducts.map((p) => (
+                <div key={p.id} className="col-lg-3 col-md-6 mb-4">
+                  <Link href={`/product/${p.id}`} className="related-card">
+                    <div className="thumb" style={{ background: p.bgColor || "#fafafa" }}>
+                      <img src={p.image} alt={p.name} />
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+                    <div className="info">
+                      <h4>{p.name}</h4>
+                      <div className="price">
+                        {p.salePrice < p.price ? (
+                          <><del>${p.price.toFixed(2)}</del> ${p.salePrice.toFixed(2)}</>
+                        ) : (
+                          <>${p.price.toFixed(2)}</>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
