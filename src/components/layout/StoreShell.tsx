@@ -33,7 +33,7 @@ export function StoreShell({ children }: { children: React.ReactNode }) {
     <LanguageProvider>
       <Header />
       {!isHome && stuck && <div style={{ height: hHeight }} />}
-      <main style={{ paddingTop: isHome ? 0 : 200 }}>{children}</main>
+      <main className={isHome ? "store-main store-main--home" : "store-main"}>{children}</main>
       <Footer />
     </LanguageProvider>
   )

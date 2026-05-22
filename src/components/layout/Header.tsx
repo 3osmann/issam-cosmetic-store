@@ -16,21 +16,41 @@ export function Header() {
   const pathname = usePathname();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [settings, setSettings] = useState<any>(null);
-  const [mastheadHeight, setMastheadHeight] = useState(120);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const current = window.scrollY;
-      setScrolled(current > 50);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll, { passive: true });
     fetch("/api/header").then(r => r.json()).then(setSettings).catch(() => {});
-    const el = document.getElementById("masthead");
-    if (el) setMastheadHeight(el.offsetHeight);
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    const wrapper = document.querySelector(".header-wrapper");
+    if (!wrapper) return;
+    const setHeight = () => {
+      document.documentElement.style.setProperty(
+        "--header-height",
+        `${wrapper.getBoundingClientRect().height}px`
+      );
+    };
+    setHeight();
+    const ro = new ResizeObserver(setHeight);
+    ro.observe(wrapper);
+    window.addEventListener("resize", setHeight);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", setHeight);
+    };
+  }, [mobileSearchOpen, mobileMenuOpen]);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileMenuOpen]);
 
   const categories = [
     "Blusher", "Body Care", "Cheeks", "Deal Of The Day", "Eyes",
@@ -40,87 +60,138 @@ export function Header() {
 
   const headerStyles = `
     .header-wrapper { overflow: visible; }
-    #masthead { overflow: visible; }
+    #masthead { overflow: visible; transition: box-shadow 0.25s ease, background 0.25s ease; }
+    #masthead.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     div#topabr { padding: 6px 14px !important; }
     div#topabr h4 { font-size: 12px !important; line-height: 18px !important; }
-    .wishlist_view { position: relative; display: inline-block; }
+    .wishlist_view { position: relative; display: inline-flex; align-items: center; justify-content: center; }
     .wishlist_view i { margin: 0 !important; width: auto !important; height: auto !important; border: none !important; display: inline !important; font-size: 18px !important; line-height: 1 !important; }
-    .wishlist .cart-counter {
-      position: absolute; top: -18px; right: -12px;
-      background: #FF5894; color: #fff;
-      padding: 0px 7px; border-radius: 50%;
-      font-size: 13px; z-index: 2;
+    .wishlist .cart-counter, .cart .cart-counter {
+      position: absolute; top: -6px; right: -6px;
+      background: var(--primary, #FF5894); color: #fff;
+      min-width: 18px; height: 18px; padding: 0 5px;
+      border-radius: 50%; font-size: 10px; font-weight: 700;
+      line-height: 18px; text-align: center; z-index: 2;
+    }
+    .mobile-header-actions { display: none; }
+    .mobile-search-panel { display: none; }
+    .mobile-icon-btn {
+      width: 40px; height: 40px; border: none; border-radius: 10px;
+      background: #f5f5f5; color: #333; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 0.2s, color 0.2s; position: relative;
+    }
+    .mobile-icon-btn:hover, .mobile-icon-btn.active { background: #fff5f8; color: #FF5894; }
+    .mobile-search-panel {
+      padding: 10px 14px 12px; background: #fff;
+      border-top: 1px solid #f0f0f0;
+    }
+    .mobile-search-panel .search-form { display: flex; width: 100%; position: relative; margin: 0; }
+    .mobile-search-panel .search-field {
+      flex: 1; width: 100% !important; height: 44px !important;
+      padding: 0 48px 0 14px !important; font-size: 15px !important;
+      border: 1px solid #e8e8e8 !important; border-radius: 12px !important;
+      background: #fafafa !important;
+    }
+    .mobile-search-panel .search-submit {
+      position: absolute !important; right: 6px !important; top: 50% !important;
+      transform: translateY(-50%) !important; width: 36px !important; height: 36px !important;
+      border-radius: 10px !important; padding: 0 !important;
+    }
+    .sidenav-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      z-index: 9999998; backdrop-filter: blur(2px);
     }
     @media (min-width: 1025px) {
-      #mySidenav.nav.sidenav { display: block !important; width: auto !important; position: static !important; height: auto !important; background: transparent !important; }
-      #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: wrap !important; gap: 4px; list-style: none !important; margin: 0 !important; padding: 0 !important; }
+      .mobile-search-panel.is-open { display: none !important; }
+      #mySidenav.nav.sidenav { display: block !important; width: auto !important; position: static !important; height: auto !important; background: transparent !important; padding-top: 0 !important; box-shadow: none !important; }
+      #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: wrap !important; gap: 2px; list-style: none !important; margin: 0 !important; padding: 0 !important; justify-content: center !important; }
       #mySidenav .main-navigation > .menu > ul > li { display: inline-block !important; position: relative !important; }
-      #mySidenav .main-navigation > .menu > ul > li > a { color: inherit !important; padding: 6px 14px !important; text-decoration: none !important; font-size: 14px !important; white-space: nowrap !important; }
-      #mySidenav .main-navigation > .menu > ul > li > a:hover { color: #FF5894 !important; }
-      #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a { color: #FF5894 !important; font-weight: 600 !important; }
+      #mySidenav .main-navigation > .menu > ul > li > a { color: #333 !important; padding: 8px 18px !important; text-decoration: none !important; font-size: 14px !important; font-weight: 600 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; white-space: nowrap !important; border-radius: 6px !important; transition: all 0.2s ease !important; }
+      #mySidenav .main-navigation > .menu > ul > li > a:hover { color: #FF5894 !important; background: #fff5f8 !important; }
+      #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a { color: #FF5894 !important; background: #fff5f8 !important; }
       #mySidenav .main-navigation ul.sub-menu,
-      #mySidenav .main-navigation ul ul { display: none !important; position: absolute !important; top: 100% !important; left: 0 !important; background: #fff !important; min-width: 180px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; border-radius: 8px !important; padding: 8px 0 !important; list-style: none !important; z-index: 999 !important; }
+      #mySidenav .main-navigation ul ul { display: none !important; position: absolute !important; top: 100% !important; left: 0 !important; background: #fff !important; min-width: 200px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.1) !important; border-radius: 10px !important; padding: 8px 0 !important; list-style: none !important; z-index: 999 !important; border: 1px solid #f0f0f0 !important; }
       #mySidenav .main-navigation ul li.menu-item-has-children:hover > ul.sub-menu,
       #mySidenav .main-navigation ul li.menu-item-has-children:hover > ul { display: block !important; }
-      #mySidenav .main-navigation ul.sub-menu li { display: block !important; }
-      #mySidenav .main-navigation ul.sub-menu li a { display: block !important; padding: 8px 20px !important; color: #444 !important; font-size: 13px !important; text-decoration: none !important; }
-      #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894 !important; background: #fff5f8 !important; }
+      #mySidenav .main-navigation ul.sub-menu li a { display: block !important; padding: 10px 22px !important; color: #444 !important; font-size: 13px !important; font-weight: 500 !important; text-decoration: none !important; transition: all 0.2s ease !important; }
+      #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894 !important; background: #fff5f8 !important; padding-left: 28px !important; }
+      #mySidenav .main-navigation ul li.menu-item-has-children > a::after { content: " ▾"; font-size: 10px; margin-left: 4px; opacity: 0.6; }
+      a.closebtn { display: none !important; }
+      .toggle-nav { display: none !important; }
+      .sidenav-header, .sidenav-footer { display: none !important; }
     }
     @media (max-width: 1024px) {
-      #mySidenav.nav.sidenav { width: 0; position: fixed; }
-      #mySidenav .main-navigation > .menu > ul { display: block; }
-      #mySidenav .main-navigation > .menu > ul > li { display: block; }
-      #mySidenav .main-navigation > .menu > ul > li > a { display: block; padding: 10px 20px; font-size: 14px; color: #333; text-decoration: none; border-bottom: 1px solid #f0f0f0; }
-      #mySidenav .main-navigation > .menu > ul > li > a:hover { color: #FF5894; }
-      #mySidenav .main-navigation ul.sub-menu { padding-left: 20px; }
-      #mySidenav .main-navigation ul.sub-menu li a { display: block; padding: 8px 20px; font-size: 13px; color: #666; text-decoration: none; }
-      .logo img { max-height: 28px; }
-      #topabr .topbar-contents h4 { font-size: 10px; }
-      #topabr .shop-btn a { font-size: 10px; padding: 2px 6px; }
-
-      .toggle-nav { display: block !important; }
-      a.closebtn { display: block !important; }
+      #mySidenav.nav.sidenav {
+        width: 0; max-width: min(300px, 88vw); position: fixed; top: 0; right: 0;
+        height: 100%; height: 100dvh; background: #fff; z-index: 9999999;
+        overflow-x: hidden; overflow-y: auto;
+        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        padding-top: 0; box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+      }
+      #mySidenav.nav.sidenav.is-open { width: min(300px, 88vw); }
+      .sidenav-header {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: 16px 20px; border-bottom: 1px solid #f0f0f0;
+        position: sticky; top: 0; background: #fff; z-index: 1;
+      }
+      .sidenav-header span { font-weight: 700; font-size: 16px; color: #222; }
+      a.closebtn {
+        position: static !important; font-size: 28px !important;
+        color: #999 !important; line-height: 1; padding: 4px;
+      }
+      #mySidenav .main-navigation > .menu > ul { display: block; list-style: none; margin: 0; padding: 8px 0 24px; }
+      #mySidenav .main-navigation > .menu > ul > li { border-bottom: 1px solid #e8e8e8; }
+      #mySidenav .main-navigation > .menu > ul > li > a {
+        display: block; padding: 14px 20px 18px; font-size: 15px; font-weight: 600;
+        color: #333; text-decoration: none; transition: color 0.2s, background 0.2s;
+      }
+      #mySidenav .main-navigation > .menu > ul > li > a:hover,
+      #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a {
+        color: #FF5894; background: #fff5f8;
+      }
+      #mySidenav .main-navigation ul.sub-menu { padding: 0; list-style: none; background: #fafafa; }
+      #mySidenav .main-navigation ul.sub-menu li a {
+        display: block; padding: 12px 20px 12px 36px; font-size: 14px;
+        font-weight: 500; color: #555; text-decoration: none;
+      }
+      .sidenav-footer {
+        padding: 16px 20px calc(16px + var(--safe-bottom));
+        border-top: 1px solid #f0f0f0; display: flex; flex-wrap: wrap; gap: 10px;
+      }
+      .sidenav-footer select {
+        flex: 1; min-width: 100px; padding: 10px 12px; border-radius: 10px;
+        border: 1px solid #e8e8e8; font-size: 14px; background: #fafafa;
+      }
+      .toggle-nav { display: none !important; }
     }
-
-    @media (max-width: 768px) {
-      .main-header-box .row.bg-media { display: flex !important; flex-wrap: wrap !important; align-items: center !important; gap: 0; }
-      .main-header-box .row.bg-media > .col-lg-2 { flex: 0 0 auto !important; width: auto !important; max-width: none !important; padding: 2px 6px !important; margin: 0 !important; }
-      .main-header-box .row.bg-media > .col-lg-5.header-search-flex { flex: 1 1 auto !important; width: auto !important; max-width: none !important; padding: 2px 4px !important; margin: 0 !important; min-width: 0 !important; }
-      .main-header-box .row.bg-media > .col-lg-5.quote-btn { flex: 0 0 auto !important; width: auto !important; max-width: none !important; padding: 2px 4px !important; margin: 0 !important; }
-      .main-header-box .row.bg-media > .col-lg-5.header-nav { flex: 0 0 auto !important; width: auto !important; max-width: none !important; padding: 2px 4px !important; margin: 0 !important; }
-      .main-header-box .row.bg-media > .col-lg-7 { flex: 0 0 100% !important; width: 100% !important; max-width: 100% !important; padding: 2px 8px 4px !important; margin: 0 !important; }
-      .main-header-box .row.bg-media > .col-lg-7.mt-4 { margin-top: 0 !important; }
-      .logo img { max-height: 24px !important; }
-      .quote-btn .hotline-details { display: none !important; }
-      .quote-btn .product-details { display: flex !important; align-items: center !important; gap: 2px !important; }
-      .quote-btn .product-details .account,
-      .quote-btn .product-details .wishlist { display: none !important; }
-      .quote-btn .product-details .cart { display: flex !important; }
-      .quote-btn .product-details .cart a i { font-size: 16px !important; }
-      .cart-counter { top: -6px !important; right: -6px !important; width: 14px !important; height: 14px !important; font-size: 8px !important; line-height: 14px !important; }
-      .header-nav .toggle-nav { display: block !important; float: none !important; position: static !important; width: auto !important; height: auto !important; margin: 0 !important; text-align: center !important; }
-      .header-nav .toggle-nav span i { font-size: 20px !important; color: #333; }
-      .header-search-flex { display: flex !important; flex-direction: row !important; align-items: center !important; }
-      #cat_toggle { display: none !important; }
-      #qnimate.off { display: block !important; }
-      .search-form.searchBox { display: flex !important; align-items: center !important; margin: 0 !important; }
-      .search-form .search-field { font-size: 11px !important; padding: 4px 6px !important; width: 70px !important; height: 24px !important; border: 1px solid #ddd !important; border-radius: 4px 0 0 4px !important; }
-      .search-submit { font-size: 10px !important; padding: 4px 6px !important; height: 24px !important; border-radius: 0 4px 4px 0 !important; }
-      .order-tracking-products, .recently-viewed-products { display: none !important; }
-      .track-main-box { display: flex !important; flex-wrap: wrap !important; gap: 4px !important; justify-content: center !important; }
-      .currency select, .language select { font-size: 10px !important; padding: 1px 3px !important; max-width: 55px !important; height: 20px !important; }
+    @media (max-width: 991px) {
+      .desktop-header-search { display: none !important; }
+      .desktop-header-nav-col { display: none !important; }
+      .desktop-track-row { display: none !important; }
+      .desktop-quote-btn { display: none !important; }
+      .mobile-header-actions {
+        display: flex !important; align-items: center; gap: 6px;
+        margin-left: auto; padding: 8px 12px 8px 0;
+      }
+      .main-header-box .row.bg-media {
+        display: flex !important; flex-wrap: nowrap !important;
+        align-items: center !important; padding: 4px 0 !important;
+      }
+      .main-header-box .row.bg-media > .col-logo {
+        flex: 0 0 auto !important; width: auto !important; max-width: none !important;
+        padding: 8px 0 8px 12px !important;
+      }
+      .logo img { max-height: 32px !important; width: auto; }
       #topabr { display: none !important; }
-      .quote-btn > button { font-size: 13px !important; margin-right: 0 !important; padding: 0 2px !important; }
-      .menubar { margin: 0 !important; }
-      .innermenubox { padding-bottom: 0 !important; }
       #masthead { padding: 0 !important; }
-      .main-header-box { padding: 0 !important; }
+      .nav_wrap { padding-left: 0 !important; padding-right: 0 !important; }
+      .mobile-search-panel.is-open { display: block !important; }
     }
-
     @media (max-width: 576px) {
-      .main-header-box .row.bg-media > .col-lg-5.header-search-flex { display: none !important; }
-      .main-header-box .row.bg-media > .col-lg-7 { display: none !important; }
-      .main-header-box .row.bg-media { padding: 2px 0 !important; }
+      .logo img { max-height: 28px !important; }
+      .mobile-icon-btn { width: 36px; height: 36px; border-radius: 8px; }
+      .mobile-header-actions { gap: 4px; padding-right: 8px; }
     }
   `;
 
@@ -171,12 +242,41 @@ export function Header() {
             <div className="container nav_wrap">
               <div className="main-header-box">
                 <div className="row bg-media">
-                  <div className="col-lg-2 col-md-5 col-sm-4 col-12 align-self-center">
+                  <div className="col-lg-2 col-md-5 col-sm-4 col-12 align-self-center col-logo">
                     <div className="logo">
                       <Link href="/"><img src={theme === "dark" ? "/images/logo_dark.png" : "/images/logo_light.png"} alt="logo" /></Link>
                     </div>
                   </div>
-                  <div className="col-lg-5 col-md-7 header-search-flex">
+                  <div className="mobile-header-actions">
+                    <button
+                      type="button"
+                      className={`mobile-icon-btn ${mobileSearchOpen ? "active" : ""}`}
+                      onClick={() => { setMobileSearchOpen(!mobileSearchOpen); setMobileMenuOpen(false); }}
+                      aria-label={t("search.placeholder")}
+                    >
+                      <i className="fas fa-search" />
+                    </button>
+                    <Link href="/account" className="mobile-icon-btn" aria-label="Account">
+                      <i className="fa-duotone fa-user" />
+                    </Link>
+                    <Link href="/wishlist" className="mobile-icon-btn" aria-label="Wishlist">
+                      <i className="far fa-heart" />
+                      {wishlistCount > 0 && <span className="cart-counter">{wishlistCount}</span>}
+                    </Link>
+                    <Link href="/cart" className="mobile-icon-btn" aria-label="Cart">
+                      <i className="fal fa-shopping-cart" />
+                      {itemCount > 0 && <span className="cart-counter">{itemCount}</span>}
+                    </Link>
+                    <button
+                      type="button"
+                      className={`mobile-icon-btn ${mobileMenuOpen ? "active" : ""}`}
+                      onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setMobileSearchOpen(false); }}
+                      aria-label="Menu"
+                    >
+                      <i className="fas fa-bars" />
+                    </button>
+                  </div>
+                  <div className="col-lg-5 col-md-7 header-search-flex desktop-header-search">
                     <div id="cat_toggle" onClick={() => setCategoriesOpen(!categoriesOpen)}>
                       {t("search.all_categories")} <i className="fas fa-angle-down mx-1"></i>
                     </div>
@@ -208,7 +308,7 @@ export function Header() {
                       </div>
                     </div>
                   </div>
-                  <div className="col-lg-5 col-md-8 col-sm-4 col-12 quote-btn">
+                  <div className="col-lg-5 col-md-8 col-sm-4 col-12 quote-btn desktop-quote-btn">
                     <button onClick={toggleTheme} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 18, marginRight: 10 }}>
                       {theme === "dark" ? <i className="fas fa-sun" style={{ color: "#f59e0b" }}></i> : <i className="fas fa-moon"></i>}
                     </button>
@@ -241,15 +341,15 @@ export function Header() {
                       </div>
                     </div>
                   </div>
-                  <div className="col-lg-5 col-md-4 col-sm-4 col-12 mt-4 text-center header-nav align-self-center">
+                  <div className="col-lg-5 col-md-4 col-sm-4 col-12 mt-4 text-center header-nav align-self-center desktop-header-nav-col">
                     <div className="menubar m-0 mt-md-0">
                       <div className="right_menu">
                         <div className="innermenubox">
-                          <div className="toggle-nav mobile-menu">
-                            <span onClick={() => setMobileMenuOpen(!mobileMenuOpen)}><i className="fas fa-bars"></i></span>
-                          </div>
-                          <div id="mySidenav" className="nav sidenav" style={mobileMenuOpen ? { width: 260, position: "fixed", right: 0, top: 0, height: "100%", background: "#fff", zIndex: 9999999, paddingTop: 60, boxShadow: "-4px 0 30px rgba(0,0,0,0.15)", overflowY: "auto" } : {}}>
-                            <a href="#" className="closebtn" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }} style={{ position: "absolute", top: 10, right: 20, fontSize: 36, color: "#999", textDecoration: "none" }}>&times;</a>
+                          <div id="mySidenav" className={`nav sidenav ${mobileMenuOpen ? "is-open" : ""}`}>
+                            <div className="sidenav-header">
+                              <span>Menu</span>
+                              <a href="#" className="closebtn" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }}>&times;</a>
+                            </div>
                             <nav id="site-navigation" className="main-navigation">
                               <div className="menu clearfix">
                                 <ul id="menu-primary-menu" className="clearfix mobile_nav">
@@ -258,6 +358,7 @@ export function Header() {
                                     { label: "Blog", href: "/blog", children: [] },
                                     { label: "Shop", href: "/shop", children: [] },
                                     { label: "Contact", href: "/contact", children: [] },
+                                    { label: "Buy Now", href: "/shop", children: [] },
                                   ]).map((item: any, i: number) => (
                                     <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""}`}>
                                       <Link href={item.href}>{item.label}</Link>
@@ -273,12 +374,28 @@ export function Header() {
                                 </ul>
                               </div>
                             </nav>
+                            <div className="sidenav-footer">
+                              <select className="woocommerce-currency-switcher" defaultValue="USD" aria-label="Currency">
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                              </select>
+                              <select
+                                className="gt_selector notranslate"
+                                value={locale}
+                                onChange={(e) => setLocale(e.target.value as Locale)}
+                                aria-label="Language"
+                              >
+                                <option value="fr">{t("language.fr")}</option>
+                                <option value="en">{t("language.en")}</option>
+                                <option value="ar">{t("language.ar")}</option>
+                              </select>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="col-lg-7 col-md-12 mt-4">
+                  <div className="col-lg-7 col-md-12 mt-4 desktop-track-row">
                     <div className="track-main-box position-relative">
                       <div className="order-tracking-products">
                         <i className="fa-solid fa-bag-shopping search"></i>
@@ -314,9 +431,22 @@ export function Header() {
             </div>
           </div>
         </div>
+        <div className={`mobile-search-panel ${mobileSearchOpen ? "is-open" : ""}`}>
+          <form role="search" className="search-form searchBox" action="/shop">
+            <label className="w-100">
+              <span className="screen-reader-text">Search for:</span>
+              <input type="search" className="search-field" placeholder={t("search.placeholder")} name="s" />
+            </label>
+            <button type="submit" className="search-submit" style={{ fontFamily: "'FontAwesome', sans-serif", background: "#FF5894", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+            </button>
+          </form>
+        </div>
       </header>
       {mobileMenuOpen && (
-        <div onClick={() => setMobileMenuOpen(false)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 9999998 }} />
+        <div className="sidenav-overlay" onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
       )}
     </div>
   );

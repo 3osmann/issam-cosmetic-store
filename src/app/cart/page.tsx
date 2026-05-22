@@ -86,7 +86,7 @@ export default function CartPage() {
                 <div className="cart_totals" style={{
                   background: "#fff", borderRadius: 16, overflow: "hidden",
                   boxShadow: "0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(0,0,0,0.04)",
-                  position: "sticky", top: 220,
+                  position: "sticky", top: "calc(var(--header-height, 120px) + 16px)",
                 }}>
                   <div style={{
                     background: "linear-gradient(135deg,#FF5894,#e83e8c)", padding: "20px 24px",

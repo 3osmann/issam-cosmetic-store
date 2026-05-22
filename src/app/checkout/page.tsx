@@ -213,7 +213,7 @@ export default function CheckoutPage() {
             </div>
 
             <div className="col-lg-5">
-              <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 12, padding: 28, position: "sticky", top: 220 }}>
+              <div style={{ background: "#fff", border: "1px solid #eee", borderRadius: 12, padding: 28, position: "sticky", top: "calc(var(--header-height, 120px) + 16px)" }}>
                 <h2 style={{ fontSize: 20, fontWeight: 700, marginBottom: 20, color: "#333" }}>Your Order</h2>
 
                 <table className="shop_table" style={{ width: "100%" }}>

@@ -92,6 +92,21 @@ const pageStyles = `
   .trending_products-box:hover .best-wishlist-btn { opacity: 1; }
   .best-wishlist-btn:hover { background: #FF5894; }
   .best-wishlist-btn:hover svg { stroke: #fff; }
+  @media (max-width: 991px) {
+    .popular-category .cat-images {
+      display: grid !important;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px !important;
+    }
+    .popular-category .up-to-off { width: auto !important; }
+    .popular-category .cat-image { width: 100% !important; height: auto !important; max-height: 56px; }
+  }
+  @media (max-width: 576px) {
+    .popular-category .cat-images { grid-template-columns: repeat(4, 1fr); }
+    .product-bg-circle { width: 100px !important; height: 100px !important; }
+    .products-image img { max-height: 120px; }
+    .products-image { min-height: 130px; }
+  }
 `;
 
 export default function HomePage() {
@@ -181,17 +196,17 @@ export default function HomePage() {
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: pageStyles }} />
-      <section id="banner" style={{ paddingTop: 220 }}>
+      <section id="banner">
         <div className="container">
-          <div className="popular-category" style={{ marginBottom: 40 }}>
+          <div className="popular-category" style={{ marginBottom: 40, paddingTop: 200 }}>
             <h3 className="heading">Popular Categories</h3>
-            <div className="cat-images" style={{ display: "flex", flexWrap: "wrap", gap: 12, justifyContent: "center" }}>
+            <div className="cat-images">
               {categories.map((cat) => (
                 <div key={cat.slug} className="up-to-off">
-                  <div className="cat-box" style={{ textAlign: "center" }}>
+                  <div className="cat-box">
                     <Link href={`/shop?category=${cat.slug}`}>
-                      <img src={cat.image} className="cat-image" alt="" style={{ width: 100, height: 100, objectFit: "contain" }} />
-                      <p className="category text-center" style={{ marginTop: 8 }}>{cat.name}</p>
+                      <img src={cat.image} className="cat-image" alt={cat.name} />
+                      <p className="category text-center">{cat.name}</p>
                     </Link>
                   </div>
                 </div>
