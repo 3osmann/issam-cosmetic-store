@@ -198,7 +198,7 @@ export function Header() {
                             <span className="screen-reader-text">Search for:</span>
                             <input type="search" className="search-field" placeholder={t("search.placeholder")} name="s" />
                           </label>
-                          <button type="submit" className="search-submit" style={{ fontFamily: "'FontAwesome', sans-serif", background: "#FF5894", border: "none", color: "#fff", padding: "8px 11px", borderRadius: 70, fontSize: 12, cursor: "pointer", position: "absolute", right: 9, bottom: 4, display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}>
+                          <button type="submit" className="search-submit" style={{ fontFamily: "'FontAwesome', sans-serif", background: "#FF5894", border: "none", color: "#fff", padding: "8px 11px", borderRadius: 70, fontSize: 12, cursor: "pointer", position: "absolute", right: 9, top: "50%", transform: "translateY(-50%)", display: "flex", alignItems: "center", justifyContent: "center", lineHeight: 1 }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                               <circle cx="11" cy="11" r="8"/>
                               <line x1="21" y1="21" x2="16.65" y2="16.65"/>
