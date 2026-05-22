@@ -543,48 +543,62 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="our-brands">
+      <section id="our-brands" style={{ padding: "50px 0", background: "#fff" }}>
         <div className="container">
-          <div className="row">
-            <div className="col-lg-12">
-              <div className="owl-carousel owl-theme">
-                <div className="item">
-                  <div className="row justify-content-center align-items-center">
-                    {brands.map((brand, i) => (
-                      <div key={i} className="col-lg-2 text-center">
-                        <img src={brand} alt={`Brand ${i + 1}`} />
-                      </div>
-                    ))}
-                  </div>
+          <div style={{ textAlign: "center", marginBottom: 32 }}>
+            <h2 style={{ fontFamily: "Elsie, serif", fontSize: 28, fontWeight: 400, color: "#222", margin: 0 }}>Our Trusted Brands</h2>
+            <p style={{ color: "#999", fontSize: 14, marginTop: 6 }}>We partner with the best names in beauty</p>
+          </div>
+          <div className="row justify-content-center align-items-center">
+            {brands.map((brand, i) => (
+              <div key={i} className="col-lg-2 col-md-3 col-4 text-center mb-3">
+                <div style={{
+                  background: "#fafafa", borderRadius: 12, padding: "20px 16px",
+                  transition: "all 0.3s ease", cursor: "pointer"
+                }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "#fff"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(0,0,0,0.06)"; e.currentTarget.style.transform = "translateY(-2px)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "#fafafa"; e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.transform = "translateY(0)"; }}
+                >
+                  <img src={brand} alt={`Brand ${i + 1}`} style={{ maxWidth: "100%", height: 40, objectFit: "contain", filter: "grayscale(0.4)", transition: "filter 0.3s" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.filter = "grayscale(0)"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.filter = "grayscale(0.4)"; }}
+                  />
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section id="testimonial">
+      <section id="testimonial" style={{ padding: "60px 0", background: "#fcfcfc" }}>
         <div className="container">
-          <div className="row align-items-center">
-            <div className="col-lg-6">
-              <img src="/images/testimonial-img.png" alt="Testimonial" className="img-fluid" />
-            </div>
-            <div className="col-lg-6">
-              <div className="testimonial-content">
-                <div id="testimonialCarousel" className="carousel slide">
-                  <div className="carousel-inner">
-                    {testimonials.map((t, i) => (
-                      <div key={i} className={`carousel-item ${i === 0 ? "active" : ""}`}>
-                        <p className="testimonial-text">&ldquo;{t.text}&rdquo;</p>
-                        <img src={t.image} alt={t.name} className="testimonial-img" />
-                        <h5 className="testimonial-name">{t.name}</h5>
-                        <p className="testimonial-role">{t.role}</p>
-                      </div>
-                    ))}
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <span style={{ color: "#FF5894", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>Testimonials</span>
+            <h2 style={{ fontFamily: "Elsie, serif", fontSize: 36, fontWeight: 400, color: "#222", marginTop: 6, marginBottom: 0 }}>What Our Customers Say</h2>
+          </div>
+          <div className="row justify-content-center">
+            {testimonials.map((t, i) => (
+              <div key={i} className="col-lg-4 col-md-6 mb-4">
+                <div style={{
+                  background: "#fff", borderRadius: 16, padding: "28px 24px",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)", height: "100%",
+                  transition: "all 0.3s ease", position: "relative"
+                }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.08)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; }}
+                >
+                  <div style={{ color: "#FF5894", fontSize: 28, lineHeight: 1, marginBottom: 12, opacity: 0.3 }}>&ldquo;</div>
+                  <p style={{ fontSize: 14, color: "#666", lineHeight: 1.7, marginBottom: 20, fontStyle: "italic" }}>{t.text}</p>
+                  <div style={{ display: "flex", alignItems: "center", gap: 12, borderTop: "1px solid #f5f5f5", paddingTop: 16 }}>
+                    <img src={t.image} alt={t.name} style={{ width: 44, height: 44, borderRadius: "50%", objectFit: "cover" }} />
+                    <div>
+                      <h5 style={{ fontSize: 14, fontWeight: 700, color: "#222", margin: 0 }}>{t.name}</h5>
+                      <span style={{ fontSize: 12, color: "#aaa" }}>{t.role}</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
