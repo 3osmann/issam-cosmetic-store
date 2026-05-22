@@ -138,7 +138,7 @@ export default function HomePage() {
 
   return (
     <>
-      <section id="banner" style={{ paddingTop: 150 }}>
+      <section id="banner" style={{ paddingTop: 220 }}>
         <div className="container">
           <div className="popular-category" style={{ marginBottom: 40 }}>
             <h3 className="heading">Popular Categories</h3>
@@ -484,48 +484,61 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="our-blogs">
+      <section id="our-blogs" style={{ padding: "60px 0", background: "#fcfcfc" }}>
         <div className="container">
-          <div className="blog-head section-head wow fadeInUp" data-wow-duration="1s">
-            <div className="blog-tag-flex">
-              <h6 className="text-center blog-tag">Latest News</h6>
-            </div>
-            <h2 className="text-center blog-main-heading mt-sm-0 mt-lg-0">The Blogs</h2>
+          <div style={{ textAlign: "center", marginBottom: 40 }}>
+            <span style={{ color: "#FF5894", fontSize: 13, fontWeight: 600, textTransform: "uppercase", letterSpacing: 2 }}>Latest News</span>
+            <h2 style={{ fontFamily: "Elsie, serif", fontSize: 36, fontWeight: 400, color: "#222", marginTop: 6, marginBottom: 0 }}>The Blogs</h2>
+            <p style={{ color: "#999", fontSize: 14, marginTop: 8, maxWidth: 500, marginLeft: "auto", marginRight: "auto" }}>Stay inspired with beauty tips, trends, and stories from our experts</p>
           </div>
-          <div className="row">
-            <div className="col-lg-12 mt-4">
-              <div className="row">
-                {blogs.map((blog, i) => (
-                  <div key={i} className="col-lg-4 blog-contents-left" style={{ alignItems: "center" }}>
-                    <div className="box">
-                      <img src={blog.image} alt="thumimg" />
-                    </div>
-                    <div className="blog-box">
-                      <div className="comt-author">
-                        <div className="date">
-                          <div className="blog-dates">
-                            <p className="blog-month">{blog.date.split(" ")[0]} </p>
-                            <p className="blog-year">{blog.date.split(" ")[1]}</p>
-                          </div>
-                        </div>
-                        <div className="inner-blog-box">
-                          <div className="blog-title">
-                            <Link href="/blog"><h5 className="blog-heading">{blog.title}</h5></Link>
-                          </div>
-                        </div>
-                        <div className="admin">
-                          <span className="author-box"><i className="fas fa-user"></i></span>
-                          <span className="author-name">{blog.author}</span>
-                        </div>
-                        <span className="news-comments">
-                          <i className="fas fa-comment-dots"></i> {blog.comments} Comments
-                        </span>
-                      </div>
+          <div className="row" style={{ marginTop: 0 }}>
+            {blogs.map((blog, i) => (
+              <div key={i} className="col-lg-4 mb-4">
+                <div style={{
+                  background: "#fff", borderRadius: 16, overflow: "hidden",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.04)", height: "100%",
+                  display: "flex", flexDirection: "column",
+                  transition: "all 0.3s ease"
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.08)"; }}
+                onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 1px 3px rgba(0,0,0,0.04)"; }}
+                >
+                  <div style={{ height: 200, overflow: "hidden", position: "relative" }}>
+                    <img src={blog.image} alt={blog.title} style={{ width: "100%", height: "100%", objectFit: "cover", transition: "transform 0.5s ease" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.transform = "scale(1.05)"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.transform = "scale(1)"; }} />
+                    <div style={{ position: "absolute", top: 14, left: 14, background: "#FF5894", color: "#fff", fontSize: 11, fontWeight: 600, padding: "4px 12px", borderRadius: 20 }}>
+                      {blog.date.split(" ")[0]}
                     </div>
                   </div>
-                ))}
+                  <div style={{ padding: "18px 22px 22px", flex: 1, display: "flex", flexDirection: "column" }}>
+                    <div style={{ display: "flex", gap: 14, fontSize: 12, color: "#aaa", marginBottom: 10 }}>
+                      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        {blog.author}
+                      </span>
+                      <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        {blog.comments} Comments
+                      </span>
+                    </div>
+                    <Link href="/blog" style={{ textDecoration: "none" }}>
+                      <h5 style={{ fontSize: 15, fontWeight: 700, color: "#222", lineHeight: 1.45, margin: "0 0 0", transition: "color 0.2s", flex: 1 }}
+                        onMouseEnter={(e) => { e.currentTarget.style.color = "#FF5894"; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.color = "#222"; }}
+                      >{blog.title}</h5>
+                    </Link>
+                    <Link href="/blog" style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "#FF5894", textDecoration: "none", marginTop: 14, transition: "gap 0.2s" }}
+                      onMouseEnter={(e) => { e.currentTarget.style.gap = "10px"; }}
+                      onMouseLeave={(e) => { e.currentTarget.style.gap = "6px"; }}
+                    >
+                      Read More
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </Link>
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
