@@ -17,21 +17,13 @@ export function Header() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [hidden, setHidden] = useState(false);
   const [settings, setSettings] = useState<any>(null);
   const [mastheadHeight, setMastheadHeight] = useState(120);
 
   useEffect(() => {
-    let lastScroll = 0;
     const handleScroll = () => {
       const current = window.scrollY;
       setScrolled(current > 50);
-      if (current > lastScroll && current > 100) {
-        setHidden(true);
-      } else {
-        setHidden(false);
-      }
-      lastScroll = current;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     fetch("/api/header").then(r => r.json()).then(setSettings).catch(() => {});
@@ -49,6 +41,8 @@ export function Header() {
   const headerStyles = `
     .header-wrapper { overflow: visible; }
     #masthead { overflow: visible; }
+    div#topabr { padding: 6px 14px !important; }
+    div#topabr h4 { font-size: 12px !important; line-height: 18px !important; }
     .wishlist_view { position: relative; display: inline-block; }
     .wishlist_view i { margin: 0 !important; width: auto !important; height: auto !important; border: none !important; display: inline !important; font-size: 18px !important; line-height: 1 !important; }
     .wishlist .cart-counter {
@@ -131,7 +125,7 @@ export function Header() {
   `;
 
   return (
-    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, transition: "transform 0.35s ease", transform: hidden ? "translateY(-100%)" : "translateY(0)" }}>
+    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
       <style dangerouslySetInnerHTML={{ __html: headerStyles }} />
       <div id="topabr">
         <div className="container">
