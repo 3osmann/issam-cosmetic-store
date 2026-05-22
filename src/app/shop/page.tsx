@@ -2,9 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { Heart, Star } from "lucide-react";
 import React from "react";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useCart } from "@/lib/CartContext";
 
@@ -104,269 +102,569 @@ export default function ShopPage() {
   return (
     <div id="shop">
       <style>{`
-        .woocommerce ul.products li.product .star-rating { display: block !important; }
-        .woocommerce ul.products li.product .button.add_to_cart_button {
-          display: inline-block;
-          background: #FF5894;
-          color: #fff;
-          font-family: Inter;
-          font-size: 14px;
-          font-weight: 600;
-          padding: 10px 20px;
-          border-radius: 6px;
-          text-decoration: none;
-          margin-top: 10px;
-          transition: background 0.3s;
-        }
-        .woocommerce ul.products li.product .button.add_to_cart_button:hover {
-          background: #e04a7c;
-        }
-        .woocommerce ul.products {
-          display: flex;
-          flex-wrap: wrap;
-        }
-        .woocommerce ul.products li.product {
+        .shop-hero {
+          background: linear-gradient(135deg, #FF5894 0%, #e83e8c 100%);
+          padding: 50px 0;
+          margin-top: 80px;
+          text-align: center;
           position: relative;
-          width: 30.75% !important;
-          margin-right: 3.8% !important;
-          margin-bottom: 2.992em;
-          float: none !important;
-          display: flex;
-          flex-direction: column;
+          overflow: hidden;
         }
-        .woocommerce ul.products li.product:nth-child(3n) {
-          margin-right: 0 !important;
+        .shop-hero::before {
+          content: '';
+          position: absolute;
+          top: -50%;
+          left: -50%;
+          width: 200%;
+          height: 200%;
+          background: radial-gradient(circle at 70% 30%, rgba(255,255,255,0.12) 0%, transparent 50%);
+          pointer-events: none;
         }
-        .woocommerce ul.products li.product .woocommerce-LoopProduct-link {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
+        .shop-hero h1 {
+          font-family: 'Elsie', serif;
+          font-size: 42px;
+          font-weight: 400;
+          color: #fff;
+          margin: 0 0 6px;
+          position: relative;
         }
-        .woocommerce ul.products li.product .button.add_to_cart_button {
-          margin-top: auto;
+        .shop-hero p {
+          color: rgba(255,255,255,0.85);
+          font-size: 15px;
+          margin: 0;
+          position: relative;
         }
-        .woocommerce ul.products li.product .product-image-wrapper {
+
+        .products-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 24px;
+          margin: 24px 0 32px;
+        }
+        .product-item {
+          background: #fff;
+          border-radius: 16px;
+          overflow: hidden;
+          transition: all 0.3s ease;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+          position: relative;
+        }
+        .product-item:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+        }
+        .product-item .thumb {
+          height: 240px;
           display: flex;
           align-items: center;
           justify-content: center;
-          min-height: 180px;
+          padding: 24px;
+          position: relative;
+          overflow: hidden;
         }
-        .woocommerce ul.products li.product a img {
+        .product-item .thumb img {
+          max-width: 100%;
+          max-height: 100%;
           object-fit: contain;
+          transition: transform 0.4s ease;
         }
-        .yith-wcwl-add-button svg {
-          width: 20px;
-          height: 20px;
+        .product-item:hover .thumb img {
+          transform: scale(1.06);
         }
-        .shop nav.woocommerce-breadcrumb { display: block !important; }
-        #shop ul.products li.product .star-rating { display: block !important; }
+        .product-item .badge {
+          position: absolute;
+          top: 12px;
+          left: 12px;
+          background: #FF5894;
+          color: #fff;
+          font-size: 11px;
+          font-weight: 600;
+          padding: 3px 10px;
+          border-radius: 20px;
+        }
+        .product-item .wishlist-btn {
+          position: absolute;
+          top: 12px;
+          right: 12px;
+          width: 32px;
+          height: 32px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.9);
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s;
+          z-index: 2;
+        }
+        .product-item .wishlist-btn:hover {
+          background: #FF5894;
+        }
+        .product-item .wishlist-btn:hover svg {
+          stroke: #fff;
+        }
+        .product-item .info {
+          padding: 16px 20px 20px;
+        }
+        .product-item .info .cat {
+          font-size: 11px;
+          color: #aaa;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          margin-bottom: 4px;
+        }
+        .product-item .info h3 {
+          font-size: 16px;
+          font-weight: 700;
+          color: #222;
+          margin: 0 0 6px;
+          line-height: 1.3;
+        }
+        .product-item .info h3 a {
+          color: inherit;
+          text-decoration: none;
+        }
+        .product-item .info h3 a:hover {
+          color: #FF5894;
+        }
+        .product-item .stars {
+          display: flex;
+          gap: 2px;
+          margin-bottom: 8px;
+        }
+        .product-item .stars svg {
+          width: 14px;
+          height: 14px;
+        }
+        .product-item .price-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+        }
+        .product-item .price-row .price {
+          font-size: 18px;
+          font-weight: 700;
+          color: #FF5894;
+        }
+        .product-item .price-row .price del {
+          font-size: 13px;
+          font-weight: 400;
+          color: #bbb;
+          margin-right: 6px;
+        }
+        .product-item .price-row .add-btn {
+          width: 36px;
+          height: 36px;
+          border-radius: 50%;
+          background: #FF5894;
+          color: #fff;
+          border: none;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s;
+        }
+        .product-item .price-row .add-btn:hover {
+          background: #e04a7c;
+          transform: scale(1.1);
+        }
+
+        .shop-toolbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-bottom: 20px;
+        }
+        .shop-toolbar .result-count {
+          font-size: 13px;
+          color: #888;
+          margin: 0;
+        }
+        .shop-toolbar .order-select {
+          border: 1px solid #e5e5e5;
+          border-radius: 8px;
+          padding: 8px 12px;
+          font-size: 13px;
+          color: #555;
+          outline: none;
+          background: #fff;
+          cursor: pointer;
+        }
+        .shop-toolbar .order-select:focus {
+          border-color: #FF5894;
+        }
+
+        .sidebar-widget {
+          background: #fff;
+          border-radius: 16px;
+          padding: 24px;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+          margin-bottom: 20px;
+        }
+        .sidebar-widget h3 {
+          font-size: 16px;
+          font-weight: 700;
+          color: #222;
+          margin: 0 0 16px;
+          padding-bottom: 12px;
+          border-bottom: 2px solid #f5f5f5;
+        }
+        .sidebar-widget .search-box {
+          display: flex;
+          border: 1px solid #e5e5e5;
+          border-radius: 10px;
+          overflow: hidden;
+          transition: border-color 0.2s;
+        }
+        .sidebar-widget .search-box:focus-within {
+          border-color: #FF5894;
+        }
+        .sidebar-widget .search-box input {
+          flex: 1;
+          border: none;
+          padding: 10px 14px;
+          font-size: 13px;
+          outline: none;
+          color: #333;
+        }
+        .sidebar-widget .search-box button {
+          background: #FF5894;
+          border: none;
+          color: #fff;
+          padding: 10px 16px;
+          cursor: pointer;
+        }
+        .cat-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+        .cat-list li {
+          border-bottom: 1px solid #f7f7f7;
+        }
+        .cat-list li:last-child {
+          border-bottom: none;
+        }
+        .cat-list li a {
+          display: block;
+          padding: 8px 0;
+          font-size: 13px;
+          color: #666;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .cat-list li a:hover,
+        .cat-list li.current-cat a {
+          color: #FF5894;
+          font-weight: 600;
+        }
+
+        .cal-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 12px;
+        }
+        .cal-table caption {
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 8px;
+          font-size: 13px;
+        }
+        .cal-table th {
+          color: #999;
+          font-weight: 500;
+          padding: 4px;
+          text-align: center;
+        }
+        .cal-table td {
+          text-align: center;
+          padding: 5px 4px;
+          color: #555;
+          border-radius: 4px;
+        }
+        .cal-table td.today {
+          background: #FF5894;
+          color: #fff;
+          font-weight: 600;
+        }
+
+        .insta-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 6px;
+        }
+        .insta-grid a {
+          display: block;
+          border-radius: 8px;
+          overflow: hidden;
+          transition: opacity 0.2s;
+        }
+        .insta-grid a:hover {
+          opacity: 0.8;
+        }
+        .insta-grid img {
+          width: 100%;
+          aspect-ratio: 1;
+          object-fit: cover;
+        }
+
+        .arch-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+        .arch-list li {
+          border-bottom: 1px solid #f7f7f7;
+        }
+        .arch-list li:last-child {
+          border-bottom: none;
+        }
+        .arch-list li a {
+          display: block;
+          padding: 8px 0;
+          font-size: 13px;
+          color: #666;
+          text-decoration: none;
+          transition: color 0.2s;
+        }
+        .arch-list li a:hover {
+          color: #FF5894;
+        }
+
+        .pagination-wrap {
+          display: flex;
+          justify-content: center;
+          gap: 6px;
+          margin-top: 32px;
+        }
+        .pagination-wrap a,
+        .pagination-wrap span {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 38px;
+          height: 38px;
+          border-radius: 10px;
+          font-size: 14px;
+          font-weight: 600;
+          text-decoration: none;
+          transition: all 0.2s;
+        }
+        .pagination-wrap a {
+          background: #fff;
+          color: #555;
+          border: 1px solid #e5e5e5;
+        }
+        .pagination-wrap a:hover {
+          border-color: #FF5894;
+          color: #FF5894;
+        }
+        .pagination-wrap span.current {
+          background: #FF5894;
+          color: #fff;
+          border: 1px solid #FF5894;
+        }
+        .pagination-wrap .next {
+          width: auto;
+          padding: 0 14px;
+        }
+
+        @media (max-width: 992px) {
+          .products-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 576px) {
+          .products-grid { grid-template-columns: 1fr; }
+        }
       `}</style>
-      <div className="container">
-        <div className="shop">
-          <div id="container">
-            <div id="content" role="main">
-              <nav className="woocommerce-breadcrumb" aria-label="Breadcrumb">
-                <Link href="/">Home</Link>&nbsp;/&nbsp;Shop
-              </nav>
-              <div className="woocommerce">
-              <div className="row">
-                <div className="col-lg-9 col-md-12">
-                  <header className="woocommerce-products-header">
-                    <h1 className="woocommerce-products-header__title page-title">Shop</h1>
-                  </header>
 
-                  {loading ? (
-                    <div className="text-center py-20">
-                      <p style={{ color: "var(--admin-text-muted)" }}>Loading products...</p>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="woocommerce-notices-wrapper"></div>
-                      <p className="woocommerce-result-count" role="alert" aria-relevant="all">
-                        Showing {Math.min((page - 1) * perPage + 1, filteredProducts.length)}–{Math.min(page * perPage, filteredProducts.length)} of {filteredProducts.length} results
-                      </p>
-                      <form className="woocommerce-ordering" method="get">
-                        <select name="orderby" className="orderby" aria-label="Shop order" value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }}>
-                          <option value="menu_order">Default sorting</option>
-                          <option value="popularity">Sort by popularity</option>
-                          <option value="rating">Sort by average rating</option>
-                          <option value="date">Sort by latest</option>
-                          <option value="price">Sort by price: low to high</option>
-                          <option value="price-desc">Sort by price: high to low</option>
-                        </select>
-                      </form>
+      <section className="shop-hero">
+        <div className="container">
+          <h1>Shop</h1>
+          <p>Discover our curated collection of beauty essentials</p>
+        </div>
+      </section>
 
-                      {pagedProducts.length === 0 ? (
-                        <div className="text-center py-20">
-                          <h3 className="text-lg font-semibold text-gray-900 mb-1">{t("shop.no_products")}</h3>
-                          <p className="text-gray-500 text-sm">{t("shop.no_products_hint")}</p>
-                        </div>
-                      ) : (
-                        <ul className="products columns-3">
-                          {pagedProducts.map((product) => (
-                            <li key={product.id} className={`product type-product post-${product.id} status-publish instock product_cat-${product.category} has-post-thumbnail shipping-taxable purchasable product-type-simple`}>
-                              <Link href={`/product/${product.id}`} className="woocommerce-LoopProduct-link woocommerce-loop-product__link">
-                                <span className="product-image-wrapper">
-                                  <img width="132" height="214" src={product.image} className="attachment-woocommerce_thumbnail size-woocommerce_thumbnail" alt={product.name} decoding="async" />
-                                </span>
-                                <h2 className="woocommerce-loop-product__title">{product.name}</h2>
-                                <div className="star-rating" role="img" aria-label={`Rated ${product.rating}.00 out of 5`}>
-                                  <span style={{ width: `${(product.rating / 5) * 100}%` }}>Rated <strong className="rating">{product.rating}.00</strong> out of 5</span>
-                                </div>
-                                <span className="price">
-                                  <span className="woocommerce-Price-amount amount">
-                                    {product.salePrice < product.price ? (
-                                      <>
-                                        <del aria-hidden="true"><span className="woocommerce-Price-amount amount">${product.price.toFixed(2)}</span></del>
-                                        <ins><span className="woocommerce-Price-amount amount">${product.salePrice.toFixed(2)}</span></ins>
-                                      </>
-                                    ) : (
-                                      <bdi>${product.price.toFixed(2)}<span className="woocommerce-Price-currencySymbol"></span></bdi>
-                                    )}
-                                  </span>
-                                </span>
-                              </Link>
-                              <a href="#" onClick={(e) => { e.preventDefault(); addItem({ id: product.id, name: product.name, image: product.image, price: product.price, salePrice: product.salePrice, bgColor: product.bgColor }); }} aria-describedby={`woocommerce_loop_add_to_cart_link_describedby_${product.id}`} data-quantity="1" className="button product_type_simple add_to_cart_button ajax_add_to_cart" data-product_id={product.id} data-product_sku="5000" aria-label={`Add to cart: “${product.name}”`} rel="nofollow" role="button">Add to cart</a>
-                              <span id={`woocommerce_loop_add_to_cart_link_describedby_${product.id}`} className="screen-reader-text"></span>
-                              <div className="yith-wcwl-add-to-wishlist add-to-wishlist-{product.id} yith-wcwl-add-to-wishlist--link-style wishlist-fragment on-first-load">
-                                <div className="yith-wcwl-add-button">
-                                  <a href="#" className="add_to_wishlist single_add_to_wishlist" data-product-id={product.id} data-product-type="simple" rel="nofollow" onClick={(e) => { e.preventDefault(); toggleWishlist(product.id); }}>
-                                    <svg id="yith-wcwl-icon-heart-outline" className="yith-wcwl-icon-svg" fill={wishlist.includes(product.id) ? "currentColor" : "none"} strokeWidth="1.5" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"></path>
-                                    </svg>
-                                    <span>{wishlist.includes(product.id) ? "Remove from wishlist" : "Add to wishlist"}</span>
-                                  </a>
-                                </div>
-                              </div>
-                            </li>
+      <div className="container" style={{ padding: "40px 0 80px" }}>
+        {loading ? (
+          <div className="text-center py-20">
+            <p style={{ color: "#999" }}>Loading products...</p>
+          </div>
+        ) : (
+          <div className="row">
+            <div className="col-lg-9 col-md-12">
+              <div className="shop-toolbar">
+                <p className="result-count">
+                  Showing {Math.min((page - 1) * perPage + 1, filteredProducts.length)}–{Math.min(page * perPage, filteredProducts.length)} of {filteredProducts.length} results
+                </p>
+                <select className="order-select" value={sortBy} onChange={(e) => { setSortBy(e.target.value); setPage(1); }}>
+                  <option value="menu_order">Default sorting</option>
+                  <option value="popularity">Sort by popularity</option>
+                  <option value="rating">Sort by average rating</option>
+                  <option value="date">Sort by latest</option>
+                  <option value="price">Sort by price: low to high</option>
+                  <option value="price-desc">Sort by price: high to low</option>
+                </select>
+              </div>
+
+              {pagedProducts.length === 0 ? (
+                <div className="text-center py-20">
+                  <h3 style={{ fontSize: 18, fontWeight: 600, color: "#333", marginBottom: 8 }}>{t("shop.no_products")}</h3>
+                  <p style={{ color: "#999", fontSize: 14 }}>{t("shop.no_products_hint")}</p>
+                </div>
+              ) : (
+                <div className="products-grid">
+                  {pagedProducts.map((product) => (
+                    <div key={product.id} className="product-item">
+                      <div className="thumb" style={{ background: product.bgColor || "#fafafa" }}>
+                        {product.salePrice < product.price && (
+                          <span className="badge">Sale</span>
+                        )}
+                        <button className="wishlist-btn" onClick={() => toggleWishlist(product.id)} title="Add to wishlist">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill={wishlist.includes(product.id) ? "#FF5894" : "none"} stroke={wishlist.includes(product.id) ? "#FF5894" : "#888"} strokeWidth="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                          </svg>
+                        </button>
+                        <Link href={`/product/${product.id}`}>
+                          <img src={product.image} alt={product.name} />
+                        </Link>
+                      </div>
+                      <div className="info">
+                        <div className="cat">{product.category}</div>
+                        <h3><Link href={`/product/${product.id}`}>{product.name}</Link></h3>
+                        <div className="stars">
+                          {[1,2,3,4,5].map((s) => (
+                            <svg key={s} viewBox="0 0 20 20" fill={s <= product.rating ? "#FF5894" : "#e5e5e5"}>
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
                           ))}
-                        </ul>
-                      )}
-
-                      {totalPages > 1 && (
-                        <nav className="woocommerce-pagination" aria-label="Product Pagination">
-                          <ul className="page-numbers">
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                              <li key={p}>
-                                {p === page ? (
-                                  <span aria-label={`Page ${p}`} aria-current="page" className="page-numbers current">{p}</span>
-                                ) : (
-                                  <a className="page-numbers" href="#" onClick={(e) => { e.preventDefault(); setPage(p); }}>{p}</a>
-                                )}
-                              </li>
-                            ))}
-                            {page < totalPages && (
-                              <li><a className="next page-numbers" href="#" onClick={(e) => { e.preventDefault(); setPage(page + 1); }}>→</a></li>
+                        </div>
+                        <div className="price-row">
+                          <span className="price">
+                            {product.salePrice < product.price ? (
+                              <>
+                                <del>${product.price.toFixed(2)}</del>
+                                ${product.salePrice.toFixed(2)}
+                              </>
+                            ) : (
+                              <>${product.price.toFixed(2)}</>
                             )}
-                          </ul>
-                        </nav>
-                      )}
-                    </>
+                          </span>
+                          <button className="add-btn" onClick={() => addItem({ id: product.id, name: product.name, image: product.image, price: product.price, salePrice: product.salePrice, bgColor: product.bgColor })} title="Add to cart">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                              <line x1="12" y1="5" x2="12" y2="19"/>
+                              <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {totalPages > 1 && (
+                <div className="pagination-wrap">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                    p === page ? (
+                      <span key={p} className="current">{p}</span>
+                    ) : (
+                      <a key={p} href="#" onClick={(e) => { e.preventDefault(); setPage(p); }}>{p}</a>
+                    )
+                  ))}
+                  {page < totalPages && (
+                    <a className="next" href="#" onClick={(e) => { e.preventDefault(); setPage(page + 1); }}>Next →</a>
                   )}
                 </div>
+              )}
+            </div>
 
-                <div className="col-lg-3 col-md-12">
-                  <div id="sidebar">
-                    <aside id="block-2" className="widget widget_block widget_search">
-                      <form role="search" className="wp-block-search__button-outside wp-block-search__text-button wp-block-search">
-                        <label className="wp-block-search__label">Search</label>
-                        <div className="wp-block-search__inside-wrapper">
-                          <input className="wp-block-search__input" placeholder="" type="search" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} name="s" required />
-                          <button aria-label="Search" className="wp-block-search__button wp-element-button" type="submit">Search</button>
-                        </div>
-                      </form>
-                    </aside>
-
-                    <aside id="block-3" className="widget widget_block">
-                      <div className="wp-block-group">
-                        <div className="wp-block-group__inner-container">
-                          <h2 className="wp-block-heading">Categories</h2>
-                          <ul className="wp-block-categories-list wp-block-categories">
-                            <li className="cat-item"><a href="#" onClick={(e) => { e.preventDefault(); setSelectedCategory("all"); }}>All Products</a></li>
-                            {categoriesList.map((cat) => (
-                              <li key={cat.slug} className={`cat-item${selectedCategory === cat.slug ? " current-cat" : ""}`}>
-                                <a href="#" onClick={(e) => { e.preventDefault(); setSelectedCategory(cat.slug); }}>{cat.name}</a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </aside>
-
-                    <aside id="calendar-2" className="widget widget_calendar">
-                      <h3 className="widget-title">Calendar</h3>
-                      <div id="calendar_wrap" className="calendar_wrap">
-                        <table id="wp-calendar" className="wp-calendar-table">
-                          <caption>{months[currentMonth]} {currentYear}</caption>
-                          <thead>
-                            <tr>
-                              <th scope="col" aria-label="Monday">M</th>
-                              <th scope="col" aria-label="Tuesday">T</th>
-                              <th scope="col" aria-label="Wednesday">W</th>
-                              <th scope="col" aria-label="Thursday">T</th>
-                              <th scope="col" aria-label="Friday">F</th>
-                              <th scope="col" aria-label="Saturday">S</th>
-                              <th scope="col" aria-label="Sunday">S</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {(() => {
-                              const rows: React.JSX.Element[] = [];
-                              let cells: (number | null)[] = [];
-                              calendarDays.forEach((d, i) => {
-                                if (d !== null) cells.push(d);
-                                if (cells.length === 7 || i === calendarDays.length - 1) {
-                                  while (cells.length < 7) cells.push(null);
-                                  rows.push(
-                                    <tr key={rows.length}>
-                                      {cells.map((c, ci) => (
-                                        <td key={ci} className={c === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear() ? "today" : ""}>
-                                          {c || <>&nbsp;</>}
-                                        </td>
-                                      ))}
-                                    </tr>
-                                  );
-                                  cells = [];
-                                }
-                              });
-                              return rows;
-                            })()}
-                          </tbody>
-                        </table>
-                      </div>
-                    </aside>
-
-                    <aside id="media_gallery-2" className="widget widget_media_gallery">
-                      <h3 className="widget-title">Instagram</h3>
-                      <div id="gallery-1" className="gallery gallery-columns-3 gallery-size-thumbnail">
-                        {instagramImages.map((img, i) => (
-                          <dl key={i} className="gallery-item">
-                            <dt className="gallery-icon landscape">
-                              <a href="#"><img width="150" height="127" src={img} className="attachment-thumbnail size-thumbnail" alt="" decoding="async" loading="lazy" /></a>
-                            </dt>
-                          </dl>
-                        ))}
-                      </div>
-                    </aside>
-
-                    <aside id="block-9" className="widget widget_block">
-                      <div className="wp-block-group">
-                        <div className="wp-block-group__inner-container">
-                          <h2 className="wp-block-heading">Archives</h2>
-                          <ul className="wp-block-archives-list wp-block-archives">
-                            <li><a href="#">May 2026</a></li>
-                            <li><a href="#">April 2026</a></li>
-                          </ul>
-                        </div>
-                      </div>
-                    </aside>
-                  </div>
+            <div className="col-lg-3 col-md-12">
+              <div className="sidebar-widget">
+                <h3>Search</h3>
+                <div className="search-box">
+                  <input placeholder="Search products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                  <button>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                    </svg>
+                  </button>
                 </div>
               </div>
+
+              <div className="sidebar-widget">
+                <h3>Categories</h3>
+                <ul className="cat-list">
+                  <li className={selectedCategory === "all" ? "current-cat" : ""}>
+                    <a href="#" onClick={(e) => { e.preventDefault(); setSelectedCategory("all"); }}>All Products</a>
+                  </li>
+                  {categoriesList.map((cat) => (
+                    <li key={cat.slug} className={selectedCategory === cat.slug ? "current-cat" : ""}>
+                      <a href="#" onClick={(e) => { e.preventDefault(); setSelectedCategory(cat.slug); }}>{cat.name}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="sidebar-widget">
+                <h3>Calendar</h3>
+                <table className="cal-table">
+                  <caption>{months[currentMonth]} {currentYear}</caption>
+                  <thead>
+                    <tr>
+                      <th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th><th>S</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(() => {
+                      const rows: React.JSX.Element[] = [];
+                      let cells: (number | null)[] = [];
+                      calendarDays.forEach((d, i) => {
+                        if (d !== null) cells.push(d);
+                        if (cells.length === 7 || i === calendarDays.length - 1) {
+                          while (cells.length < 7) cells.push(null);
+                          rows.push(
+                            <tr key={rows.length}>
+                              {cells.map((c, ci) => (
+                                <td key={ci} className={c === today.getDate() && currentMonth === today.getMonth() && currentYear === today.getFullYear() ? "today" : ""}>
+                                  {c || ""}
+                                </td>
+                              ))}
+                            </tr>
+                          );
+                          cells = [];
+                        }
+                      });
+                      return rows;
+                    })()}
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="sidebar-widget">
+                <h3>Instagram</h3>
+                <div className="insta-grid">
+                  {instagramImages.map((img, i) => (
+                    <a key={i} href="#">
+                      <img src={img} alt="" loading="lazy" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+
+              <div className="sidebar-widget">
+                <h3>Archives</h3>
+                <ul className="arch-list">
+                  <li><a href="#">May 2026</a></li>
+                  <li><a href="#">April 2026</a></li>
+                </ul>
               </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

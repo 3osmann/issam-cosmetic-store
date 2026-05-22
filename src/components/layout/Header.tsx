@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useLanguage, type Locale } from "@/lib/i18n/LanguageContext";
 import { useTheme } from "@/lib/ThemeContext";
@@ -10,10 +11,12 @@ export function Header() {
   const { t, locale, setLocale } = useLanguage();
   const { theme, toggle: toggleTheme } = useTheme();
   const { itemCount } = useCart();
+  const pathname = usePathname();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [settings, setSettings] = useState<any>(null);
+  const [mastheadHeight, setMastheadHeight] = useState(120);
 
   useEffect(() => {
     let lastScroll = 0;
@@ -29,6 +32,8 @@ export function Header() {
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     fetch("/api/header").then(r => r.json()).then(setSettings).catch(() => {});
+    const el = document.getElementById("masthead");
+    if (el) setMastheadHeight(el.offsetHeight);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -39,7 +44,25 @@ export function Header() {
   ];
 
   return (
-    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, transition: "transform 0.3s ease", transform: hidden ? "translateY(-100%)" : "translateY(0)" }}>
+    <>
+      <style>{`
+        .header-wrapper { overflow: visible !important; }
+        #masthead { overflow: visible !important; }
+        #mySidenav.nav.sidenav { display: block !important; width: auto !important; position: static !important; height: auto !important; background: transparent !important; }
+        #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: wrap !important; gap: 4px; list-style: none !important; margin: 0 !important; padding: 0 !important; }
+        #mySidenav .main-navigation > .menu > ul > li { display: inline-block !important; position: relative !important; }
+        #mySidenav .main-navigation > .menu > ul > li > a { color: inherit !important; padding: 6px 14px !important; text-decoration: none !important; font-size: 14px !important; white-space: nowrap !important; }
+        #mySidenav .main-navigation > .menu > ul > li > a:hover { color: #FF5894 !important; }
+        #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a { color: #FF5894 !important; font-weight: 600 !important; }
+        #mySidenav .main-navigation ul.sub-menu,
+        #mySidenav .main-navigation ul ul { display: none !important; position: absolute !important; top: 100% !important; left: 0 !important; background: #fff !important; min-width: 180px !important; box-shadow: 0 4px 20px rgba(0,0,0,0.08) !important; border-radius: 8px !important; padding: 8px 0 !important; list-style: none !important; z-index: 999 !important; }
+        #mySidenav .main-navigation ul li.menu-item-has-children:hover > ul.sub-menu,
+        #mySidenav .main-navigation ul li.menu-item-has-children:hover > ul { display: block !important; }
+        #mySidenav .main-navigation ul.sub-menu li { display: block !important; }
+        #mySidenav .main-navigation ul.sub-menu li a { display: block !important; padding: 8px 20px !important; color: #444 !important; font-size: 13px !important; text-decoration: none !important; }
+        #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894 !important; background: #fff5f8 !important; }
+      `}</style>
+    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999, transition: "transform 0.35s ease", transform: hidden ? `translateY(-100%)` : "translateY(0)" }}>
       <div id="topabr">
         <div className="container">
           <div className="row" style={{ alignItems: "center" }}>
@@ -165,7 +188,7 @@ export function Header() {
                                     { label: "Shop", href: "/shop", children: [] },
                                     { label: "Contact", href: "/contact", children: [] },
                                   ]).map((item: any, i: number) => (
-                                    <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${i === 0 ? "current-menu-item" : ""}`}>
+                                    <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""}`}>
                                       <Link href={item.href}>{item.label}</Link>
                                       {item.children?.length > 0 && (
                                         <ul className="sub-menu">
@@ -222,5 +245,6 @@ export function Header() {
         </div>
       </header>
     </div>
+    </>
   );
 }
