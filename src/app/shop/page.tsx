@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import React from "react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useCart } from "@/lib/CartContext";
+import { useWishlist } from "@/lib/WishlistContext";
 
 interface Product {
   id: number;
@@ -39,13 +40,13 @@ function getCalendarDays(month: number, year: number) {
 export default function ShopPage() {
   const { t } = useLanguage();
   const { addItem } = useCart();
+  const { wishlist, toggleWishlist } = useWishlist();
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [categoriesList, setCategoriesList] = useState<CatItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortBy, setSortBy] = useState("menu_order");
-  const [wishlist, setWishlist] = useState<number[]>([]);
   const [page, setPage] = useState(1);
   const perPage = 12;
 
@@ -91,10 +92,7 @@ export default function ShopPage() {
   const totalPages = Math.ceil(filteredProducts.length / perPage);
   const pagedProducts = filteredProducts.slice((page - 1) * perPage, page * perPage);
 
-  const toggleWishlist = (id: number) => {
-    setWishlist((prev) => prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]);
-  };
-
+  
   const calendarDays = getCalendarDays(currentMonth, currentYear);
 
   const instagramImages = ["/images/insta1.png", "/images/insta2.png", "/images/insta3.png", "/images/insta4.png", "/images/insta5.png", "/images/insta6.png"];

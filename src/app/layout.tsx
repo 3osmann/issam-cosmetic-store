@@ -3,6 +3,7 @@ import "./globals.css";
 import { StoreShell } from "@/components/layout/StoreShell";
 import { ThemeProvider } from "@/lib/ThemeContext";
 import { CartProvider } from "@/lib/CartContext";
+import { WishlistProvider } from "@/lib/WishlistContext";
 import { SeoHead } from "@/components/seo/SeoHead";
 import { ChatWidget } from "@/components/chat/ChatWidget";
 
@@ -57,9 +58,11 @@ export default function RootLayout({
       <body className="home page-template" suppressHydrationWarning>
         <ThemeProvider>
           <CartProvider>
-            <SeoHead />
-            <ChatWidget />
-            <StoreShell>{children}</StoreShell>
+            <WishlistProvider>
+              <SeoHead />
+              <ChatWidget />
+              <StoreShell>{children}</StoreShell>
+            </WishlistProvider>
           </CartProvider>
         </ThemeProvider>
       </body>

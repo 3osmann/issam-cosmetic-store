@@ -6,11 +6,13 @@ import { useState, useEffect } from "react";
 import { useLanguage, type Locale } from "@/lib/i18n/LanguageContext";
 import { useTheme } from "@/lib/ThemeContext";
 import { useCart } from "@/lib/CartContext";
+import { useWishlist } from "@/lib/WishlistContext";
 
 export function Header() {
   const { t, locale, setLocale } = useLanguage();
   const { theme, toggle: toggleTheme } = useTheme();
   const { itemCount } = useCart();
+  const { wishlistCount } = useWishlist();
   const pathname = usePathname();
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -47,6 +49,13 @@ export function Header() {
   const headerStyles = `
     .header-wrapper { overflow: visible; }
     #masthead { overflow: visible; }
+    .wishlist .cart-counter {
+      position: absolute; top: -3px; right: -5px;
+      background: #FF5894; color: #fff;
+      padding: 0 5px; border-radius: 50%;
+      font-size: 10px; line-height: 16px; min-width: 16px; text-align: center;
+    }
+    .wishlist_view { position: relative; }
     @media (min-width: 1025px) {
       #mySidenav.nav.sidenav { display: block !important; width: auto !important; position: static !important; height: auto !important; background: transparent !important; }
       #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: wrap !important; gap: 4px; list-style: none !important; margin: 0 !important; padding: 0 !important; }
@@ -226,6 +235,7 @@ export function Header() {
                       <div className="wishlist">
                         <Link className="wishlist_view" href="/wishlist">
                           <i className="far fa-heart search"></i>
+                          <span className="cart-counter">{wishlistCount}</span>
                         </Link>
                       </div>
                       <div className="cart">

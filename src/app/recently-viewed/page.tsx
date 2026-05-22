@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { useCart } from "@/lib/CartContext";
+import { useWishlist } from "@/lib/WishlistContext";
 
 interface RecentlyViewedItem {
   id: number;
@@ -45,19 +46,15 @@ function StarRating({ rating }: { rating: number }) {
 export default function RecentlyViewedPage() {
   const { t } = useLanguage();
   const { addItem } = useCart();
+  const { wishlist, toggleWishlist } = useWishlist();
   const [items, setItems] = useState<RecentlyViewedItem[]>(initialItems);
-  const [wishlist, setWishlist] = useState<number[]>([]);
 
   const clearAll = () => setItems([]);
 
   const removeItem = (id: number) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
   };
-
-  const toggleWishlist = (id: number) => {
-    setWishlist((prev) => prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]);
-  };
-
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white border-b">

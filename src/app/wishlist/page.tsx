@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Heart, ShoppingCart, Trash2, Star } from "lucide-react";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useWishlist } from "@/lib/WishlistContext";
+import { useCart } from "@/lib/CartContext";
 
 const wishlistStyles = `
   .wl-page { background: #f9f9f9; min-height: 100vh; }
@@ -104,10 +106,43 @@ function StarRating({ rating }: { rating: number }) {
 
 export default function WishlistPage() {
   const { t } = useLanguage();
-  const [items, setItems] = useState<WishlistItem[]>(initialWishlist);
+  const { wishlist, toggleWishlist } = useWishlist();
+  const { addItem } = useCart();
+  const [items, setItems] = useState<WishlistItem[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const removeItem = (id: number) => setItems((prev) => prev.filter((item) => item.id !== id));
-  const moveToCart = (id: number) => removeItem(id);
+  useEffect(() => {
+    if (wishlist.length === 0) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+    fetch("/api/products")
+      .then((r) => r.json())
+      .then((data) => {
+        const prods = (Array.isArray(data) ? data : data.products || [])
+          .filter((p: any) => wishlist.includes(p.id))
+          .map((p: any) => ({
+            id: p.id,
+            name: p.name,
+            image: p.image,
+            price: parseFloat(p.price) || 0,
+            salePrice: p.salePrice ? parseFloat(p.salePrice) : parseFloat(p.price) || 0,
+            bgColor: p.bgColor || "",
+            rating: Math.round(parseFloat(p.rating) || 4),
+            inStock: p.inStock !== false,
+          }));
+        setItems(prods);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [wishlist]);
+
+  const removeItem = (id: number) => toggleWishlist(id);
+  const moveToCart = (item: WishlistItem) => {
+    addItem({ id: item.id, name: item.name, image: item.image, price: item.price, salePrice: item.salePrice, bgColor: item.bgColor });
+    toggleWishlist(item.id);
+  };
 
   return (
     <div className="wl-page">
@@ -146,7 +181,7 @@ export default function WishlistPage() {
                       ${item.salePrice.toFixed(2)}
                       {item.salePrice < item.price && <del>${item.price.toFixed(2)}</del>}
                     </div>
-                    <button className="wl-atc" disabled={!item.inStock} onClick={() => moveToCart(item.id)}>
+                    <button className="wl-atc" disabled={!item.inStock} onClick={() => moveToCart(item)}>
                       <ShoppingCart size={14} />
                       {item.inStock ? t("wishlist.move_to_cart") : t("product.out_of_stock")}
                     </button>
