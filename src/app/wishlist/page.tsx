@@ -3,11 +3,75 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Heart, ShoppingCart, Trash2, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
+
+const wishlistStyles = `
+  .wl-page { background: #f9f9f9; min-height: 100vh; }
+  .wl-hero {
+    padding: 120px 0 30px; text-align: center;
+  }
+  .wl-hero h1 { font-family: "Elsie",serif; font-size: 36px; font-weight: 400; color: #222; margin: 0 0 4px; }
+  .wl-hero p { font-size: 14px; color: #999; margin: 0; }
+  .wl-count { font-size: 13px; color: #999; margin-bottom: 20px; }
+  .wl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+  .wl-card {
+    background: #fff; border-radius: 14px; overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05); transition: all 0.25s;
+    position: relative;
+  }
+  .wl-card:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+  .wl-thumb {
+    height: 200px; display: flex; align-items: center; justify-content: center;
+    padding: 20px; position: relative; overflow: hidden;
+  }
+  .wl-thumb img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.4s; }
+  .wl-card:hover .wl-thumb img { transform: scale(1.06); }
+  .wl-thumb .wl-del {
+    position: absolute; top: 10px; right: 10px; z-index: 2;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: rgba(255,255,255,0.85); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .wl-thumb .wl-del:hover { background: #FF5894; }
+  .wl-thumb .wl-del:hover svg { color: #fff; }
+  .wl-badge {
+    position: absolute; top: 10px; left: 10px; z-index: 2;
+    background: #FF5894; color: #fff; font-size: 10px; font-weight: 600;
+    padding: 3px 9px; border-radius: 20px;
+  }
+  .wl-oos {
+    position: absolute; inset: 0; background: rgba(255,255,255,0.65);
+    display: flex; align-items: center; justify-content: center; z-index: 3;
+  }
+  .wl-oos span {
+    background: #fff; color: #e74c3c; font-size: 12px; font-weight: 600;
+    padding: 4px 14px; border-radius: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .wl-body { padding: 14px 16px 18px; }
+  .wl-body h3 { font-size: 14px; font-weight: 600; color: #222; margin: 0 0 4px; line-height: 1.4; }
+  .wl-body h3 a { color: inherit; text-decoration: none; }
+  .wl-body h3 a:hover { color: #FF5894; }
+  .wl-body .wl-price { font-size: 16px; font-weight: 700; color: #FF5894; margin-top: 6px; }
+  .wl-body .wl-price del { font-size: 12px; color: #bbb; font-weight: 400; margin-left: 6px; }
+  .wl-body .wl-atc {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    width: 100%; margin-top: 10px; padding: 8px 0;
+    background: #FF5894; color: #fff; border: none; border-radius: 8px;
+    font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.2s;
+  }
+  .wl-body .wl-atc:hover { background: #e64a7e; }
+  .wl-body .wl-atc:disabled { background: #ddd; color: #999; cursor: not-allowed; }
+  .wl-empty { text-align: center; padding: 80px 20px; }
+  .wl-empty svg { width: 80px; height: 80px; color: #ddd; margin-bottom: 16px; }
+  .wl-empty h2 { font-size: 22px; font-weight: 700; color: #333; margin: 0 0 6px; }
+  .wl-empty p { font-size: 14px; color: #999; margin: 0 0 24px; }
+  .wl-empty a {
+    display: inline-block; background: #FF5894; color: #fff; padding: 12px 32px;
+    border-radius: 8px; font-size: 14px; font-weight: 600; text-decoration: none;
+  }
+  .wl-empty a:hover { background: #e64a7e; }
+`;
 
 interface WishlistItem {
   id: number;
@@ -30,9 +94,9 @@ const initialWishlist: WishlistItem[] = [
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <div className="flex items-center gap-0.5">
+    <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
       {Array.from({ length: 5 }).map((_, i) => (
-        <Star key={i} className={cn("h-3.5 w-3.5", i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300")} />
+        <Star key={i} size={12} style={{ color: i < rating ? "#f59e0b" : "#ddd", fill: i < rating ? "#f59e0b" : "none" }} />
       ))}
     </div>
   );
@@ -42,88 +106,61 @@ export default function WishlistPage() {
   const { t } = useLanguage();
   const [items, setItems] = useState<WishlistItem[]>(initialWishlist);
 
-  const removeItem = (id: number) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const moveToCart = (id: number) => {
-    removeItem(id);
-  };
+  const removeItem = (id: number) => setItems((prev) => prev.filter((item) => item.id !== id));
+  const moveToCart = (id: number) => removeItem(id);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b">
-      <div className="max-w-7xl mx-auto px-4 py-12">
-        
-          <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
-            <Link href="/" className="hover:text-[#FF5894]">{t("nav.home")}</Link>
-            <span>/</span>
-            <span className="text-[#FF5894]">{t("wishlist.breadcrumb")}</span>
-          </div>
-        </div>
+    <div className="wl-page">
+      <style dangerouslySetInnerHTML={{ __html: wishlistStyles }} />
+      <div className="wl-hero">
+        <h1>{t("wishlist.title")}</h1>
+        <p style={{ fontSize: 14, color: "#999", margin: 0 }}>Save & shop your favorite products</p>
       </div>
-
-      <div className="max-w-7xl mx-auto px-4 py-12">
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "30px 20px" }}>
         {items.length > 0 ? (
           <>
-            <div className="flex items-center justify-between mb-6">
-              <p className="text-sm text-gray-500">{items.length} {t("wishlist.items")}</p>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <p className="wl-count">{items.length} {t("wishlist.items")}</p>
+            <div className="wl-grid">
               {items.map((item) => (
-                <Card key={item.id} className="group overflow-hidden hover:shadow-lg transition-shadow">
-                  <div className="relative aspect-square bg-gray-50 flex items-center justify-center p-4" style={item.bgColor ? { backgroundColor: item.bgColor } : undefined}>
+                <div key={item.id} className="wl-card">
+                  <div className="wl-thumb" style={item.bgColor ? { backgroundColor: item.bgColor } : { backgroundColor: "#f5f5f5" }}>
                     <Link href={`/product/${item.id}`}>
-                      <img src={item.image} alt={item.name} className="w-full h-full object-contain transition-transform group-hover:scale-105" />
+                      <img src={item.image} alt={item.name} />
                     </Link>
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="absolute top-2 right-2 p-1.5 rounded-full bg-white/80 hover:bg-white transition-colors"
-                    >
-                      <Trash2 className="h-4 w-4 text-gray-400 hover:text-red-500" />
+                    <button className="wl-del" onClick={() => removeItem(item.id)} title="Remove">
+                      <Trash2 size={14} style={{ color: "#999", transition: "color 0.2s" }} />
                     </button>
                     {item.salePrice < item.price && (
-                      <Badge className="absolute top-2 left-2 bg-[#FF5894] text-white">{t("shop.sale")}</Badge>
+                      <span className="wl-badge">{t("shop.sale")}</span>
                     )}
                     {!item.inStock && (
-                      <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
-                        <span className="text-sm font-medium text-red-500 bg-white px-3 py-1 rounded-full">{t("product.out_of_stock")}</span>
+                      <div className="wl-oos">
+                        <span>{t("product.out_of_stock")}</span>
                       </div>
                     )}
                   </div>
-                  <CardContent className="p-3">
-                    <Link href={`/product/${item.id}`}>
-                      <h3 className="text-sm font-medium text-gray-900 line-clamp-1 hover:text-[#FF5894] transition-colors">{item.name}</h3>
-                    </Link>
+                  <div className="wl-body">
+                    <h3><Link href={`/product/${item.id}`}>{item.name}</Link></h3>
                     <StarRating rating={item.rating} />
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-sm font-bold text-[#FF5894]">${item.salePrice.toFixed(2)}</span>
-                      {item.salePrice < item.price && (
-                        <span className="text-xs text-gray-400 line-through">${item.price.toFixed(2)}</span>
-                      )}
+                    <div className="wl-price">
+                      ${item.salePrice.toFixed(2)}
+                      {item.salePrice < item.price && <del>${item.price.toFixed(2)}</del>}
                     </div>
-                    <Button
-                      size="sm"
-                      className="w-full mt-2 h-8 text-xs"
-                      disabled={!item.inStock}
-                      onClick={() => moveToCart(item.id)}
-                    >
-                      <ShoppingCart className="h-3.5 w-3.5 mr-1" />
+                    <button className="wl-atc" disabled={!item.inStock} onClick={() => moveToCart(item.id)}>
+                      <ShoppingCart size={14} />
                       {item.inStock ? t("wishlist.move_to_cart") : t("product.out_of_stock")}
-                    </Button>
-                  </CardContent>
-                </Card>
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </>
         ) : (
-          <div className="text-center py-20">
-            <Heart className="h-20 w-20 text-gray-300 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-gray-900 mb-2">{t("wishlist.empty")}</h2>
-            <p className="text-gray-500 mb-6">{t("wishlist.empty_hint")}</p>
-            <Link href="/shop">
-              <Button>{t("wishlist.browse")}</Button>
-            </Link>
+          <div className="wl-empty">
+            <Heart />
+            <h2>{t("wishlist.empty")}</h2>
+            <p>{t("wishlist.empty_hint")}</p>
+            <Link href="/shop">{t("wishlist.browse")}</Link>
           </div>
         )}
       </div>
