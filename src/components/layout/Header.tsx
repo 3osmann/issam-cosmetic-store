@@ -49,13 +49,14 @@ export function Header() {
   const headerStyles = `
     .header-wrapper { overflow: visible; }
     #masthead { overflow: visible; }
+    .wishlist_view { position: relative; display: inline-block; }
+    .wishlist_view i { margin: 0 !important; width: auto !important; height: auto !important; border: none !important; display: inline !important; font-size: 18px !important; line-height: 1 !important; }
     .wishlist .cart-counter {
-      position: absolute; top: -3px; right: -5px;
+      position: absolute; top: -18px; right: -12px;
       background: #FF5894; color: #fff;
-      padding: 0 5px; border-radius: 50%;
-      font-size: 10px; line-height: 16px; min-width: 16px; text-align: center;
+      padding: 0px 7px; border-radius: 50%;
+      font-size: 13px; z-index: 2;
     }
-    .wishlist_view { position: relative; }
     @media (min-width: 1025px) {
       #mySidenav.nav.sidenav { display: block !important; width: auto !important; position: static !important; height: auto !important; background: transparent !important; }
       #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: wrap !important; gap: 4px; list-style: none !important; margin: 0 !important; padding: 0 !important; }
