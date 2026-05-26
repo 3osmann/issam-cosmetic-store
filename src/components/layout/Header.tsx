@@ -18,7 +18,8 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [topbarHidden, setTopbarHidden] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [settings, setSettings] = useState<any>(null);
 
   useEffect(() => {
@@ -26,10 +27,11 @@ export function Header() {
     const handleScroll = () => {
       const current = window.scrollY;
       setScrolled(current > 50);
+      setShowScrollTop(current > 400);
       if (current > lastScroll && current > 80) {
-        setTopbarHidden(true);
+        setHeaderHidden(true);
       } else {
-        setTopbarHidden(false);
+        setHeaderHidden(false);
       }
       lastScroll = current;
     };
@@ -70,21 +72,36 @@ export function Header() {
   ];
 
   const headerStyles = `
-    .header-wrapper { overflow: visible; }
+    .header-wrapper { overflow: visible; transition: transform 0.4s ease; }
+    .header-wrapper.hidden { transform: translateY(-100%); }
     #masthead { overflow: visible; transition: box-shadow 0.25s ease, background 0.25s ease; }
     #masthead.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    div#topabr { padding: 6px 14px !important; transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.35s ease; overflow: hidden; }
-    div#topabr.hidden { max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; opacity: 0 !important; }
-    div#topabr h4 { font-size: 12px !important; line-height: 18px !important; }
-    .wishlist_view { position: relative; display: inline-flex; align-items: center; justify-content: center; }
-    .wishlist_view i { margin: 0 !important; width: auto !important; height: auto !important; border: none !important; display: inline !important; font-size: 18px !important; line-height: 1 !important; }
-    .wishlist .cart-counter, .cart .cart-counter {
-      position: absolute; top: -6px; right: -6px;
-      background: var(--primary, #FF5894); color: #fff;
-      min-width: 18px; height: 18px; padding: 0 5px;
-      border-radius: 50%; font-size: 10px; font-weight: 700;
-      line-height: 18px; text-align: center; z-index: 2;
+    div#topabr { padding: 6px 14px !important; background: #FF5894; }
+    div#topabr h4 { font-size: 13px !important; line-height: 20px !important; font-weight: 600 !important; margin: 0 !important; color: #fff; }
+    #topabr .topbar-contents { display: flex; align-items: center; gap: 12px; }
+    #topabr .shop-btn a { font-size: 13px; font-weight: 700; color: #fff; text-decoration: none; padding: 2px 12px; border: 1.5px solid rgba(255,255,255,0.5); border-radius: 20px; transition: background 0.2s, border-color 0.2s; }
+    #topabr .shop-btn a:hover { background: rgba(255,255,255,0.15); border-color: #fff; }
+    #topabr .socialbox a { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; color: #fff; transition: background 0.2s; font-size: 13px; }
+    #topabr .socialbox a:hover { background: rgba(255,255,255,0.2); }
+    #topabr .socialbox { gap: 4px; }
+    .wishlist_view, .cart-cust {
+      position: relative; display: inline-flex; align-items: center; justify-content: center;
+      width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,88,148,0.08); transition: background 0.3s, transform 0.3s;
     }
+    .wishlist_view:hover, .cart-cust:hover { background: rgba(255,88,148,0.18); transform: scale(1.05); }
+    .wishlist_view i, .cart-cust i { margin: 0 !important; width: auto !important; height: auto !important; border: none !important; display: inline !important; font-size: 18px !important; line-height: 1 !important; }
+    .wishlist .cart-counter, .cart .cart-counter {
+      position: absolute; top: -4px; right: -4px;
+      background: linear-gradient(135deg, #FF5894, #FF2D7B); color: #fff;
+      min-width: 20px; height: 20px; padding: 0 5px;
+      border-radius: 50%; font-size: 11px; font-weight: 800;
+      line-height: 20px; text-align: center; z-index: 2;
+      box-shadow: 0 2px 8px rgba(255,88,148,0.4);
+      border: 2px solid #fff;
+      animation: counterPop 0.3s ease;
+    }
+    @keyframes counterPop { 0% { transform: scale(0.5); } 60% { transform: scale(1.15); } 100% { transform: scale(1); } }
     .mobile-header-actions { display: none; }
     .mobile-search-panel { display: none; }
     .mobile-icon-btn {
@@ -205,13 +222,26 @@ export function Header() {
       .mobile-icon-btn { width: 36px; height: 36px; border-radius: 8px; }
       .mobile-header-actions { gap: 4px; padding-right: 8px; }
     }
+    .scroll-top-btn {
+      position: fixed; bottom: 30px; right: 30px; z-index: 99999;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: linear-gradient(135deg, #FF5894, #FF2D7B);
+      color: #fff; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; box-shadow: 0 4px 15px rgba(255,88,148,0.4);
+      transition: opacity 0.3s, transform 0.3s, visibility 0.3s;
+      opacity: 0; visibility: hidden; transform: translateY(10px);
+    }
+    .scroll-top-btn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+    .scroll-top-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(255,88,148,0.6); }
   `;
 
   return (
-    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
+      <>
+    <div className={`header-wrapper${headerHidden ? " hidden" : ""}`} style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
       <style dangerouslySetInnerHTML={{ __html: headerStyles }} />
-      <div id="topabr" className={topbarHidden ? "hidden" : ""}>
-        <div className="container">
+      <div id="topabr">
+          <div className="container">
           <div className="row" style={{ alignItems: "center" }}>
             <div className="col-lg-6 col-md-7">
               <div className="topbar-contents">
@@ -342,7 +372,7 @@ export function Header() {
                       <div className="wishlist">
                         <Link className="wishlist_view" href="/wishlist">
                           <i className="far fa-heart search"></i>
-                          <span className="cart-counter">{wishlistCount}</span>
+                          {wishlistCount > 0 && <span className="cart-counter">{wishlistCount}</span>}
                         </Link>
                       </div>
                       <div className="cart">
@@ -370,7 +400,6 @@ export function Header() {
                                     { label: "Blog", href: "/blog", children: [] },
                                     { label: "Shop", href: "/shop", children: [] },
                                     { label: "Contact", href: "/contact", children: [] },
-                                    { label: "Buy Now", href: "/shop", children: [] },
                                   ]).map((item: any, i: number) => (
                                     <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""}`}>
                                       <Link href={item.href}>{item.label}</Link>
@@ -461,5 +490,9 @@ export function Header() {
         <div className="sidenav-overlay" onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
       )}
     </div>
+      <button className={`scroll-top-btn${showScrollTop ? " visible" : ""}`} onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} aria-label="Scroll to top">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </button>
+    </>
   );
 }
