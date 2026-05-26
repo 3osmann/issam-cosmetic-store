@@ -18,10 +18,21 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [topbarHidden, setTopbarHidden] = useState(false);
   const [settings, setSettings] = useState<any>(null);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    let lastScroll = 0;
+    const handleScroll = () => {
+      const current = window.scrollY;
+      setScrolled(current > 50);
+      if (current > lastScroll && current > 80) {
+        setTopbarHidden(true);
+      } else {
+        setTopbarHidden(false);
+      }
+      lastScroll = current;
+    };
     window.addEventListener("scroll", handleScroll, { passive: true });
     fetch("/api/header").then(r => r.json()).then(setSettings).catch(() => {});
     handleScroll();
@@ -62,7 +73,8 @@ export function Header() {
     .header-wrapper { overflow: visible; }
     #masthead { overflow: visible; transition: box-shadow 0.25s ease, background 0.25s ease; }
     #masthead.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
-    div#topabr { padding: 6px 14px !important; }
+    div#topabr { padding: 6px 14px !important; transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.35s ease; overflow: hidden; }
+    div#topabr.hidden { max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; opacity: 0 !important; }
     div#topabr h4 { font-size: 12px !important; line-height: 18px !important; }
     .wishlist_view { position: relative; display: inline-flex; align-items: center; justify-content: center; }
     .wishlist_view i { margin: 0 !important; width: auto !important; height: auto !important; border: none !important; display: inline !important; font-size: 18px !important; line-height: 1 !important; }
@@ -198,7 +210,7 @@ export function Header() {
   return (
     <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
       <style dangerouslySetInnerHTML={{ __html: headerStyles }} />
-      <div id="topabr">
+      <div id="topabr" className={topbarHidden ? "hidden" : ""}>
         <div className="container">
           <div className="row" style={{ alignItems: "center" }}>
             <div className="col-lg-6 col-md-7">
