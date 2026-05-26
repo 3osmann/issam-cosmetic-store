@@ -117,8 +117,8 @@ export function Header() {
     @media (min-width: 1025px) {
       .mobile-search-panel.is-open { display: none !important; }
       #mySidenav.nav.sidenav { display: block !important; width: auto !important; position: static !important; height: auto !important; background: transparent !important; padding-top: 0 !important; box-shadow: none !important; }
-      #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: wrap !important; gap: 2px; list-style: none !important; margin: 0 !important; padding: 0 !important; justify-content: center !important; }
-      #mySidenav .main-navigation > .menu > ul > li { display: inline-block !important; position: relative !important; }
+      #mySidenav .main-navigation > .menu > ul { display: flex !important; flex-wrap: nowrap !important; gap: 2px; list-style: none !important; margin: 0 !important; padding: 0 !important; justify-content: center !important; }
+      #mySidenav .main-navigation > .menu > ul > li { display: inline-block !important; position: relative !important; border-bottom: none !important; }
       #mySidenav .main-navigation > .menu > ul > li > a { color: #333 !important; padding: 8px 18px !important; text-decoration: none !important; font-size: 14px !important; font-weight: 600 !important; text-transform: uppercase !important; letter-spacing: 0.5px !important; white-space: nowrap !important; border-radius: 6px !important; transition: all 0.2s ease !important; }
       #mySidenav .main-navigation > .menu > ul > li > a:hover { color: #FF5894 !important; background: #fff5f8 !important; }
       #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a { color: #FF5894 !important; background: #fff5f8 !important; }
