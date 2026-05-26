@@ -10,7 +10,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { name, image, link, order } = body;
-  const created = await db.insert(brands).values({ name, image, link, order }).returning();
+  const { name, image, link, order, active } = body;
+  const created = await db.insert(brands).values({ name, image, link, order, active }).returning();
   return NextResponse.json(created[0], { status: 201 });
 }

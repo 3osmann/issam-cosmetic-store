@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Upload, X } from "lucide-react";
 
 interface ImageUploadProps {
@@ -11,14 +11,20 @@ interface ImageUploadProps {
 
 export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState(value);
+  const [error, setError] = useState("");
+
+  useEffect(() => { setPreview(value); }, [value]);
 
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     setUploading(true);
+    setError("");
     const formData = new FormData();
     formData.append("file", file);
 
@@ -27,10 +33,13 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
       const data = await res.json();
       if (data.url) {
         setPreview(data.url);
-        onChange(data.url);
+        onChangeRef.current(data.url);
+      } else {
+        setError(data.error || "Upload failed");
       }
     } catch (err) {
       console.error("Upload failed", err);
+      setError("Upload failed. Please try again.");
     } finally {
       setUploading(false);
     }
@@ -38,7 +47,7 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
 
   const handleRemove = () => {
     setPreview("");
-    onChange("");
+    onChangeRef.current("");
     if (inputRef.current) inputRef.current.value = "";
   };
 
@@ -72,6 +81,7 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
         )}
         <input ref={inputRef} type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }} />
       </div>
+      {error && <p style={{ color: "#ef4444", fontSize: 13, margin: "4px 0 0" }}>{error}</p>}
     </div>
   );
 }

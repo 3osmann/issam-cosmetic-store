@@ -119,7 +119,7 @@ export default function BrandsPage() {
                   <input className="admin-input" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} required />
                 </div>
                 <div className="admin-form-group">
-                  <ImageUpload value={form.image} onChange={(url) => setForm({ ...form, image: url })} label="Image" />
+                  <ImageUpload value={form.image} onChange={(url) => setForm((prev) => ({ ...prev, image: url }))} label="Image" />
                 </div>
                 <div className="admin-form-group">
                   <label className="admin-label">Link URL</label>
