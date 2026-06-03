@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { contactMessages } from "@/lib/schema";
 import { NextResponse } from "next/server";
 import { sendMail, logoCids } from "@/lib/mail";
+import { sendWhatsApp } from "@/lib/whatsapp";
 
 function emailLayout(content: string, title: string) {
   return `<!DOCTYPE html>
@@ -119,6 +120,19 @@ export async function POST(req: Request) {
         subject: `Thank you for contacting Beauty Cosmetic Store`,
         html: emailLayout(userAutoReplyContent(escapedName, escapedMessage), "We've Received Your Message"),
       });
+
+      const adminPhone = process.env.WHATSAPP_ADMIN_NUMBER || "";
+      if (adminPhone) {
+        await sendWhatsApp({
+          to: adminPhone,
+          message:
+            `📬 *New Contact Message*\n\n` +
+            `👤 *Name:* ${escapedName}\n` +
+            `📧 *Email:* ${escapedEmail}\n` +
+            `📝 *Subject:* ${escapedSubject || "N/A"}\n\n` +
+            `💬 *Message:*\n${escapedMessage}`,
+        });
+      }
     } catch (emailError) {
       console.error("Failed to send email notification:", emailError);
     }

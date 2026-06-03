@@ -46,6 +46,8 @@ export const orders = pgTable("orders", {
   shippingAddress: json("shipping_address").$type<{
     name: string; street: string; city: string; state: string; zip: string; country: string;
   }>(),
+  email: varchar("email", { length: 255 }),
+  phone: varchar("phone", { length: 50 }),
   paymentMethod: varchar("payment_method", { length: 100 }),
   createdAt: timestamp("created_at").defaultNow(),
 });

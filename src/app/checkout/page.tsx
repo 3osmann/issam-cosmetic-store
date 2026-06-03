@@ -14,6 +14,7 @@ export default function CheckoutPage() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    phone: "",
     street: "",
     city: "",
     state: "",
@@ -42,6 +43,8 @@ export default function CheckoutPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          email: form.email,
+          phone: form.phone,
           total: finalTotal,
           shippingAddress: {
             name: form.name,
@@ -130,6 +133,13 @@ export default function CheckoutPage() {
                     <div className="form-group" style={{ marginBottom: 16 }}>
                       <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#555", marginBottom: 6 }}>Email *</label>
                       <input type="email" required value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })}
+                        style={{ width: "100%", padding: "10px 14px", border: "1px solid #ddd", borderRadius: 8, fontSize: 14, outline: "none" }} />
+                    </div>
+                  </div>
+                  <div className="col-lg-6">
+                    <div className="form-group" style={{ marginBottom: 16 }}>
+                      <label style={{ display: "block", fontSize: 13, fontWeight: 500, color: "#555", marginBottom: 6 }}>Phone *</label>
+                      <input type="tel" required value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })}
                         style={{ width: "100%", padding: "10px 14px", border: "1px solid #ddd", borderRadius: 8, fontSize: 14, outline: "none" }} />
                     </div>
                   </div>
