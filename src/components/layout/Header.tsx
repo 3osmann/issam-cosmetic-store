@@ -61,8 +61,9 @@ export function Header() {
   }, [mobileSearchOpen, mobileMenuOpen]);
 
   useEffect(() => {
+    document.documentElement.classList.toggle("mobile-menu-open", mobileMenuOpen);
     document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => { document.documentElement.classList.remove("mobile-menu-open"); document.body.style.overflow = ""; };
   }, [mobileMenuOpen]);
 
   const categories = [
@@ -196,7 +197,11 @@ export function Header() {
     }
     @media (max-width: 991px) {
       .desktop-header-search { display: none !important; }
-      .desktop-header-nav-col { display: none !important; }
+      .desktop-header-nav-col {
+        display: block !important; width: 0 !important; height: 0 !important;
+        overflow: visible !important; padding: 0 !important; margin: 0 !important;
+        border: none !important; flex: 0 0 0 !important; max-width: 0 !important;
+      }
       .desktop-track-row { display: none !important; }
       .desktop-quote-btn { display: none !important; }
       .mobile-header-actions {

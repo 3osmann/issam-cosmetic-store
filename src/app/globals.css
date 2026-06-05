@@ -493,3 +493,18 @@ html.dark #masthead.scrolled { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4); }
   .options-footer .col-lg-3 { padding: 0 4px !important; }
   .home section h2 { font-size: 18px !important; }
 }
+
+/* Fix: mobile container padding and column stacking */
+@media (max-width: 576px) {
+  :root { --header-height: 60px; }
+  .store-main { padding-top: var(--header-height); }
+  .store-main--home { padding-top: 0; }
+  #banner { padding-top: var(--header-height) !important; }
+  .popular-category .cat-images { grid-template-columns: repeat(4, 1fr) !important; }
+}
+@media (max-width: 430px) {
+  .popular-category .cat-images { grid-template-columns: repeat(3, 1fr) !important; }
+}
+
+/* Fix: ensure fixed-position mobile menu not clipped */
+html.mobile-menu-open body { overflow: hidden; }
