@@ -99,26 +99,27 @@ export function Header() {
     .mobile-header-actions { display: none; }
     .mobile-search-panel { display: none; }
     .mobile-icon-btn {
-      width: 36px; height: 36px; border: none; border-radius: 10px;
+      width: 40px; height: 40px; border: none; border-radius: 10px;
       background: transparent; color: #444; cursor: pointer;
       display: inline-flex; align-items: center; justify-content: center;
-      transition: all 0.2s; position: relative; font-size: 17px;
+      transition: all 0.2s; position: relative;
     }
+    .mobile-icon-btn svg, .mobile-icon-btn i { font-size: 18px; }
     .mobile-icon-btn:hover, .mobile-icon-btn.active { color: #FF5894; background: rgba(255,88,148,0.08); }
     .mobile-search-panel {
-      padding: 10px 14px 14px; background: #fff;
+      padding: 12px 16px 16px; background: #fff;
       border-bottom: 1px solid #f0f0f0;
     }
     .mobile-search-panel .search-form { display: flex; width: 100%; position: relative; margin: 0; }
     .mobile-search-panel .search-field {
-      flex: 1; width: 100% !important; height: 42px !important;
-      padding: 0 44px 0 14px !important; font-size: 14px !important;
-      border: 1px solid #e0e0e0 !important; border-radius: 10px !important;
+      flex: 1; width: 100% !important; height: 44px !important;
+      padding: 0 48px 0 16px !important; font-size: 14px !important;
+      border: 1px solid #e0e0e0 !important; border-radius: 12px !important;
       background: #f8f8f8 !important;
     }
     .mobile-search-panel .search-field:focus { border-color: #FF5894 !important; background: #fff !important; outline: none !important; }
     .mobile-search-panel .search-submit {
-      position: absolute !important; right: 4px !important; top: 50% !important;
+      position: absolute !important; right: 5px !important; top: 50% !important;
       transform: translateY(-50%) !important; width: 34px !important; height: 34px !important;
       border-radius: 8px !important; padding: 0 !important;
     }
@@ -149,56 +150,65 @@ export function Header() {
     }
     @media (max-width: 1024px) {
       #mySidenav.nav.sidenav {
-        width: 0; max-width: min(320px, 90vw); position: fixed; top: 0; right: 0;
+        width: 0; max-width: min(340px, 90vw); position: fixed; top: 0; right: 0;
         height: 100%; height: 100dvh; background: #fff; z-index: 9999999;
         overflow-x: hidden; overflow-y: auto;
-        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         padding-top: 0; box-shadow: -4px 0 24px rgba(0,0,0,0.1);
       }
-      #mySidenav.nav.sidenav.is-open { width: min(320px, 90vw); }
+      #mySidenav.nav.sidenav.is-open { width: min(340px, 90vw); }
       .sidenav-header {
         display: flex; align-items: center; justify-content: space-between;
-        padding: 20px 20px 16px; border-bottom: 1px solid #f0f0f0;
-        position: sticky; top: 0; background: #fff; z-index: 1;
+        padding: 22px 24px 18px; border-bottom: 1px solid #f0f0f0;
+        position: sticky; top: 0; background: #fff; z-index: 2;
       }
       .sidenav-header span { font-weight: 700; font-size: 18px; color: #222; letter-spacing: -0.3px; }
       a.closebtn {
-        position: static !important; font-size: 26px !important;
-        color: #aaa !important; line-height: 1; padding: 4px 8px;
-        border-radius: 8px; transition: background 0.2s; display: block;
+        position: static !important; font-size: 28px !important;
+        color: #999 !important; line-height: 1; width: 36px; height: 36px;
+        display: flex !important; align-items: center; justify-content: center;
+        border-radius: 50%; transition: background 0.2s;
       }
       a.closebtn:hover { background: #f5f5f5 !important; color: #333 !important; }
       #mySidenav .main-navigation > .menu > ul { display: block; list-style: none; margin: 0; padding: 8px 0 24px; }
-      #mySidenav .main-navigation > .menu > ul > li { border-bottom: 1px solid #f0f0f0; }
+      #mySidenav .main-navigation > .menu > ul > li {
+        border-bottom: 1px solid #f0f0f0;
+        position: relative;
+      }
       #mySidenav .main-navigation > .menu > ul > li > a {
-        display: flex; align-items: center; padding: 16px 20px; font-size: 15px; font-weight: 600;
+        display: block; padding: 16px 56px 16px 24px; font-size: 15px; font-weight: 600;
         color: #333; text-decoration: none; transition: color 0.2s, background 0.2s;
-        letter-spacing: -0.2px; gap: 8px;
+        letter-spacing: -0.2px;
       }
-      .submenu-toggle {
-        margin-left: auto; display: inline-flex; align-items: center; justify-content: center;
-        width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
-        transition: background 0.2s; flex-shrink: 0;
+      #mySidenav .main-navigation > .menu > ul > li .sub-toggle {
+        position: absolute; right: 10px; top: 10px; z-index: 3;
+        width: 36px; height: 36px; border: none; background: transparent;
+        border-radius: 50%; cursor: pointer; display: flex;
+        align-items: center; justify-content: center;
+        color: #999; font-size: 14px; transition: transform 0.25s ease, background 0.2s;
       }
-      .submenu-toggle:hover { background: rgba(255,88,148,0.1); }
+      #mySidenav .main-navigation > .menu > ul > li .sub-toggle:hover { background: #f5f5f5; color: #FF5894; }
+      #mySidenav .main-navigation > .menu > ul > li .sub-toggle.open { transform: rotate(180deg); color: #FF5894; }
       #mySidenav .main-navigation > .menu > ul > li > a:hover,
       #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a {
         color: #FF5894; background: #fff5f8;
       }
       #mySidenav .main-navigation ul.sub-menu {
-        padding: 0 0 0 16px; list-style: none; background: #fafafa;
-        overflow: hidden; transition: max-height 0.3s ease; max-height: 0;
+        display: block; list-style: none; padding: 0;
+        background: #fafafa; max-height: 0; overflow: hidden;
+        transition: max-height 0.35s ease, padding 0.35s ease;
       }
-      #mySidenav .main-navigation ul.sub-menu.is-open { max-height: 500px; }
+      #mySidenav .main-navigation ul.sub-menu.open { max-height: 500px; padding: 6px 0; }
       #mySidenav .main-navigation ul.sub-menu li { border-bottom: 1px solid #f5f5f5; }
       #mySidenav .main-navigation ul.sub-menu li:last-child { border-bottom: none; }
       #mySidenav .main-navigation ul.sub-menu li a {
-        display: block; padding: 12px 20px 12px 24px; font-size: 14px;
+        display: block; padding: 14px 24px 14px 36px; font-size: 14px;
         font-weight: 500; color: #555; text-decoration: none;
+        transition: color 0.2s, background 0.2s;
       }
-      #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894; }
+      #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894; background: #fff5f8; }
       .sidenav-footer {
-        padding: 20px 20px calc(20px + var(--safe-bottom));
+        padding: 20px 24px calc(20px + var(--safe-bottom));
         border-top: 1px solid #f0f0f0; display: flex; flex-wrap: wrap; gap: 12px;
       }
       .sidenav-footer select {
@@ -219,30 +229,30 @@ export function Header() {
       .desktop-track-row { display: none !important; }
       .desktop-quote-btn { display: none !important; }
       .mobile-header-actions {
-        display: flex !important; align-items: center; gap: 4px;
-        margin-left: auto; padding: 4px 8px 4px 0;
+        display: flex !important; align-items: center; gap: 8px;
+        margin-left: auto; flex-shrink: 0; padding: 0 12px 0 0;
       }
       .main-header-box .row.bg-media {
         display: flex !important; flex-wrap: nowrap !important;
         align-items: center !important; padding: 2px 0 !important;
-        min-height: 52px;
+        min-height: 58px;
       }
       .main-header-box .row.bg-media > .col-logo {
         flex: 0 0 auto !important; width: auto !important; max-width: none !important;
-        padding: 6px 0 6px 14px !important;
+        padding: 6px 0 6px 16px !important;
       }
-      .logo img { max-height: 34px !important; width: auto; }
+      .logo img { max-height: 40px !important; width: auto; }
       #topabr { display: none !important; }
       #masthead { padding: 0 !important; }
       .nav_wrap { padding-left: 0 !important; padding-right: 0 !important; }
       .mobile-search-panel.is-open { display: block !important; }
-      #masthead { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+      #masthead { box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
     }
     @media (max-width: 576px) {
-      .logo img { max-height: 30px !important; }
-      .mobile-icon-btn { width: 34px; height: 34px; border-radius: 8px; font-size: 16px; }
-      .mobile-header-actions { gap: 2px; padding-right: 6px; }
-      .main-header-box .row.bg-media { min-height: 48px; }
+      .logo img { max-height: 34px !important; }
+      .mobile-icon-btn { width: 38px; height: 38px; border-radius: 10px; }
+      .mobile-header-actions { gap: 6px; padding: 0 8px 0 0; }
+      .main-header-box .row.bg-media { min-height: 52px; }
       .main-header-box .row.bg-media > .col-logo { padding: 4px 0 4px 12px !important; }
     }
     .scroll-top-btn {
@@ -430,23 +440,21 @@ export function Header() {
                                     { label: "Shop", href: "/shop", children: [] },
                                     { label: "Contact", href: "/contact", children: [] },
                                   ]).map((item: any, i: number) => (
-                                    <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""} ${openSubmenu === i ? "submenu-open" : ""}`}>
+                                    <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""}`}>
                                       <Link href={item.href} onClick={() => { if (!item.children?.length) setMobileMenuOpen(false); }}>
                                         {item.label}
-                                        {item.children?.length > 0 && (
-                                          <span className="submenu-toggle" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenSubmenu(openSubmenu === i ? null : i); }}>
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "transform 0.25s", transform: openSubmenu === i ? "rotate(180deg)" : "rotate(0)" }}>
-                                              <polyline points="6 9 12 15 18 9"/>
-                                            </svg>
-                                          </span>
-                                        )}
                                       </Link>
                                       {item.children?.length > 0 && (
-                                        <ul className={`sub-menu ${openSubmenu === i ? "is-open" : ""}`}>
-                                          {item.children.map((child: any, ci: number) => (
-                                            <li key={ci}><Link href={child.href} onClick={() => setMobileMenuOpen(false)}>{child.label}</Link></li>
-                                          ))}
-                                        </ul>
+                                        <>
+                                          <button className={`sub-toggle ${openSubmenu === i ? "open" : ""}`} onClick={() => setOpenSubmenu(openSubmenu === i ? null : i)} aria-label="Toggle submenu">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                          </button>
+                                          <ul className={`sub-menu ${openSubmenu === i ? "open" : ""}`}>
+                                            {item.children.map((child: any, ci: number) => (
+                                              <li key={ci}><Link href={child.href} onClick={() => setMobileMenuOpen(false)}>{child.label}</Link></li>
+                                            ))}
+                                          </ul>
+                                        </>
                                       )}
                                     </li>
                                   ))}
