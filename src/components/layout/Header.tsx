@@ -18,6 +18,7 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [settings, setSettings] = useState<any>(null);
 
@@ -26,6 +27,7 @@ export function Header() {
       const current = window.scrollY;
       setScrolled(current > 50);
       setShowScrollTop(current > 400);
+      setHeaderHidden(current > 0);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     fetch("/api/header").then(r => r.json()).then(setSettings).catch(() => {});
@@ -65,7 +67,8 @@ export function Header() {
   ];
 
   const headerStyles = `
-    .header-wrapper { overflow: visible; transition: box-shadow 0.3s ease; }
+    .header-wrapper { overflow: visible; transition: transform 0.35s ease; }
+    .header-wrapper.hidden { transform: translateY(-100%); }
     #masthead { overflow: visible; transition: box-shadow 0.25s ease, background 0.25s ease; }
     #masthead.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     div#topabr { padding: 6px 14px !important; background: #FF5894; }
@@ -247,7 +250,7 @@ export function Header() {
 
   return (
       <>
-    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
+    <div className={`header-wrapper${headerHidden ? " hidden" : ""}`} style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
       <style dangerouslySetInnerHTML={{ __html: headerStyles }} />
       <div id="topabr">
           <div className="container">
