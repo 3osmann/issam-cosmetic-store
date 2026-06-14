@@ -17,6 +17,7 @@ export function Header() {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [openSubmenu, setOpenSubmenu] = useState<number | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [headerHidden, setHeaderHidden] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -170,15 +171,25 @@ export function Header() {
       #mySidenav .main-navigation > .menu > ul { display: block; list-style: none; margin: 0; padding: 8px 0 24px; }
       #mySidenav .main-navigation > .menu > ul > li { border-bottom: 1px solid #f0f0f0; }
       #mySidenav .main-navigation > .menu > ul > li > a {
-        display: block; padding: 16px 20px; font-size: 15px; font-weight: 600;
+        display: flex; align-items: center; padding: 16px 20px; font-size: 15px; font-weight: 600;
         color: #333; text-decoration: none; transition: color 0.2s, background 0.2s;
-        letter-spacing: -0.2px;
+        letter-spacing: -0.2px; gap: 8px;
       }
+      .submenu-toggle {
+        margin-left: auto; display: inline-flex; align-items: center; justify-content: center;
+        width: 28px; height: 28px; border-radius: 6px; cursor: pointer;
+        transition: background 0.2s; flex-shrink: 0;
+      }
+      .submenu-toggle:hover { background: rgba(255,88,148,0.1); }
       #mySidenav .main-navigation > .menu > ul > li > a:hover,
       #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a {
         color: #FF5894; background: #fff5f8;
       }
-      #mySidenav .main-navigation ul.sub-menu { padding: 0 0 0 16px; list-style: none; background: #fafafa; }
+      #mySidenav .main-navigation ul.sub-menu {
+        padding: 0 0 0 16px; list-style: none; background: #fafafa;
+        overflow: hidden; transition: max-height 0.3s ease; max-height: 0;
+      }
+      #mySidenav .main-navigation ul.sub-menu.is-open { max-height: 500px; }
       #mySidenav .main-navigation ul.sub-menu li { border-bottom: 1px solid #f5f5f5; }
       #mySidenav .main-navigation ul.sub-menu li:last-child { border-bottom: none; }
       #mySidenav .main-navigation ul.sub-menu li a {
@@ -324,10 +335,16 @@ export function Header() {
                     <button
                       type="button"
                       className={`mobile-icon-btn ${mobileMenuOpen ? "active" : ""}`}
-                      onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setMobileSearchOpen(false); }}
+                      onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setMobileSearchOpen(false); setOpenSubmenu(null); }}
                       aria-label="Menu"
                     >
-                      <i className="fas fa-bars" />
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "transform 0.3s", transform: mobileMenuOpen ? "rotate(90deg)" : "rotate(0)" }}>
+                        {mobileMenuOpen ? (
+                          <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
+                        ) : (
+                          <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
+                        )}
+                      </svg>
                     </button>
                   </div>
                   <div className="col-lg-5 col-md-7 header-search-flex desktop-header-search">
@@ -406,19 +423,28 @@ export function Header() {
                             </div>
                             <nav id="site-navigation" className="main-navigation">
                               <div className="menu clearfix">
-                                <ul id="menu-primary-menu" className="clearfix mobile_nav">
+                                 <ul id="menu-primary-menu" className="clearfix mobile_nav">
                                   {(settings?.navItems || [
                                     { label: "Home", href: "/", children: [] },
                                     { label: "Blog", href: "/blog", children: [] },
                                     { label: "Shop", href: "/shop", children: [] },
                                     { label: "Contact", href: "/contact", children: [] },
                                   ]).map((item: any, i: number) => (
-                                    <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""}`}>
-                                      <Link href={item.href}>{item.label}</Link>
+                                    <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""} ${openSubmenu === i ? "submenu-open" : ""}`}>
+                                      <Link href={item.href} onClick={() => { if (!item.children?.length) setMobileMenuOpen(false); }}>
+                                        {item.label}
+                                        {item.children?.length > 0 && (
+                                          <span className="submenu-toggle" onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpenSubmenu(openSubmenu === i ? null : i); }}>
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "transform 0.25s", transform: openSubmenu === i ? "rotate(180deg)" : "rotate(0)" }}>
+                                              <polyline points="6 9 12 15 18 9"/>
+                                            </svg>
+                                          </span>
+                                        )}
+                                      </Link>
                                       {item.children?.length > 0 && (
-                                        <ul className="sub-menu">
+                                        <ul className={`sub-menu ${openSubmenu === i ? "is-open" : ""}`}>
                                           {item.children.map((child: any, ci: number) => (
-                                            <li key={ci}><Link href={child.href}>{child.label}</Link></li>
+                                            <li key={ci}><Link href={child.href} onClick={() => setMobileMenuOpen(false)}>{child.label}</Link></li>
                                           ))}
                                         </ul>
                                       )}
