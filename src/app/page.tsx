@@ -226,7 +226,7 @@ export default function HomePage() {
                 <div className="carousel-inner">
                   {[0, 1, 2].map((idx) => (
                     <div key={idx} className={`carousel-item ${idx === activeSlide ? "active" : ""}`}>
-                      <img src={`/images/slider${idx + 1}.png`} className="d-block w-100" alt={`Slide ${idx + 1}`} />
+                      <img src={`/images/slider${idx + 1}.png`} className="d-block w-100" alt={`Slide ${idx + 1}`} style={{ height: 400, objectFit: "cover" }} />
                       <div className="carousel-caption d-none d-md-block">
                         <h1 className="slider-heading">Free Shipping Beauty</h1>
                         <p className="slider-paragraph">Shop Top Quality Haircare, Makeup, Skincare, Nailcare &amp; Much More.</p>
