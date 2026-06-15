@@ -110,6 +110,8 @@ export function Header() {
   const headerStyles = `
     .header-wrapper { overflow: visible; transition: transform 0.35s ease; }
     .header-wrapper.hidden { transform: translateY(-100%); }
+    body { padding-top: var(--header-height, 0px); }
+    @media (max-width: 991px) { body { padding-top: var(--header-height, 0px); } }
     #masthead { overflow: visible; transition: box-shadow 0.25s ease, background 0.25s ease; }
     #masthead.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     div#topabr { padding: 6px 14px !important; background: #FF5894; }
