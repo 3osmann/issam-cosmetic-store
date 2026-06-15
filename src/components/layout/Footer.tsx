@@ -87,9 +87,35 @@ export function Footer() {
           color: #666;
           font-size: 14px;
         }
-        .copyright img {
-          max-height: 28px;
-          margin: 0 4px;
+        .payment-icons {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          flex-wrap: wrap;
+        }
+        .payment-icon-box {
+          width: 48px;
+          height: 32px;
+          background: #fff;
+          border: 1px solid #e5e7eb;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 4px;
+          transition: all 0.2s;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .payment-icon-box:hover {
+          border-color: #FF5894;
+          box-shadow: 0 2px 8px rgba(255,88,148,0.15);
+          transform: translateY(-1px);
+        }
+        .payment-icon-box img {
+          max-height: 20px;
+          max-width: 100%;
+          object-fit: contain;
         }
         .social_widget {
           display: flex;
@@ -181,9 +207,13 @@ export function Footer() {
                 <p>{s.copyright || `© 2026 Cosmetic Store. ${t("footer.rights")}`}</p>
               </div>
               <div className="col-lg-4 text-center">
-                {paymentIcons.map((icon: string, i: number) => (
-                  <img key={i} src={icon} alt="Pay" className="me-2" />
-                ))}
+                <div className="payment-icons">
+                  {paymentIcons.map((icon: string, i: number) => (
+                    <div key={i} className="payment-icon-box">
+                      <img src={icon} alt="Pay" />
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className="col-lg-4 text-end">
                 <div className="social_widget">
