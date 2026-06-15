@@ -99,13 +99,17 @@ export default function AdminStoriesPage() {
     }
   }
 
-  async function handleDelete(id: number) {
-    if (!confirm("Delete this story?")) return
+  async function handleDeactivate(id: number) {
+    if (!confirm("Deactivate this story? It will be hidden from the frontend.")) return
     try {
-      await fetch(`/api/stories/${id}`, { method: "DELETE" })
+      await fetch(`/api/stories/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active: false }),
+      })
       await fetchItems()
     } catch (err) {
-      console.error("Failed to delete story", err)
+      console.error("Failed to deactivate story", err)
     }
   }
 
@@ -298,8 +302,8 @@ export default function AdminStoriesPage() {
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
                           </button>
                         )}
-                        <button className="admin-btn-icon" onClick={() => handleDelete(item.id)} title="Delete">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        <button className="admin-btn-icon" onClick={() => handleDeactivate(item.id)} title="Deactivate">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
                         </button>
                       </td>
                     </tr>
