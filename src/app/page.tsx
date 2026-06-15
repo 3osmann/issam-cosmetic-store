@@ -165,6 +165,92 @@ const pageStyles = `
     .products-image img { max-height: 120px; }
     .products-image { min-height: 130px; }
   }
+  .banner-promo-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    --promo-duo-height: 220px;
+  }
+  .banner-promo-row > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+  }
+  .banner-promo-row .get-offer-details,
+  .banner-promo-row .check-out-details,
+  .banner-promo-row .body-lotion-details {
+    flex: 1;
+    width: 100%;
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .banner-promo-row .promo-banner-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 20px;
+    object-fit: cover;
+  }
+  @media (max-width: 991px) {
+    .banner-promo-row { --promo-duo-height: 190px; gap: 0; }
+    .banner-promo-row > .col-12 { margin-bottom: 10px !important; }
+    .banner-promo-row > .col-6 {
+      flex: 0 0 50% !important;
+      max-width: 50% !important;
+      width: 50% !important;
+      margin-bottom: 0 !important;
+      padding-left: 6px !important;
+      padding-right: 6px !important;
+    }
+    .banner-promo-row > .col-6:nth-child(2) { padding-left: 12px !important; padding-right: 6px !important; }
+    .banner-promo-row > .col-6:nth-child(3) { padding-left: 6px !important; padding-right: 12px !important; }
+    .banner-promo-row .check-out-details,
+    .banner-promo-row .body-lotion-details {
+      min-height: var(--promo-duo-height);
+      height: 100%;
+    }
+    .banner-promo-row .check-out-details .promo-banner-img,
+    .banner-promo-row .body-lotion-details .promo-banner-img {
+      width: 100% !important;
+      height: var(--promo-duo-height) !important;
+      min-height: var(--promo-duo-height) !important;
+      object-fit: cover !important;
+      border-radius: 16px !important;
+    }
+    .banner-promo-row .check-out-content {
+      top: 14px !important;
+      left: 14px !important;
+    }
+    .banner-promo-row .check-out-content h3 {
+      font-size: 13px !important;
+      line-height: 1.25 !important;
+      width: 95% !important;
+    }
+    .banner-promo-row .check-out-content p { font-size: 9px !important; margin: 2px 0 !important; }
+    .banner-promo-row .check-out-content h6 { font-size: 15px !important; line-height: 1.2 !important; }
+    .banner-promo-row .body-lotion-content {
+      top: 14px !important;
+      left: 14px !important;
+    }
+    .banner-promo-row .body-lotion-content h3 { font-size: 13px !important; line-height: 1.25 !important; }
+    .banner-promo-row .body-lotion-content p { font-size: 9px !important; margin: 2px 0 !important; }
+    .banner-promo-row .body-lotion-content h6 { font-size: 15px !important; line-height: 1.2 !important; }
+    .banner-promo-row .shop-now-lotion-button {
+      bottom: 12px !important;
+      left: 12px !important;
+    }
+    .banner-promo-row .shop-now-lotion-button a {
+      font-size: 10px !important;
+      padding: 7px 14px !important;
+    }
+  }
+  @media (max-width: 390px) {
+    .banner-promo-row { --promo-duo-height: 165px; }
+    .banner-promo-row .check-out-content h3,
+    .banner-promo-row .body-lotion-content h3 { font-size: 11px !important; }
+    .banner-promo-row .check-out-content h6,
+    .banner-promo-row .body-lotion-content h6 { font-size: 13px !important; }
+  }
 `;
 
 export default function HomePage() {
@@ -309,10 +395,10 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="row mt-3">
-            <div className="col-lg-6">
-              <div className="get-offer-details" style={{ height: "100%" }}>
-                <img src="/images/get-offer.png" className="get-offer-img img-fluid" alt="Get 50% Off" style={{ borderRadius: 20, width: "100%" }} />
+          <div className="row mt-3 banner-promo-row">
+            <div className="col-lg-6 col-12">
+              <div className="get-offer-details">
+                <img src="/images/get-offer.png" className="get-offer-img promo-banner-img" alt="Get 50% Off" />
                 <div className="get-offer-content">
                   <h3>Get Your 50% Off</h3>
                   <h6>Nourish your skin with toxin-free cosmetic products.</h6>
@@ -322,9 +408,9 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="col-lg-3">
-              <div className="check-out-details" style={{ height: "100%" }}>
-                <img src="/images/check-this-out.png" className="img-fluid" alt="Check This Out" style={{ borderRadius: 20, width: "100%" }} />
+            <div className="col-lg-3 col-6">
+              <div className="check-out-details">
+                <img src="/images/check-this-out.png" className="promo-banner-img" alt="Check This Out" />
                 <div className="check-out-content">
                   <h3>Check This Out</h3>
                   <p>FROM</p>
@@ -332,9 +418,9 @@ export default function HomePage() {
                 </div>
               </div>
             </div>
-            <div className="col-lg-3">
-              <div className="body-lotion-details" style={{ height: "100%" }}>
-                <img src="/images/body-lotion.png" className="img-fluid" alt="Body Lotion" style={{ borderRadius: 20, width: "100%" }} />
+            <div className="col-lg-3 col-6">
+              <div className="body-lotion-details">
+                <img src="/images/body-lotion.png" className="promo-banner-img" alt="Body Lotion" />
                 <div className="body-lotion-content">
                   <h3>Body Lotion</h3>
                   <p>From</p>
