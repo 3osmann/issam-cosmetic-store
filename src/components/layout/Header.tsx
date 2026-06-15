@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
+import { Search, ShoppingBag, Menu, X, User, Heart } from "lucide-react";
 import { useLanguage, type Locale } from "@/lib/i18n/LanguageContext";
 import { useTheme } from "@/lib/ThemeContext";
 import { useCart } from "@/lib/CartContext";
@@ -19,7 +20,6 @@ export function Header() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<number | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [headerHidden, setHeaderHidden] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [settings, setSettings] = useState<any>(null);
 
@@ -28,7 +28,6 @@ export function Header() {
       const current = window.scrollY;
       setScrolled(current > 50);
       setShowScrollTop(current > 400);
-      setHeaderHidden(current > 0);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     fetch("/api/header").then(r => r.json()).then(setSettings).catch(() => {});
@@ -96,16 +95,91 @@ export function Header() {
       box-shadow: 0 2px 6px rgba(255,88,148,0.35);
       border: 2px solid #fff;
     }
+    .mobile-header-bar {
+      display: none;
+      width: 100%;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 16px;
+      min-height: 60px;
+    }
+    .mobile-header-logo {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+    }
+    .mobile-header-logo a {
+      display: flex;
+      align-items: center;
+      max-width: 100%;
+    }
+    .mobile-header-logo img {
+      max-height: 36px !important;
+      width: auto !important;
+      max-width: min(160px, 48vw);
+      object-fit: contain;
+    }
     .mobile-header-actions { display: none; }
+    .mobile-header-tools {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
     .mobile-search-panel { display: none; }
     .mobile-icon-btn {
-      width: 40px; height: 40px; border: none; border-radius: 10px;
-      background: transparent; color: #444; cursor: pointer;
+      width: 44px; height: 44px; border: none; border-radius: 12px;
+      background: transparent; color: #333; cursor: pointer;
       display: inline-flex; align-items: center; justify-content: center;
-      transition: all 0.2s; position: relative;
+      transition: background 0.2s, color 0.2s, transform 0.15s;
+      position: relative; text-decoration: none; flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
     }
-    .mobile-icon-btn svg, .mobile-icon-btn i { font-size: 18px; }
-    .mobile-icon-btn:hover, .mobile-icon-btn.active { color: #FF5894; background: rgba(255,88,148,0.08); }
+    .mobile-icon-btn:active { transform: scale(0.94); }
+    .mobile-icon-btn:hover, .mobile-icon-btn.active {
+      color: #FF5894;
+      background: rgba(255, 88, 148, 0.1);
+    }
+    .mobile-icon-btn--primary {
+      background: linear-gradient(135deg, #FF5894, #FF2D7B);
+      color: #fff !important;
+      box-shadow: 0 4px 14px rgba(255, 88, 148, 0.28);
+    }
+    .mobile-icon-btn--primary:hover,
+    .mobile-icon-btn--primary.active {
+      background: linear-gradient(135deg, #FF2D7B, #FF5894);
+      color: #fff !important;
+    }
+    .mobile-icon-btn .mobile-badge {
+      position: absolute; top: 4px; right: 4px;
+      min-width: 17px; height: 17px; padding: 0 4px;
+      background: #FF5894; color: #fff;
+      font-size: 10px; font-weight: 700; line-height: 17px;
+      text-align: center; border-radius: 999px;
+      border: 2px solid #fff;
+      pointer-events: none;
+    }
+    .mobile-icon-btn--primary .mobile-badge {
+      background: #fff; color: #FF5894; border-color: #FF5894;
+    }
+    .sidenav-quick-links {
+      display: none;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      background: #fafafa;
+    }
+    .sidenav-quick-link {
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 12px 8px; border-radius: 12px; background: #fff;
+      border: 1px solid #eee; color: #444; text-decoration: none;
+      font-size: 11px; font-weight: 600; transition: border-color 0.2s, color 0.2s;
+    }
+    .sidenav-quick-link:hover { color: #FF5894; border-color: #FF5894; }
+    .sidenav-quick-link svg { color: #FF5894; }
     .mobile-search-panel {
       padding: 12px 16px 16px; background: #fff;
       border-bottom: 1px solid #f0f0f0;
@@ -147,6 +221,7 @@ export function Header() {
       a.closebtn { display: none !important; }
       .toggle-nav { display: none !important; }
       .sidenav-header, .sidenav-footer { display: none !important; }
+      .sidenav-quick-links { display: none !important; }
     }
     @media (max-width: 1024px) {
       #mySidenav.nav.sidenav {
@@ -228,32 +303,22 @@ export function Header() {
       }
       .desktop-track-row { display: none !important; }
       .desktop-quote-btn { display: none !important; }
-      .mobile-header-actions {
-        display: flex !important; align-items: center; gap: 8px;
-        margin-left: auto; flex-shrink: 0; padding: 0 12px 0 0;
-      }
-      .main-header-box .row.bg-media {
-        display: flex !important; flex-wrap: nowrap !important;
-        align-items: center !important; padding: 2px 0 !important;
-        min-height: 58px;
-      }
-      .main-header-box .row.bg-media > .col-logo {
-        flex: 0 0 auto !important; width: auto !important; max-width: none !important;
-        padding: 6px 0 6px 16px !important;
-      }
-      .logo img { max-height: 40px !important; width: auto; }
+      .main-header-box .row.bg-media { display: none !important; }
+      .mobile-header-bar { display: flex !important; }
+      .sidenav-quick-links { display: grid !important; }
       #topabr { display: none !important; }
-      #masthead { padding: 0 !important; }
-      .nav_wrap { padding-left: 0 !important; padding-right: 0 !important; }
+      #masthead { padding: 0 !important; background: #fff !important; }
+      .nav_wrap { padding: 0 !important; max-width: 100% !important; }
+      .main-header-box { padding: 0 !important; }
       .mobile-search-panel.is-open { display: block !important; }
-      #masthead { box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
+      #masthead { box-shadow: 0 1px 0 rgba(0,0,0,0.06); }
+      #masthead.scrolled { box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
     }
-    @media (max-width: 576px) {
-      .logo img { max-height: 34px !important; }
-      .mobile-icon-btn { width: 38px; height: 38px; border-radius: 10px; }
-      .mobile-header-actions { gap: 6px; padding: 0 8px 0 0; }
-      .main-header-box .row.bg-media { min-height: 52px; }
-      .main-header-box .row.bg-media > .col-logo { padding: 4px 0 4px 12px !important; }
+    @media (max-width: 390px) {
+      .mobile-header-bar { padding: 8px 12px; min-height: 56px; }
+      .mobile-header-logo img { max-height: 32px !important; max-width: 130px; }
+      .mobile-icon-btn { width: 40px; height: 40px; border-radius: 10px; }
+      .mobile-header-tools { gap: 2px; }
     }
     .scroll-top-btn {
       position: fixed; bottom: 30px; right: 30px; z-index: 99999;
@@ -267,11 +332,17 @@ export function Header() {
     }
     .scroll-top-btn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
     .scroll-top-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(255,88,148,0.6); }
+    html.dark .mobile-header-bar { background: #1e1e1e; }
+    html.dark .mobile-icon-btn { color: #e8e8e8; }
+    html.dark .mobile-icon-btn:hover,
+    html.dark .mobile-icon-btn.active { background: rgba(255, 88, 148, 0.15); color: #FF5894; }
+    html.dark .sidenav-quick-links { background: #1a1a1a; border-color: #333; }
+    html.dark .sidenav-quick-link { background: #252525; border-color: #333; color: #ddd; }
   `;
 
   return (
       <>
-    <div className={`header-wrapper${headerHidden ? " hidden" : ""}`} style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
+    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
       <style dangerouslySetInnerHTML={{ __html: headerStyles }} />
       <div id="topabr">
           <div className="container">
@@ -316,46 +387,44 @@ export function Header() {
           <div className="header-wrap">
             <div className="container nav_wrap">
               <div className="main-header-box">
-                <div className="row bg-media">
-                  <div className="col-lg-2 col-md-5 col-sm-4 col-12 align-self-center col-logo">
-                    <div className="logo">
-                      <Link href="/"><img src={theme === "dark" ? "/images/logo_dark.png" : "/images/logo_light.png"} alt="logo" /></Link>
-                    </div>
+                <div className="mobile-header-bar">
+                  <div className="mobile-header-logo">
+                    <Link href="/">
+                      <img
+                        src={theme === "dark" ? "/images/logo_dark.png" : "/images/logo_light.png"}
+                        alt="Cosmetic Store"
+                      />
+                    </Link>
                   </div>
-                  <div className="mobile-header-actions">
+                  <div className="mobile-header-tools">
                     <button
                       type="button"
                       className={`mobile-icon-btn ${mobileSearchOpen ? "active" : ""}`}
                       onClick={() => { setMobileSearchOpen(!mobileSearchOpen); setMobileMenuOpen(false); }}
                       aria-label={t("search.placeholder")}
                     >
-                      <i className="fas fa-search" />
+                      <Search size={20} strokeWidth={2.2} />
                     </button>
-                    <Link href="/account" className="mobile-icon-btn" aria-label="Account">
-                      <i className="fa-duotone fa-user" />
-                    </Link>
-                    <Link href="/wishlist" className="mobile-icon-btn" aria-label="Wishlist">
-                      <i className="far fa-heart" />
-                      {wishlistCount > 0 && <span className="cart-counter">{wishlistCount}</span>}
-                    </Link>
-                    <Link href="/cart" className="mobile-icon-btn" aria-label="Cart">
-                      <i className="fal fa-shopping-cart" />
-                      {itemCount > 0 && <span className="cart-counter">{itemCount}</span>}
+                    <Link href="/cart" className="mobile-icon-btn mobile-icon-btn--primary" aria-label="Cart">
+                      <ShoppingBag size={20} strokeWidth={2.2} />
+                      {itemCount > 0 && <span className="mobile-badge">{itemCount > 9 ? "9+" : itemCount}</span>}
                     </Link>
                     <button
                       type="button"
                       className={`mobile-icon-btn ${mobileMenuOpen ? "active" : ""}`}
                       onClick={() => { setMobileMenuOpen(!mobileMenuOpen); setMobileSearchOpen(false); setOpenSubmenu(null); }}
                       aria-label="Menu"
+                      aria-expanded={mobileMenuOpen}
                     >
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ transition: "transform 0.3s", transform: mobileMenuOpen ? "rotate(90deg)" : "rotate(0)" }}>
-                        {mobileMenuOpen ? (
-                          <><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></>
-                        ) : (
-                          <><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></>
-                        )}
-                      </svg>
+                      {mobileMenuOpen ? <X size={22} strokeWidth={2.2} /> : <Menu size={22} strokeWidth={2.2} />}
                     </button>
+                  </div>
+                </div>
+                <div className="row bg-media">
+                  <div className="col-lg-2 col-md-5 col-sm-4 col-12 align-self-center col-logo">
+                    <div className="logo">
+                      <Link href="/"><img src={theme === "dark" ? "/images/logo_dark.png" : "/images/logo_light.png"} alt="logo" /></Link>
+                    </div>
                   </div>
                   <div className="col-lg-5 col-md-7 header-search-flex desktop-header-search">
                     <div id="cat_toggle" onClick={() => setCategoriesOpen(!categoriesOpen)}>
@@ -430,6 +499,29 @@ export function Header() {
                             <div className="sidenav-header">
                               <span>Menu</span>
                               <a href="#" className="closebtn" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }}>&times;</a>
+                            </div>
+                            <div className="sidenav-quick-links">
+                              <Link href="/account" className="sidenav-quick-link" onClick={() => setMobileMenuOpen(false)}>
+                                <User size={20} strokeWidth={2} />
+                                Account
+                              </Link>
+                              <Link href="/wishlist" className="sidenav-quick-link" onClick={() => setMobileMenuOpen(false)}>
+                                <Heart size={20} strokeWidth={2} />
+                                Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
+                              </Link>
+                              <button
+                                type="button"
+                                className="sidenav-quick-link"
+                                style={{ border: "1px solid #eee", cursor: "pointer", fontFamily: "inherit" }}
+                                onClick={toggleTheme}
+                              >
+                                {theme === "dark" ? (
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                                ) : (
+                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+                                )}
+                                {theme === "dark" ? "Light" : "Dark"}
+                              </button>
                             </div>
                             <nav id="site-navigation" className="main-navigation">
                               <div className="menu clearfix">
