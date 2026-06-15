@@ -20,8 +20,8 @@ export async function POST(request: Request) {
     await writeFile(path.join(dir, filename), buffer);
 
     return NextResponse.json({ url: `/uploads/${filename}` });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Upload error:", error);
-    return NextResponse.json({ error: "Upload failed" }, { status: 500 });
+    return NextResponse.json({ error: `Upload failed: ${error.message || "Unknown error"}` }, { status: 500 });
   }
 }

@@ -28,30 +28,16 @@ export function ImageUpload({ value, onChange, label }: ImageUploadProps) {
 
     try {
       const reader = new FileReader();
-      const base64 = await new Promise<string>((resolve, reject) => {
-        reader.onload = () => {
-          const result = reader.result as string;
-          resolve(result.split(",")[1]);
-        };
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string);
         reader.onerror = () => reject(reader.error);
         reader.readAsDataURL(file);
       });
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ file: base64, name: file.name }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        setPreview(data.url);
-        onChangeRef.current(data.url);
-      } else {
-        setError(data.error || "Upload failed");
-      }
+      setPreview(dataUrl);
+      onChangeRef.current(dataUrl);
     } catch (err) {
       console.error("Upload failed", err);
-      setError("Upload failed. Please try again.");
+      setError("Failed to read file");
     } finally {
       setUploading(false);
     }

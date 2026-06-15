@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { brands } from "@/lib/schema";
 import { eq } from "drizzle-orm";
+import { saveBase64Image } from "@/lib/upload";
+
+export const runtime = "nodejs";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -13,7 +16,10 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await request.json();
-  const { name, image, link, order, active } = body;
+  let { name, image, link, order, active } = body;
+  if (image && typeof image === "string" && image.startsWith("data:")) {
+    image = await saveBase64Image(image);
+  }
   const updated = await db.update(brands).set({ name, image, link, order, active }).where(eq(brands.id, Number(id))).returning();
   if (!updated.length) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(updated[0]);

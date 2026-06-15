@@ -21,6 +21,7 @@ export default function BrandsPage() {
   const [editing, setEditing] = useState<Brand | null>(null)
   const [form, setForm] = useState(emptyForm)
   const [submitting, setSubmitting] = useState(false)
+  const [formError, setFormError] = useState("")
 
   useEffect(() => { fetchItems() }, [])
 
@@ -45,7 +46,7 @@ export default function BrandsPage() {
 
   function openEdit(item: Brand) {
     setEditing(item)
-    setForm({ name: item.name, image: item.image, link: item.link, order: item.order, active: item.active })
+    setForm({ name: item.name, image: item.image || "", link: item.link || "", order: item.order ?? 0, active: item.active ?? true })
     setShowForm(true)
   }
 
@@ -53,6 +54,7 @@ export default function BrandsPage() {
     setShowForm(false)
     setEditing(null)
     setForm(emptyForm)
+    setFormError("")
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -60,23 +62,29 @@ export default function BrandsPage() {
     if (!form.name) return
     try {
       setSubmitting(true)
+      setFormError("")
+      let res
       if (editing) {
-        await fetch(`/api/brands/${editing.id}`, {
+        res = await fetch(`/api/brands/${editing.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(form),
         })
       } else {
-        await fetch("/api/brands", {
+        res = await fetch("/api/brands", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(form),
         })
       }
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || `Server error (${res.status})`)
+      }
       cancelForm()
       await fetchItems()
     } catch (err) {
-      console.error("Failed to save brand", err)
+      setFormError((err as Error).message)
     } finally {
       setSubmitting(false)
     }
@@ -113,6 +121,11 @@ export default function BrandsPage() {
           </div>
           <div className="admin-card-body">
             <form onSubmit={handleSubmit}>
+              {formError && (
+                <div style={{ background: "#fef2f2", color: "#b91c1c", padding: "8px 12px", borderRadius: 8, marginBottom: 12, fontSize: 14 }}>
+                  {formError}
+                </div>
+              )}
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, marginBottom: 16 }}>
                 <div className="admin-form-group">
                   <label className="admin-label">Name</label>
