@@ -88,16 +88,29 @@ export default function StoriesBar() {
     <>
       <style>{`
         .stories-bar-wrap {
-          padding: 16px 0;
+          padding: 20px 0 4px;
           overflow: hidden;
+        }
+        .stories-bar-heading {
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .stories-bar-heading h3 {
+          font-size: 24px;
+          font-weight: 700;
+          color: #222;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin: 0;
         }
         .stories-bar {
           display: flex;
-          gap: 16px;
+          gap: 24px;
           overflow-x: auto;
-          padding: 4px 0 8px;
+          padding: 4px 0 16px;
           scrollbar-width: none;
           -ms-overflow-style: none;
+          justify-content: center;
         }
         .stories-bar::-webkit-scrollbar { display: none; }
         .story-avatar {
@@ -105,20 +118,21 @@ export default function StoriesBar() {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 6px;
+          gap: 10px;
           cursor: pointer;
           transition: transform 0.2s;
         }
-        .story-avatar:hover { transform: scale(1.05); }
+        .story-avatar:hover { transform: scale(1.08); }
         .story-ring {
-          width: 68px;
-          height: 68px;
+          width: 120px;
+          height: 120px;
           border-radius: 50%;
-          padding: 3px;
+          padding: 4px;
           background: conic-gradient(#ec4899, #f59e0b, #ec4899);
           display: flex;
           align-items: center;
           justify-content: center;
+          box-shadow: 0 2px 12px rgba(236,72,153,0.25);
         }
         .story-ring-inner {
           width: 100%;
@@ -137,23 +151,24 @@ export default function StoriesBar() {
           border-radius: 50%;
         }
         .story-text-thumb {
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 600;
           color: #ec4899;
           text-align: center;
-          padding: 4px;
-          line-height: 1.2;
+          padding: 6px;
+          line-height: 1.3;
           word-break: break-word;
           display: -webkit-box;
-          -webkit-line-clamp: 3;
+          -webkit-line-clamp: 4;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
         .story-avatar-name {
-          font-size: 11px;
-          color: #666;
+          font-size: 12px;
+          font-weight: 500;
+          color: #555;
           text-align: center;
-          max-width: 72px;
+          max-width: 120px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
@@ -278,6 +293,9 @@ export default function StoriesBar() {
 
       <div className="container">
         <div className="stories-bar-wrap">
+          <div className="stories-bar-heading">
+            <h3>Story</h3>
+          </div>
           <div className="stories-bar">
             {stories.map((story, i) => (
               <div key={story.id} className="story-avatar" onClick={() => openViewer(i)}>
@@ -287,17 +305,17 @@ export default function StoriesBar() {
                       <img src={story.content} alt="Story" />
                     ) : story.type === "text" ? (
                       <div className="story-text-thumb" style={{ background: storyColors[i % storyColors.length], color: "#fff", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>
-                        {story.content.slice(0, 30)}
+                        {story.content.slice(0, 40)}
                       </div>
                     ) : (
-                      <div style={{ width: "100%", height: "100%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", fontSize: 24, color: "#fff" }}>
+                      <div style={{ width: "100%", height: "100%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", fontSize: 32, color: "#fff" }}>
                         ▶
                       </div>
                     )}
                   </div>
                 </div>
                 <span className="story-avatar-name">
-                  {story.type === "text" ? story.content.slice(0, 15) : "Story"}
+                  {story.type === "text" ? story.content.slice(0, 18) : "Story"}
                 </span>
               </div>
             ))}
