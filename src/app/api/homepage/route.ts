@@ -55,6 +55,7 @@ export async function GET() {
       id: s.id,
       type: s.type,
       content: s.content,
+      caption: s.caption,
       duration: s.duration,
       link: s.link,
       expiresAt: s.expiresAt,

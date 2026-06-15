@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { ImageUpload } from "@/components/ui/image-upload"
 import AdminPagination from "@/components/admin/admin-pagination"
 
@@ -10,6 +10,7 @@ interface Story {
   id: number
   type: "image" | "text" | "video"
   content: string
+  caption?: string
   duration: number
   link: string
   active: boolean
@@ -18,17 +19,41 @@ interface Story {
   expired?: boolean
 }
 
-const emptyForm: { type: "image" | "text" | "video"; content: string; duration: number; link: string; active: boolean } = { type: "image", content: "", duration: 1, link: "", active: true }
+interface FormState { type: "image" | "text" | "video"; content: string; caption: string; duration: number; link: string; active: boolean }
+
+const emptyForm: FormState = { type: "image", content: "", caption: "", duration: 1, link: "", active: true }
 
 export default function AdminStoriesPage() {
   const [items, setItems] = useState<Story[]>([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editing, setEditing] = useState<Story | null>(null)
-  const [form, setForm] = useState(emptyForm)
+  const [form, setForm] = useState<FormState>(emptyForm)
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const [videoUploading, setVideoUploading] = useState(false)
+  const videoInputRef = useRef<HTMLInputElement>(null)
+
+  async function handleVideoFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setVideoUploading(true)
+    try {
+      const reader = new FileReader()
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = () => reject(reader.error)
+        reader.readAsDataURL(file)
+      })
+      setForm((prev) => ({ ...prev, content: dataUrl }))
+    } catch (err) {
+      console.error("Failed to read video", err)
+      setFormError("Failed to read video file")
+    } finally {
+      setVideoUploading(false)
+    }
+  }
 
   useEffect(() => { fetchItems() }, [])
 
@@ -54,7 +79,7 @@ export default function AdminStoriesPage() {
 
   function openEdit(item: Story) {
     setEditing(item)
-    setForm({ type: item.type, content: item.content, duration: item.duration, link: item.link || "", active: item.active })
+    setForm({ type: item.type, content: item.content, caption: item.caption || "", duration: item.duration, link: item.link || "", active: item.active })
     setShowForm(true)
     setFormError("")
   }
@@ -119,6 +144,19 @@ export default function AdminStoriesPage() {
       await fetchItems()
     } catch (err) {
       console.error("Failed to repost story", err)
+    }
+  }
+
+  async function handleReactivate(id: number) {
+    try {
+      await fetch(`/api/stories/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ active: true }),
+      })
+      await fetchItems()
+    } catch (err) {
+      console.error("Failed to reactivate story", err)
     }
   }
 
@@ -187,13 +225,13 @@ export default function AdminStoriesPage() {
               </div>
 
               {form.type === "image" && (
-                <div className="admin-form-group" style={{ marginBottom: 16 }}>
+                <div className="admin-form-group" style={{ marginBottom: 12 }}>
                   <ImageUpload value={form.content.startsWith("data:") || form.content.startsWith("/") || form.content.startsWith("http") ? form.content : ""} onChange={(url) => setForm((prev) => ({ ...prev, content: url }))} label="Image" />
                 </div>
               )}
 
               {form.type === "text" && (
-                <div className="admin-form-group" style={{ marginBottom: 16 }}>
+                <div className="admin-form-group" style={{ marginBottom: 12 }}>
                   <label className="admin-label">Text Content</label>
                   <textarea
                     className="admin-input"
@@ -207,13 +245,38 @@ export default function AdminStoriesPage() {
               )}
 
               {form.type === "video" && (
-                <div className="admin-form-group" style={{ marginBottom: 16 }}>
-                  <label className="admin-label">Video URL</label>
-                  <input
+                <>
+                  <div className="admin-form-group" style={{ marginBottom: 12 }}>
+                    <label className="admin-label">Video URL</label>
+                    <input
+                      className="admin-input"
+                      placeholder="https://example.com/video.mp4"
+                      value={form.content.startsWith("http") && !form.content.startsWith("data:") ? form.content : ""}
+                      onChange={(e) => setForm({ ...form, content: e.target.value })}
+                    />
+                  </div>
+                  <div className="admin-form-group" style={{ marginBottom: 12 }}>
+                    <label className="admin-label">Or upload video file</label>
+                    <div>
+                      <button type="button" className="admin-btn admin-btn-ghost admin-btn-sm" onClick={() => videoInputRef.current?.click()}>
+                        {videoUploading ? "Uploading..." : "Choose Video File"}
+                      </button>
+                      <input ref={videoInputRef} type="file" accept="video/*" onChange={handleVideoFile} style={{ display: "none" }} />
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {(form.type === "image" || form.type === "video") && (
+                <div className="admin-form-group" style={{ marginBottom: 12 }}>
+                  <label className="admin-label">Caption (text overlay)</label>
+                  <textarea
                     className="admin-input"
-                    placeholder="https://example.com/video.mp4"
-                    value={form.content.startsWith("http") ? form.content : ""}
-                    onChange={(e) => setForm({ ...form, content: e.target.value })}
+                    rows={2}
+                    placeholder="Optional text to show over the image/video..."
+                    value={form.caption}
+                    onChange={(e) => setForm({ ...form, caption: e.target.value })}
+                    style={{ resize: "vertical" }}
                   />
                 </div>
               )}
@@ -297,9 +360,14 @@ export default function AdminStoriesPage() {
                         <button className="admin-btn-icon" onClick={() => openEdit(item)} title="Edit">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                         </button>
+                        {!item.active && !expired && (
+                          <button className="admin-btn-icon" onClick={() => handleReactivate(item.id)} title="Reactivate">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                          </button>
+                        )}
                         {expired && (
                           <button className="admin-btn-icon" onClick={() => handleRepost(item.id)} title="Repost (renew)">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="22 12 18 12 18 16"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L22 10"/></svg>
                           </button>
                         )}
                         <button className="admin-btn-icon" onClick={() => handleDeactivate(item.id)} title="Deactivate">

@@ -138,6 +138,7 @@ export const stories = pgTable("stories", {
   id: serial("id").primaryKey(),
   type: varchar("type", { length: 20 }).notNull().default("image"),
   content: text("content").notNull(),
+  caption: text("caption"),
   duration: integer("duration").notNull().default(1),
   link: text("link"),
   active: boolean("active").default(true),

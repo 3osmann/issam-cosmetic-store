@@ -6,6 +6,7 @@ interface StoryItem {
   id: number
   type: "image" | "text" | "video"
   content: string
+  caption?: string
   link?: string
   expiresAt: string
 }
@@ -366,11 +367,32 @@ export default function StoriesBar() {
               <div className="story-nav-area story-nav-left" onClick={prevStory} />
               <div className="story-nav-area story-nav-right" onClick={nextStory} />
 
-              {stories[viewingIndex].type === "image" && (
-                <img src={stories[viewingIndex].content} alt="Story" />
-              )}
-              {stories[viewingIndex].type === "video" && (
-                <video src={stories[viewingIndex].content} autoPlay muted controls />
+              {(stories[viewingIndex].type === "image" || stories[viewingIndex].type === "video") && (
+                <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  {stories[viewingIndex].type === "image" ? (
+                    <img src={stories[viewingIndex].content} alt="Story" />
+                  ) : (
+                    <video src={stories[viewingIndex].content} autoPlay muted controls style={{ maxWidth: "100%", maxHeight: "100%", borderRadius: 8 }} />
+                  )}
+                  {stories[viewingIndex].caption && (
+                    <div style={{
+                      position: "absolute",
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      padding: "40px 20px 20px",
+                      background: "linear-gradient(transparent, rgba(0,0,0,0.7))",
+                      color: "#fff",
+                      fontSize: 16,
+                      fontWeight: 500,
+                      textAlign: "center",
+                      lineHeight: 1.4,
+                      borderRadius: "0 0 8px 8px",
+                    }}>
+                      {stories[viewingIndex].caption}
+                    </div>
+                  )}
+                </div>
               )}
               {stories[viewingIndex].type === "text" && (
                 <div

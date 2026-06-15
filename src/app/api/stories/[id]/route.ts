@@ -19,19 +19,45 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     const existing = await db.select().from(stories).where(eq(stories.id, Number(id))).limit(1);
     if (!existing.length) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const body = await request.json();
-    let { type, content, duration, link, active } = body;
+    let { type, content, caption, duration, link, active } = body;
     const hasContent = content !== undefined;
     const hasType = type !== undefined;
     const hasDuration = duration !== undefined;
     const hasLink = link !== undefined;
     const hasActive = active !== undefined;
-    if (hasType && type === "image" && hasContent && content && typeof content === "string" && content.startsWith("data:")) {
-      content = await saveBase64Image(content);
+    const hasCaption = caption !== undefined;
+    if (hasContent && content && typeof content === "string" && content.startsWith("data:")) {
+      if (content.startsWith("data:image")) {
+        content = await saveBase64Image(content);
+      } else if (content.startsWith("data:video")) {
+        const matches = content.match(/^data:video\/(\w+);base64,(.+)$/);
+        if (matches) {
+          const ext = matches[1].replace("mp4", "mp4").replace("webm", "webm").replace("ogg", "ogv");
+          const data = matches[2];
+          const buffer = Buffer.from(data, "base64");
+          const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+          const { writeFile, mkdir } = await import("fs/promises");
+          const path = await import("path");
+          const os = await import("os");
+          try {
+            const dir = path.join(process.cwd(), "public", "uploads");
+            await mkdir(dir, { recursive: true });
+            await writeFile(path.join(dir, filename), buffer);
+            content = `/uploads/${filename}`;
+          } catch {
+            const dir = path.join(os.tmpdir(), "uploads");
+            await mkdir(dir, { recursive: true });
+            await writeFile(path.join(dir, filename), buffer);
+            content = `/api/uploads/${filename}`;
+          }
+        }
+      }
     }
     const now = new Date();
     const merged: Record<string, any> = {};
     if (hasType) merged.type = type || "image";
     if (hasContent) merged.content = content || "";
+    if (hasCaption) merged.caption = caption || null;
     if (hasDuration) {
       const days = Math.max(1, Math.min(3, Number(duration) || 1));
       merged.duration = days;
