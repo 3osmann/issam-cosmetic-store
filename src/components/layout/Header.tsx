@@ -20,14 +20,22 @@ export function Header() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<number | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const [settings, setSettings] = useState<any>(null);
 
   useEffect(() => {
+    let lastScroll = 0;
     const handleScroll = () => {
       const current = window.scrollY;
       setScrolled(current > 50);
       setShowScrollTop(current > 400);
+      if (current === 0) {
+        setHeaderHidden(false);
+      } else if (current > lastScroll && current > 80) {
+        setHeaderHidden(true);
+      }
+      lastScroll = current;
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     fetch("/api/header").then(r => r.json()).then(setSettings).catch(() => {});
@@ -396,7 +404,7 @@ export function Header() {
 
   return (
       <>
-    <div className="header-wrapper" style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
+    <div className={`header-wrapper${headerHidden ? " hidden" : ""}`} style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 9999 }}>
       <style dangerouslySetInnerHTML={{ __html: headerStyles }} />
       <div id="topabr">
           <div className="container">
