@@ -240,8 +240,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="col-lg-4">
-              <div className="beauty-care-details">
-                <img src="/images/beauty-care.png" className="img-fluid" alt="Beauty & Care" />
+              <div className="beauty-care-details" style={{ height: "100%" }}>
+                <img src="/images/beauty-care.png" className="img-fluid" alt="Beauty & Care" style={{ borderRadius: 20, width: "100%", height: "100%", objectFit: "cover" }} />
                 <div className="beauty-care-content">
                   <h3>Beauty &amp; Care</h3>
                   <h6>From $299</h6>
@@ -254,8 +254,8 @@ export default function HomePage() {
           </div>
           <div className="row mt-3">
             <div className="col-lg-6">
-              <div className="get-offer-details">
-                <img src="/images/get-offer.png" className="get-offer-img img-fluid" alt="Get 50% Off" />
+              <div className="get-offer-details" style={{ height: "100%" }}>
+                <img src="/images/get-offer.png" className="get-offer-img img-fluid" alt="Get 50% Off" style={{ borderRadius: 20, width: "100%" }} />
                 <div className="get-offer-content">
                   <h3>Get Your 50% Off</h3>
                   <h6>Nourish your skin with toxin-free cosmetic products.</h6>
@@ -266,8 +266,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="col-lg-3">
-              <div className="check-out-details">
-                <img src="/images/check-this-out.png" className="img-fluid" alt="Check This Out" />
+              <div className="check-out-details" style={{ height: "100%" }}>
+                <img src="/images/check-this-out.png" className="img-fluid" alt="Check This Out" style={{ borderRadius: 20, width: "100%" }} />
                 <div className="check-out-content">
                   <h3>Check This Out</h3>
                   <p>FROM</p>
@@ -276,8 +276,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="col-lg-3">
-              <div className="body-lotion-details">
-                <img src="/images/body-lotion.png" className="img-fluid" alt="Body Lotion" />
+              <div className="body-lotion-details" style={{ height: "100%" }}>
+                <img src="/images/body-lotion.png" className="img-fluid" alt="Body Lotion" style={{ borderRadius: 20, width: "100%" }} />
                 <div className="body-lotion-content">
                   <h3>Body Lotion</h3>
                   <p>From</p>
@@ -679,7 +679,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="newsletter" className="position-relative" style={{ background: "linear-gradient(135deg, #FF5894, #FF8DB5)", padding: "60px 0", marginBottom: 40 }}>
+      <section id="newsletter" className="position-relative" style={{ background: "linear-gradient(135deg, #FF5894, #FF8DB5)", padding: "60px 0", marginBottom: 80 }}>
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-lg-6 text-center text-white">
