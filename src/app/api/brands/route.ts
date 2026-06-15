@@ -12,11 +12,17 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const body = await request.json();
-  let { name, image, link, order, active } = body;
-  if (image && typeof image === "string" && image.startsWith("data:")) {
-    image = await saveBase64Image(image);
+  try {
+    const body = await request.json();
+    let { name, image, link, order, active } = body;
+    if (image && typeof image === "string" && image.startsWith("data:")) {
+      image = await saveBase64Image(image);
+    }
+    if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    const created = await db.insert(brands).values({ name, image: image || "", link, order, active }).returning();
+    return NextResponse.json(created[0], { status: 201 });
+  } catch (error: any) {
+    console.error("POST brand error:", error);
+    return NextResponse.json({ error: error.message || "Failed to create brand" }, { status: 500 });
   }
-  const created = await db.insert(brands).values({ name, image, link, order, active }).returning();
-  return NextResponse.json(created[0], { status: 201 });
 }

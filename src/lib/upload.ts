@@ -2,10 +2,10 @@ import { writeFile, mkdir } from "fs/promises";
 import path from "path";
 
 export async function saveBase64Image(dataUrl: string): Promise<string> {
-  const matches = dataUrl.match(/^data:(image\/\w+);base64,(.+)$/);
+  const matches = dataUrl.match(/^data:image\/(\w+);base64,(.+)$/);
   if (!matches) throw new Error("Invalid data URL");
 
-  const ext = matches[1].split("/")[1].replace("jpeg", "jpg");
+  let ext = matches[1].replace("jpeg", "jpg");
   const data = matches[2];
   const buffer = Buffer.from(data, "base64");
 

@@ -14,15 +14,21 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 }
 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
-  const { id } = await params;
-  const body = await request.json();
-  let { name, image, link, order, active } = body;
-  if (image && typeof image === "string" && image.startsWith("data:")) {
-    image = await saveBase64Image(image);
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    let { name, image, link, order, active } = body;
+    if (image && typeof image === "string" && image.startsWith("data:")) {
+      image = await saveBase64Image(image);
+    }
+    if (!name) return NextResponse.json({ error: "Name is required" }, { status: 400 });
+    const updated = await db.update(brands).set({ name, image: image || "", link, order, active }).where(eq(brands.id, Number(id))).returning();
+    if (!updated.length) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    return NextResponse.json(updated[0]);
+  } catch (error: any) {
+    console.error("PUT brand error:", error);
+    return NextResponse.json({ error: error.message || "Failed to update brand" }, { status: 500 });
   }
-  const updated = await db.update(brands).set({ name, image, link, order, active }).where(eq(brands.id, Number(id))).returning();
-  if (!updated.length) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  return NextResponse.json(updated[0]);
 }
 
 export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
