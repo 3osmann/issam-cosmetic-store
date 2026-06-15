@@ -1,5 +1,10 @@
 "use client"
 
+import { useState } from "react"
+import AdminPagination from "@/components/admin/admin-pagination"
+
+const ITEMS_PER_PAGE = 6
+
 const orders = [
   { id: "#ORD-010", date: "2026-05-15", total: 89.99, status: "Delivered", items: 2, payment: "Credit Card" },
   { id: "#ORD-009", date: "2026-05-10", total: 45.00, status: "Shipped", items: 1, payment: "PayPal" },
@@ -12,6 +17,9 @@ const orders = [
 ]
 
 export default function OrdersPage() {
+  const [currentPage, setCurrentPage] = useState(1)
+  const totalPages = Math.ceil(orders.length / ITEMS_PER_PAGE)
+  const paginated = orders.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
   return (
     <div>
       <div className="admin-page-header">
@@ -51,7 +59,7 @@ export default function OrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {orders.map((o) => (
+              {paginated.map((o) => (
                 <tr key={o.id}>
                   <td style={{ fontWeight: 600 }}>{o.id}</td>
                   <td style={{ color: "var(--admin-text-muted)", fontSize: 13 }}>{o.date}</td>
@@ -72,13 +80,8 @@ export default function OrdersPage() {
           </table>
         </div>
         <div className="admin-table-footer">
-          <span>{orders.length} orders</span>
-          <div className="admin-pagination">
-            <button className="admin-page-btn" disabled>Previous</button>
-            <button className="admin-page-btn active">1</button>
-            <button className="admin-page-btn">2</button>
-            <button className="admin-page-btn">Next</button>
-          </div>
+          <span>{paginated.length} of {orders.length} orders</span>
+          <AdminPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       </div>
     </div>

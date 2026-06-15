@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import AdminPagination from "@/components/admin/admin-pagination"
+
+const ITEMS_PER_PAGE = 6
 
 const customers = [
   { id: "CUS-001", name: "Alice Johnson", email: "alice@example.com", orders: 12, totalSpent: 1245.00, joinedDate: "2026-01-15", status: "Active", avatar: "AJ" },
@@ -15,9 +18,12 @@ const customers = [
 
 export default function CustomersPage() {
   const [search, setSearch] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
   const filtered = customers.filter((c) =>
     c.name.toLowerCase().includes(search.toLowerCase()) || c.email.toLowerCase().includes(search.toLowerCase())
   )
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   return (
     <div>
@@ -35,7 +41,7 @@ export default function CustomersPage() {
             <svg className="admin-search-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input className="admin-input" placeholder="Search customers..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <input className="admin-input" placeholder="Search customers..." value={search} onChange={(e) => { setSearch(e.target.value); setCurrentPage(1) }} />
           </div>
         </div>
         <div className="admin-table-wrap">
@@ -51,7 +57,7 @@ export default function CustomersPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((c) => (
+              {paginated.map((c) => (
                 <tr key={c.id}>
                   <td>
                     <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -80,13 +86,8 @@ export default function CustomersPage() {
           </table>
         </div>
         <div className="admin-table-footer">
-          <span>Showing {filtered.length} of {customers.length} customers</span>
-          <div className="admin-pagination">
-            <button className="admin-page-btn" disabled>Previous</button>
-            <button className="admin-page-btn active">1</button>
-            <button className="admin-page-btn">2</button>
-            <button className="admin-page-btn">Next</button>
-          </div>
+          <span>Showing {paginated.length} of {filtered.length} customers</span>
+          <AdminPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       </div>
     </div>

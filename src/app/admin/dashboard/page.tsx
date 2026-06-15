@@ -249,13 +249,7 @@ export default function DashboardPage() {
             </table>
           </div>
           <div className="admin-table-footer">
-            <span>Showing 5 of 10 orders</span>
-            <div className="admin-pagination">
-              <button className="admin-page-btn" disabled>Previous</button>
-              <button className="admin-page-btn active">1</button>
-              <button className="admin-page-btn">2</button>
-              <button className="admin-page-btn">Next</button>
-            </div>
+            <span>Showing {recentOrders.length} recent orders</span>
           </div>
         </div>
 

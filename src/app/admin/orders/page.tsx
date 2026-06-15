@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import AdminPagination from "@/components/admin/admin-pagination"
+
+const ITEMS_PER_PAGE = 6
 
 type OrderStatus = "Pending" | "Processing" | "Shipped" | "Delivered" | "Cancelled"
 
@@ -30,12 +33,15 @@ const badgeMap: Record<OrderStatus, string> = {
 export default function OrdersPage() {
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<OrderStatus | "All">("All")
+  const [currentPage, setCurrentPage] = useState(1)
 
   const filtered = orders.filter((o) => {
     const ms = o.id.toLowerCase().includes(search.toLowerCase()) || o.customer.toLowerCase().includes(search.toLowerCase())
     const ss = statusFilter === "All" || o.status === statusFilter
     return ms && ss
   })
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   return (
     <div>
@@ -54,12 +60,12 @@ export default function OrdersPage() {
               <svg className="admin-search-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
               </svg>
-              <input className="admin-input" placeholder="Search orders..." value={search} onChange={(e) => setSearch(e.target.value)} />
+              <input className="admin-input" placeholder="Search orders..." value={search} onChange={(e) => { setSearch(e.target.value); setCurrentPage(1) }} />
             </div>
             <div className="admin-filter-group">
-              <button className={`admin-filter-btn ${statusFilter === "All" ? "active" : ""}`} onClick={() => setStatusFilter("All")}>All</button>
+              <button className={`admin-filter-btn ${statusFilter === "All" ? "active" : ""}`} onClick={() => { setStatusFilter("All"); setCurrentPage(1) }}>All</button>
               {statuses.map((s) => (
-                <button key={s} className={`admin-filter-btn ${statusFilter === s ? "active" : ""}`} onClick={() => setStatusFilter(s)}>{s}</button>
+                <button key={s} className={`admin-filter-btn ${statusFilter === s ? "active" : ""}`} onClick={() => { setStatusFilter(s); setCurrentPage(1) }}>{s}</button>
               ))}
             </div>
           </div>
@@ -78,7 +84,7 @@ export default function OrdersPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((o) => (
+              {paginated.map((o) => (
                 <tr key={o.id}>
                   <td style={{ fontWeight: 600 }}>{o.id}</td>
                   <td>
@@ -103,13 +109,8 @@ export default function OrdersPage() {
           </table>
         </div>
         <div className="admin-table-footer">
-          <span>Showing {filtered.length} of {orders.length} orders</span>
-          <div className="admin-pagination">
-            <button className="admin-page-btn" disabled>Previous</button>
-            <button className="admin-page-btn active">1</button>
-            <button className="admin-page-btn">2</button>
-            <button className="admin-page-btn">Next</button>
-          </div>
+          <span>Showing {paginated.length} of {filtered.length} orders</span>
+          <AdminPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       </div>
     </div>

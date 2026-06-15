@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import AdminPagination from "@/components/admin/admin-pagination"
+
+const ITEMS_PER_PAGE = 6
 
 const products = [
   { id: "PRD-001", name: "Rose Glow Serum", category: "Skincare", price: 89.99, stock: 45, status: "Active" },
@@ -15,7 +18,10 @@ const products = [
 
 export default function ProductsPage() {
   const [search, setSearch] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
   const filtered = products.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()))
+  const totalPages = Math.ceil(filtered.length / ITEMS_PER_PAGE)
+  const paginated = filtered.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   return (
     <div>
@@ -36,7 +42,7 @@ export default function ProductsPage() {
             <svg className="admin-search-input-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             </svg>
-            <input className="admin-input" placeholder="Search products..." value={search} onChange={(e) => setSearch(e.target.value)} />
+            <input className="admin-input" placeholder="Search products..." value={search} onChange={(e) => { setSearch(e.target.value); setCurrentPage(1) }} />
           </div>
         </div>
         <div className="admin-table-wrap">
@@ -52,7 +58,7 @@ export default function ProductsPage() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((p) => (
+              {paginated.map((p) => (
                 <tr key={p.id}>
                   <td>
                     <div className="admin-product-item">
@@ -94,14 +100,8 @@ export default function ProductsPage() {
           </table>
         </div>
         <div className="admin-table-footer">
-          <span>Showing {filtered.length} of {products.length} products</span>
-          <div className="admin-pagination">
-            <button className="admin-page-btn" disabled>Previous</button>
-            <button className="admin-page-btn active">1</button>
-            <button className="admin-page-btn">2</button>
-            <button className="admin-page-btn">3</button>
-            <button className="admin-page-btn">Next</button>
-          </div>
+          <span>Showing {paginated.length} of {filtered.length} products</span>
+          <AdminPagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
         </div>
       </div>
     </div>
