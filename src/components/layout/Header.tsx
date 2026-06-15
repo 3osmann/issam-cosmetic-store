@@ -66,6 +66,47 @@ export function Header() {
     "Skin care", "Uncategorized",
   ];
 
+  const navItems = settings?.navItems || [
+    { label: "Home", href: "/", children: [] },
+    { label: "Blog", href: "/blog", children: [] },
+    { label: "Shop", href: "/shop", children: [] },
+    { label: "Contact", href: "/contact", children: [] },
+  ];
+
+  const renderNavLinks = (onNavigate?: () => void) => (
+    <ul id="menu-primary-menu" className="clearfix mobile_nav">
+      {navItems.map((item: any, i: number) => (
+        <li
+          key={i}
+          className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""}`}
+        >
+          <Link href={item.href} onClick={() => { if (!item.children?.length) onNavigate?.(); }}>
+            {item.label}
+          </Link>
+          {item.children?.length > 0 && (
+            <>
+              <button
+                type="button"
+                className={`sub-toggle ${openSubmenu === i ? "open" : ""}`}
+                onClick={() => setOpenSubmenu(openSubmenu === i ? null : i)}
+                aria-label="Toggle submenu"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <ul className={`sub-menu ${openSubmenu === i ? "open" : ""}`}>
+                {item.children.map((child: any, ci: number) => (
+                  <li key={ci}>
+                    <Link href={child.href} onClick={() => onNavigate?.()}>{child.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </li>
+      ))}
+    </ul>
+  );
+
   const headerStyles = `
     .header-wrapper { overflow: visible; transition: transform 0.35s ease; }
     .header-wrapper.hidden { transform: translateY(-100%); }
@@ -198,8 +239,8 @@ export function Header() {
       border-radius: 8px !important; padding: 0 !important;
     }
     .sidenav-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-      z-index: 9999998; backdrop-filter: blur(4px);
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      z-index: 9999999; backdrop-filter: blur(4px);
       animation: fadeIn 0.2s ease;
     }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -218,89 +259,96 @@ export function Header() {
       #mySidenav .main-navigation ul.sub-menu li a { display: block !important; padding: 10px 22px !important; color: #444 !important; font-size: 13px !important; font-weight: 500 !important; text-decoration: none !important; transition: all 0.2s ease !important; }
       #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894 !important; background: #fff5f8 !important; padding-left: 28px !important; }
       #mySidenav .main-navigation ul li.menu-item-has-children > a::after { content: " ▾"; font-size: 10px; margin-left: 4px; opacity: 0.6; }
+      #mySidenav .sub-toggle { display: none !important; }
+      #mySidenav .main-navigation ul.sub-menu { max-height: none !important; overflow: visible !important; }
       a.closebtn { display: none !important; }
       .toggle-nav { display: none !important; }
       .sidenav-header, .sidenav-footer { display: none !important; }
       .sidenav-quick-links { display: none !important; }
+      .mobile-menu-drawer { display: none !important; }
+      .desktop-header-nav-col { display: block !important; }
     }
     @media (max-width: 1024px) {
-      #mySidenav.nav.sidenav {
+      #mobileMenuDrawer.nav.sidenav {
         width: 0; max-width: min(340px, 90vw); position: fixed; top: 0; right: 0;
-        height: 100%; height: 100dvh; background: #fff; z-index: 9999999;
+        height: 100%; height: 100dvh; background: #fff !important; z-index: 10000000;
         overflow-x: hidden; overflow-y: auto;
-        transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
         padding-top: 0; box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+        visibility: hidden;
       }
-      #mySidenav.nav.sidenav.is-open { width: min(340px, 90vw); }
-      .sidenav-header {
+      #mobileMenuDrawer.nav.sidenav.is-open {
+        width: min(340px, 90vw) !important;
+        visibility: visible;
+      }
+      #mobileMenuDrawer.nav.sidenav a { color: #333 !important; padding: 0 !important; }
+      #mobileMenuDrawer .sidenav-header {
         display: flex; align-items: center; justify-content: space-between;
         padding: 22px 24px 18px; border-bottom: 1px solid #f0f0f0;
         position: sticky; top: 0; background: #fff; z-index: 2;
       }
-      .sidenav-header span { font-weight: 700; font-size: 18px; color: #222; letter-spacing: -0.3px; }
-      a.closebtn {
+      #mobileMenuDrawer .sidenav-header span { font-weight: 700; font-size: 18px; color: #222; letter-spacing: -0.3px; }
+      #mobileMenuDrawer a.closebtn {
         position: static !important; font-size: 28px !important;
         color: #999 !important; line-height: 1; width: 36px; height: 36px;
         display: flex !important; align-items: center; justify-content: center;
         border-radius: 50%; transition: background 0.2s;
       }
-      a.closebtn:hover { background: #f5f5f5 !important; color: #333 !important; }
-      #mySidenav .main-navigation > .menu > ul { display: block; list-style: none; margin: 0; padding: 8px 0 24px; }
-      #mySidenav .main-navigation > .menu > ul > li {
+      #mobileMenuDrawer a.closebtn:hover { background: #f5f5f5 !important; color: #333 !important; }
+      #mobileMenuDrawer .main-navigation > .menu > ul { display: block; list-style: none; margin: 0; padding: 8px 0 24px; }
+      #mobileMenuDrawer .main-navigation > .menu > ul > li {
         border-bottom: 1px solid #f0f0f0;
         position: relative;
       }
-      #mySidenav .main-navigation > .menu > ul > li > a {
+      #mobileMenuDrawer .main-navigation > .menu > ul > li > a {
         display: block; padding: 16px 56px 16px 24px; font-size: 15px; font-weight: 600;
         color: #333; text-decoration: none; transition: color 0.2s, background 0.2s;
         letter-spacing: -0.2px;
       }
-      #mySidenav .main-navigation > .menu > ul > li .sub-toggle {
+      #mobileMenuDrawer .main-navigation > .menu > ul > li .sub-toggle {
         position: absolute; right: 10px; top: 10px; z-index: 3;
         width: 36px; height: 36px; border: none; background: transparent;
         border-radius: 50%; cursor: pointer; display: flex;
         align-items: center; justify-content: center;
         color: #999; font-size: 14px; transition: transform 0.25s ease, background 0.2s;
       }
-      #mySidenav .main-navigation > .menu > ul > li .sub-toggle:hover { background: #f5f5f5; color: #FF5894; }
-      #mySidenav .main-navigation > .menu > ul > li .sub-toggle.open { transform: rotate(180deg); color: #FF5894; }
-      #mySidenav .main-navigation > .menu > ul > li > a:hover,
-      #mySidenav .main-navigation > .menu > ul > li.current-menu-item > a {
+      #mobileMenuDrawer .main-navigation > .menu > ul > li .sub-toggle:hover { background: #f5f5f5; color: #FF5894; }
+      #mobileMenuDrawer .main-navigation > .menu > ul > li .sub-toggle.open { transform: rotate(180deg); color: #FF5894; }
+      #mobileMenuDrawer .main-navigation > .menu > ul > li > a:hover,
+      #mobileMenuDrawer .main-navigation > .menu > ul > li.current-menu-item > a {
         color: #FF5894; background: #fff5f8;
       }
-      #mySidenav .main-navigation ul.sub-menu {
+      #mobileMenuDrawer .main-navigation ul.sub-menu {
         display: block; list-style: none; padding: 0;
         background: #fafafa; max-height: 0; overflow: hidden;
         transition: max-height 0.35s ease, padding 0.35s ease;
       }
-      #mySidenav .main-navigation ul.sub-menu.open { max-height: 500px; padding: 6px 0; }
-      #mySidenav .main-navigation ul.sub-menu li { border-bottom: 1px solid #f5f5f5; }
-      #mySidenav .main-navigation ul.sub-menu li:last-child { border-bottom: none; }
-      #mySidenav .main-navigation ul.sub-menu li a {
+      #mobileMenuDrawer .main-navigation ul.sub-menu.open { max-height: 500px; padding: 6px 0; }
+      #mobileMenuDrawer .main-navigation ul.sub-menu li { border-bottom: 1px solid #f5f5f5; }
+      #mobileMenuDrawer .main-navigation ul.sub-menu li:last-child { border-bottom: none; }
+      #mobileMenuDrawer .main-navigation ul.sub-menu li a {
         display: block; padding: 14px 24px 14px 36px; font-size: 14px;
         font-weight: 500; color: #555; text-decoration: none;
         transition: color 0.2s, background 0.2s;
       }
-      #mySidenav .main-navigation ul.sub-menu li a:hover { color: #FF5894; background: #fff5f8; }
-      .sidenav-footer {
+      #mobileMenuDrawer .main-navigation ul.sub-menu li a:hover { color: #FF5894; background: #fff5f8; }
+      #mobileMenuDrawer .sidenav-footer {
         padding: 20px 24px calc(20px + var(--safe-bottom));
         border-top: 1px solid #f0f0f0; display: flex; flex-wrap: wrap; gap: 12px;
       }
-      .sidenav-footer select {
+      #mobileMenuDrawer .sidenav-footer select {
         flex: 1; min-width: 100px; padding: 10px 12px; border-radius: 10px;
         border: 1px solid #e0e0e0; font-size: 14px; background: #f8f8f8;
         color: #444; outline: none; cursor: pointer;
       }
-      .sidenav-footer select:focus { border-color: #FF5894; }
+      #mobileMenuDrawer .sidenav-footer select:focus { border-color: #FF5894; }
+      .mobile-menu-drawer { display: none; }
       .toggle-nav { display: none !important; }
     }
     @media (max-width: 991px) {
       .desktop-header-search { display: none !important; }
-      .desktop-header-nav-col {
-        display: block !important; width: 0 !important; height: 0 !important;
-        overflow: visible !important; padding: 0 !important; margin: 0 !important;
-        border: none !important; flex: 0 0 0 !important; max-width: 0 !important;
-      }
+      .desktop-header-nav-col { display: none !important; }
+      .mobile-menu-drawer { display: block !important; }
       .desktop-track-row { display: none !important; }
       .desktop-quote-btn { display: none !important; }
       .main-header-box .row.bg-media { display: none !important; }
@@ -338,6 +386,10 @@ export function Header() {
     html.dark .mobile-icon-btn.active { background: rgba(255, 88, 148, 0.15); color: #FF5894; }
     html.dark .sidenav-quick-links { background: #1a1a1a; border-color: #333; }
     html.dark .sidenav-quick-link { background: #252525; border-color: #333; color: #ddd; }
+    html.dark #mobileMenuDrawer.nav.sidenav { background: #1e1e1e !important; }
+    html.dark #mobileMenuDrawer .sidenav-header { background: #1e1e1e; border-color: #333; }
+    html.dark #mobileMenuDrawer .sidenav-header span { color: #eee; }
+    html.dark #mobileMenuDrawer .main-navigation > .menu > ul > li > a { color: #ddd !important; }
   `;
 
   return (
@@ -495,80 +547,10 @@ export function Header() {
                     <div className="menubar m-0 mt-md-0">
                       <div className="right_menu">
                         <div className="innermenubox">
-                          <div id="mySidenav" className={`nav sidenav ${mobileMenuOpen ? "is-open" : ""}`}>
-                            <div className="sidenav-header">
-                              <span>Menu</span>
-                              <a href="#" className="closebtn" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); }}>&times;</a>
-                            </div>
-                            <div className="sidenav-quick-links">
-                              <Link href="/account" className="sidenav-quick-link" onClick={() => setMobileMenuOpen(false)}>
-                                <User size={20} strokeWidth={2} />
-                                Account
-                              </Link>
-                              <Link href="/wishlist" className="sidenav-quick-link" onClick={() => setMobileMenuOpen(false)}>
-                                <Heart size={20} strokeWidth={2} />
-                                Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
-                              </Link>
-                              <button
-                                type="button"
-                                className="sidenav-quick-link"
-                                style={{ border: "1px solid #eee", cursor: "pointer", fontFamily: "inherit" }}
-                                onClick={toggleTheme}
-                              >
-                                {theme === "dark" ? (
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-                                ) : (
-                                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-                                )}
-                                {theme === "dark" ? "Light" : "Dark"}
-                              </button>
-                            </div>
+                          <div id="mySidenav" className="nav sidenav">
                             <nav id="site-navigation" className="main-navigation">
-                              <div className="menu clearfix">
-                                 <ul id="menu-primary-menu" className="clearfix mobile_nav">
-                                  {(settings?.navItems || [
-                                    { label: "Home", href: "/", children: [] },
-                                    { label: "Blog", href: "/blog", children: [] },
-                                    { label: "Shop", href: "/shop", children: [] },
-                                    { label: "Contact", href: "/contact", children: [] },
-                                  ]).map((item: any, i: number) => (
-                                    <li key={i} className={`menu-item ${item.children?.length ? "menu-item-has-children" : ""} ${pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href)) ? "current-menu-item" : ""}`}>
-                                      <Link href={item.href} onClick={() => { if (!item.children?.length) setMobileMenuOpen(false); }}>
-                                        {item.label}
-                                      </Link>
-                                      {item.children?.length > 0 && (
-                                        <>
-                                          <button className={`sub-toggle ${openSubmenu === i ? "open" : ""}`} onClick={() => setOpenSubmenu(openSubmenu === i ? null : i)} aria-label="Toggle submenu">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-                                          </button>
-                                          <ul className={`sub-menu ${openSubmenu === i ? "open" : ""}`}>
-                                            {item.children.map((child: any, ci: number) => (
-                                              <li key={ci}><Link href={child.href} onClick={() => setMobileMenuOpen(false)}>{child.label}</Link></li>
-                                            ))}
-                                          </ul>
-                                        </>
-                                      )}
-                                    </li>
-                                  ))}
-                                </ul>
-                              </div>
+                              <div className="menu clearfix">{renderNavLinks()}</div>
                             </nav>
-                            <div className="sidenav-footer">
-                              <select className="woocommerce-currency-switcher" defaultValue="USD" aria-label="Currency">
-                                <option value="USD">USD</option>
-                                <option value="EUR">EUR</option>
-                              </select>
-                              <select
-                                className="gt_selector notranslate"
-                                value={locale}
-                                onChange={(e) => setLocale(e.target.value as Locale)}
-                                aria-label="Language"
-                              >
-                                <option value="fr">{t("language.fr")}</option>
-                                <option value="en">{t("language.en")}</option>
-                                <option value="ar">{t("language.ar")}</option>
-                              </select>
-                            </div>
                           </div>
                         </div>
                       </div>
@@ -624,6 +606,68 @@ export function Header() {
           </form>
         </div>
       </header>
+
+      <div
+        id="mobileMenuDrawer"
+        className={`nav sidenav mobile-menu-drawer ${mobileMenuOpen ? "is-open" : ""}`}
+        aria-hidden={!mobileMenuOpen}
+      >
+        <div className="sidenav-header">
+          <span>Menu</span>
+          <button
+            type="button"
+            className="closebtn"
+            onClick={() => setMobileMenuOpen(false)}
+            aria-label="Close menu"
+            style={{ background: "none", border: "none", cursor: "pointer" }}
+          >
+            &times;
+          </button>
+        </div>
+        <div className="sidenav-quick-links">
+          <Link href="/account" className="sidenav-quick-link" onClick={() => setMobileMenuOpen(false)}>
+            <User size={20} strokeWidth={2} />
+            Account
+          </Link>
+          <Link href="/wishlist" className="sidenav-quick-link" onClick={() => setMobileMenuOpen(false)}>
+            <Heart size={20} strokeWidth={2} />
+            Wishlist{wishlistCount > 0 ? ` (${wishlistCount})` : ""}
+          </Link>
+          <button
+            type="button"
+            className="sidenav-quick-link"
+            style={{ border: "1px solid #eee", cursor: "pointer", fontFamily: "inherit" }}
+            onClick={toggleTheme}
+          >
+            {theme === "dark" ? (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            )}
+            {theme === "dark" ? "Light" : "Dark"}
+          </button>
+        </div>
+        <nav className="main-navigation">
+          <div className="menu clearfix">{renderNavLinks(() => setMobileMenuOpen(false))}</div>
+        </nav>
+        <div className="sidenav-footer">
+          <select className="woocommerce-currency-switcher" defaultValue="USD" aria-label="Currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+          <select
+            className="gt_selector notranslate"
+            value={locale}
+            onChange={(e) => setLocale(e.target.value as Locale)}
+            aria-label="Language"
+          >
+            <option value="fr">{t("language.fr")}</option>
+            <option value="en">{t("language.en")}</option>
+            <option value="ar">{t("language.ar")}</option>
+          </select>
+        </div>
+      </div>
+
       {mobileMenuOpen && (
         <div className="sidenav-overlay" onClick={() => setMobileMenuOpen(false)} aria-hidden="true" />
       )}
