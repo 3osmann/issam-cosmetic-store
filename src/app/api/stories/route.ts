@@ -59,7 +59,8 @@ export async function POST(request: Request) {
       .returning();
     return NextResponse.json(created[0], { status: 201 });
   } catch (error: any) {
-    console.error("POST story error:", error);
-    return NextResponse.json({ error: error.message || "Failed to create story" }, { status: 500 });
+    console.error("POST story error:", error?.message, error?.detail, error?.hint, error?.code);
+    if (error?.response) console.error("Response:", error.response);
+    return NextResponse.json({ error: JSON.stringify({ message: error?.message, detail: error?.detail, code: error?.code }) }, { status: 500 });
   }
 }
