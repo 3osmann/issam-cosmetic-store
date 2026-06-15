@@ -6,15 +6,14 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const formData = await request.formData();
-    const file = formData.get("file") as File | null;
+    const { file, name } = await request.json();
     if (!file) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const buffer = Buffer.from(file, "base64");
 
-    const ext = path.extname(file.name) || ".png";
+    const ext = path.extname(name || "") || ".png";
     const filename = `${Date.now()}-${Math.random().toString(36).substring(2, 8)}${ext}`;
     const dir = path.join(process.cwd(), "public", "uploads");
     await mkdir(dir, { recursive: true });
