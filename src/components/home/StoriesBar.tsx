@@ -146,18 +146,6 @@ export default function StoriesBar() {
           padding: 20px 0 4px;
           overflow: hidden;
         }
-        .stories-bar-heading {
-          text-align: center;
-          margin-bottom: 20px;
-        }
-        .stories-bar-heading h3 {
-          font-size: 24px;
-          font-weight: 700;
-          color: #222;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          margin: 0;
-        }
         .stories-bar {
           display: flex;
           gap: 24px;
@@ -370,8 +358,10 @@ export default function StoriesBar() {
 
       <div className="container">
         <div className="stories-bar-wrap">
-          <div className="stories-bar-heading">
-            <h3>Story</h3>
+          <div className="our_products-head" style={{ marginBottom: 8 }}>
+            <div className="our_products-tag">
+              <h2 className="main_heading">Story</h2>
+            </div>
           </div>
           <div className="stories-bar">
             {stories.map((story, si) => {
