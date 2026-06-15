@@ -93,7 +93,63 @@ const pageStyles = `
   .trending_products-box:hover .best-wishlist-btn { opacity: 1; }
   .best-wishlist-btn:hover { background: #FF5894; }
   .best-wishlist-btn:hover svg { stroke: #fff; }
+  .banner-hero-row {
+    --banner-height: 400px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+  .banner-hero-row > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+  }
+  .banner-hero-row .carousel {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: var(--banner-height);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .banner-hero-row .carousel-inner {
+    height: 100%;
+    min-height: var(--banner-height);
+  }
+  .banner-hero-row .carousel-item {
+    height: 100%;
+    min-height: var(--banner-height);
+  }
+  .banner-hero-row .carousel-item img {
+    height: var(--banner-height) !important;
+    min-height: var(--banner-height) !important;
+    width: 100% !important;
+    object-fit: cover !important;
+    border-radius: 20px;
+    display: block;
+  }
+  .banner-hero-row .beauty-care-details {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    min-height: var(--banner-height);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .banner-hero-row .beauty-care-details > img {
+    height: var(--banner-height) !important;
+    min-height: var(--banner-height) !important;
+    width: 100% !important;
+    object-fit: cover !important;
+    border-radius: 20px;
+    display: block;
+  }
+  @media (max-width: 1199px) {
+    .banner-hero-row { --banner-height: 340px; }
+  }
   @media (max-width: 991px) {
+    .banner-hero-row { --banner-height: 300px; }
+    .banner-hero-row > [class*="col-"] { margin-bottom: 12px; }
+    .banner-hero-row > [class*="col-"]:last-child { margin-bottom: 0; }
     .popular-category .cat-images {
       display: grid !important;
       grid-template-columns: repeat(5, 1fr);
@@ -103,6 +159,7 @@ const pageStyles = `
     .popular-category .cat-image { width: 100% !important; height: auto !important; max-height: 56px; }
   }
   @media (max-width: 576px) {
+    .banner-hero-row { --banner-height: 220px; }
     .popular-category .cat-images { grid-template-columns: repeat(4, 1fr); }
     .product-bg-circle { width: 100px !important; height: 100px !important; }
     .products-image img { max-height: 120px; }
@@ -215,7 +272,7 @@ export default function HomePage() {
             </div>
           </div>
           <StoriesBar />
-          <div className="row">
+          <div className="row banner-hero-row">
             <div className="col-lg-8">
               <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">
                 <div className="carousel-indicators">
@@ -226,7 +283,7 @@ export default function HomePage() {
                 <div className="carousel-inner">
                   {[0, 1, 2].map((idx) => (
                     <div key={idx} className={`carousel-item ${idx === activeSlide ? "active" : ""}`}>
-                      <img src={`/images/slider${idx + 1}.png`} className="d-block w-100" alt={`Slide ${idx + 1}`} style={{ height: 400, objectFit: "cover" }} />
+                      <img src={`/images/slider${idx + 1}.png`} className="d-block w-100 banner-slide-img" alt={`Slide ${idx + 1}`} />
                       <div className="carousel-caption d-none d-md-block">
                         <h1 className="slider-heading">Free Shipping Beauty</h1>
                         <p className="slider-paragraph">Shop Top Quality Haircare, Makeup, Skincare, Nailcare &amp; Much More.</p>
@@ -240,8 +297,8 @@ export default function HomePage() {
               </div>
             </div>
             <div className="col-lg-4">
-              <div className="beauty-care-details" style={{ height: "100%" }}>
-                <img src="/images/beauty-care.png" className="img-fluid" alt="Beauty & Care" style={{ borderRadius: 20, width: "100%", height: "100%", objectFit: "cover" }} />
+              <div className="beauty-care-details">
+                <img src="/images/beauty-care.png" className="img-fluid banner-side-img" alt="Beauty & Care" />
                 <div className="beauty-care-content">
                   <h3>Beauty &amp; Care</h3>
                   <h6>From $299</h6>

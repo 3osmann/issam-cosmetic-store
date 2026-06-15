@@ -81,7 +81,12 @@ section { background-size: cover; background-repeat: no-repeat; position: relati
 .bg-pink-500 { background: #FF5894; }
 .font-elsie { font-family: Elsie, serif; }
 .header-wrapper { background: #fff; }
-#banner .carousel-item img { width: 100%; height: 400px; object-fit: cover; border-radius: 20px; }
+#banner .banner-hero-row .carousel-item img,
+#banner .banner-hero-row .beauty-care-details > img {
+  width: 100%;
+  object-fit: cover;
+  border-radius: 20px;
+}
 
 /* Modern mobile homepage */
 @media (max-width: 767px) {
@@ -270,6 +275,10 @@ html.dark .counter_box { background: #1e1e1e; }
   #banner { padding-top: var(--header-height) !important; padding-bottom: 10px !important; }
   #banner .popular-category { margin-bottom: 12px !important; }
   .popular-category h3 { margin-top: 8px !important; margin-bottom: 12px !important; font-size: 18px !important; }
+  #banner .banner-hero-row .carousel-item img,
+  #banner .banner-hero-row .beauty-care-details > img {
+    border-radius: 12px !important;
+  }
   #banner .carousel-item img { min-height: 140px; border-radius: 12px !important; }
   .home .carousel-indicators { display: none !important; }
   .popular-category .cat-images { gap: 4px !important; }
@@ -466,7 +475,6 @@ html.dark #masthead.scrolled { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4); }
   .products-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 20px !important; }
   .product-item .thumb { height: 200px !important; }
   #deal-of-the-day .container-fluid > .row > div { flex: 0 0 33.33%; max-width: 33.33%; }
-  #banner .carousel-item img { height: 300px !important; }
   footer .col-lg-3 { flex: 0 0 25%; max-width: 25%; }
 }
 
