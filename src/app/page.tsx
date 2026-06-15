@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
+import StoriesBar from "@/components/home/StoriesBar";
 import { motion } from "framer-motion";
 
 const instagramFeed = ["/images/insta1.png", "/images/insta2.png", "/images/insta3.png", "/images/insta4.png", "/images/insta5.png", "/images/insta6.png"];
@@ -213,6 +214,7 @@ export default function HomePage() {
               ))}
             </div>
           </div>
+          <StoriesBar />
           <div className="row">
             <div className="col-lg-8">
               <div id="carouselExampleIndicators" className="carousel slide" data-bs-ride="carousel">

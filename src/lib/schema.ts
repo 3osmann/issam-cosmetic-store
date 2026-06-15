@@ -134,6 +134,17 @@ export const siteSettings = pgTable("site_settings", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+export const stories = pgTable("stories", {
+  id: serial("id").primaryKey(),
+  type: varchar("type", { length: 20 }).notNull().default("image"),
+  content: text("content").notNull(),
+  duration: integer("duration").notNull().default(1),
+  link: text("link"),
+  active: boolean("active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  expiresAt: timestamp("expires_at").notNull(),
+});
+
 export const seoSettings = pgTable("seo_settings", {
   id: serial("id").primaryKey(),
   page: varchar("page", { length: 255 }).notNull().unique(),
