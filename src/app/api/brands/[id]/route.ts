@@ -13,7 +13,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const body = await request.json();
-  const updated = await db.update(brands).set(body).where(eq(brands.id, Number(id))).returning();
+  const { name, image, link, order, active } = body;
+  const updated = await db.update(brands).set({ name, image, link, order, active }).where(eq(brands.id, Number(id))).returning();
   if (!updated.length) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json(updated[0]);
 }
