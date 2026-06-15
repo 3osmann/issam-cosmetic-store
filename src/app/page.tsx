@@ -679,7 +679,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="newsletter" className="position-relative" style={{ background: "linear-gradient(135deg, #FF5894, #FF8DB5)" }}>
+      <section id="newsletter" className="position-relative" style={{ background: "linear-gradient(135deg, #FF5894, #FF8DB5)", padding: "60px 0", marginBottom: 40 }}>
         <div className="container">
           <div className="row justify-content-center">
             <div className="col-lg-6 text-center text-white">
