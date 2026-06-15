@@ -21,6 +21,8 @@ export async function POST(request: Request) {
     const body = await request.json();
     let { type, content, caption, duration, link, active } = body;
     if (!content) return NextResponse.json({ error: "Content is required" }, { status: 400 });
+    if (caption === "") caption = null;
+    if (link === "") link = null;
     if (content && typeof content === "string" && content.startsWith("data:")) {
       if (content.startsWith("data:image")) {
         content = await saveBase64Image(content);

@@ -20,6 +20,8 @@ export async function PUT(request: Request, { params }: { params: Promise<{ id: 
     if (!existing.length) return NextResponse.json({ error: "Not found" }, { status: 404 });
     const body = await request.json();
     let { type, content, caption, duration, link, active } = body;
+    if (caption === "") caption = null;
+    if (link === "") link = null;
     const hasContent = content !== undefined;
     const hasType = type !== undefined;
     const hasDuration = duration !== undefined;
