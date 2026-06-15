@@ -30,6 +30,100 @@ export function Footer() {
 
   return (
     <>
+      <style>{`
+        #footer {
+          color: #000 !important;
+          background: #fff !important;
+          padding: 60px 0 0 !important;
+        }
+        #footer h3 {
+          color: #000 !important;
+          font-family: Inter;
+          font-size: 18px;
+          font-weight: 500;
+          margin-bottom: 16px;
+        }
+        #footer ul {
+          padding-left: 0;
+          list-style: none;
+        }
+        #footer ul li {
+          padding: 4px 0;
+          text-align: left;
+        }
+        #footer ul li a {
+          color: #555 !important;
+          text-decoration: none;
+          font-size: 14px;
+          transition: color 0.2s;
+        }
+        #footer ul li a:hover {
+          color: #FF5894 !important;
+        }
+        #footer .foot-flex {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        #footer .foot-flex li p {
+          margin: 0;
+        }
+        #footer .foot-flex li p a {
+          color: #FF5894 !important;
+          font-weight: 700;
+        }
+        #footer .text-muted {
+          color: #666 !important;
+          font-size: 14px;
+          line-height: 1.6;
+        }
+        .copyright {
+          background: #FFEBEF !important;
+          padding: 20px 0;
+          margin-top: 40px;
+        }
+        .copyright p {
+          margin: 0;
+          color: #666;
+          font-size: 14px;
+        }
+        .copyright img {
+          max-height: 28px;
+          margin: 0 4px;
+        }
+        .social_widget {
+          display: flex;
+          gap: 8px;
+          justify-content: flex-end;
+        }
+        .social_widget a {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 34px;
+          height: 34px;
+          border-radius: 50%;
+          background: #fff;
+          color: #FF5894 !important;
+          border: 1px solid #FF5894;
+          transition: all 0.2s;
+        }
+        .social_widget a:hover {
+          background: #FF5894;
+          color: #fff !important;
+        }
+        .social_widget a i {
+          font-size: 15px;
+        }
+        @media (max-width: 768px) {
+          #footer h3 { text-align: center; }
+          #footer ul li { text-align: center; }
+          #footer .foot-flex { justify-content: center; }
+          #footer .text-center-mobile { text-align: center !important; }
+          .copyright .row > div { text-align: center !important; margin-bottom: 8px; }
+          .social_widget { justify-content: center; }
+        }
+      `}</style>
       <section className="options-footer">
         <div className="container">
           <div className="row">
