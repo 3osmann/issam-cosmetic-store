@@ -7,13 +7,34 @@ interface StoryItem {
   type: "image" | "text" | "video"
   content: string
   caption?: string
+}
+
+interface StoryData {
+  id: number
+  type: "image" | "text" | "video"
+  content: string
+  caption?: string
+  duration: number
   link?: string
   expiresAt: string
+  items?: StoryItem[]
+}
+
+interface FlatItem {
+  storyIndex: number
+  itemIndex: number
+  storyId: number
+  type: "image" | "text" | "video"
+  content: string
+  caption?: string
+  link?: string
+  duration: number
 }
 
 export default function StoriesBar() {
-  const [stories, setStories] = useState<StoryItem[]>([])
-  const [viewingIndex, setViewingIndex] = useState<number | null>(null)
+  const [stories, setStories] = useState<StoryData[]>([])
+  const [viewIndex, setViewIndex] = useState<number | null>(null)
+  const [flatItems, setFlatItems] = useState<FlatItem[]>([])
   const [progress, setProgress] = useState(0)
   const progressRef = useRef(0)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -26,6 +47,30 @@ export default function StoriesBar() {
       })
       .catch(() => {})
   }, [])
+
+  const flat = useCallback(() => {
+    const result: FlatItem[] = []
+    stories.forEach((s, si) => {
+      const items = s.items && s.items.length > 0 ? s.items : [{ id: 0, type: s.type, content: s.content, caption: s.caption }]
+      items.forEach((item, ii) => {
+        result.push({
+          storyIndex: si,
+          itemIndex: ii,
+          storyId: s.id,
+          type: item.type,
+          content: item.content,
+          caption: item.caption,
+          link: s.link,
+          duration: s.duration,
+        })
+      })
+    })
+    return result
+  }, [stories])
+
+  useEffect(() => {
+    setFlatItems(flat())
+  }, [stories, flat])
 
   const stopTimer = useCallback(() => {
     if (timerRef.current) {
@@ -45,45 +90,54 @@ export default function StoriesBar() {
       setProgress(progressRef.current)
       if (progressRef.current >= 100) {
         stopTimer()
+        advance()
       }
     }, interval)
   }, [stopTimer])
 
+  function advance() {
+    setViewIndex((prev) => {
+      if (prev === null) return null
+      if (prev < flatItems.length - 1) return prev + 1
+      return null
+    })
+  }
+
   useEffect(() => {
-    if (viewingIndex !== null) {
-      startTimer(5000)
+    if (viewIndex !== null && flatItems[viewIndex]) {
+      const dur = flatItems[viewIndex].duration
+      startTimer(dur * 24 * 60 * 60 * 1000)
     }
     return stopTimer
-  }, [viewingIndex, startTimer, stopTimer])
+  }, [viewIndex, flatItems, startTimer, stopTimer])
 
   function openViewer(index: number) {
-    setViewingIndex(index)
+    setViewIndex(0)
   }
 
   function closeViewer() {
-    setViewingIndex(null)
+    setViewIndex(null)
     stopTimer()
   }
 
-  function nextStory() {
-    if (viewingIndex === null) return
-    if (viewingIndex < stories.length - 1) {
-      setViewingIndex(viewingIndex + 1)
-    } else {
-      closeViewer()
+  function nextItem() {
+    if (viewIndex === null) return
+    if (viewIndex < flatItems.length - 1) {
+      setViewIndex(viewIndex + 1)
     }
   }
 
-  function prevStory() {
-    if (viewingIndex === null) return
-    if (viewingIndex > 0) {
-      setViewingIndex(viewingIndex - 1)
+  function prevItem() {
+    if (viewIndex === null) return
+    if (viewIndex > 0) {
+      setViewIndex(viewIndex - 1)
     }
   }
 
-  if (!stories.length) return null
+  if (!stories.length && !flatItems.length) return null
 
   const storyColors = ["#ec4899", "#8b5cf6", "#06b6d4", "#f59e0b", "#10b981", "#ef4444", "#3b82f6", "#14b8a6"]
+  const current = viewIndex !== null ? flatItems[viewIndex] : null
 
   return (
     <>
@@ -122,6 +176,7 @@ export default function StoriesBar() {
           gap: 10px;
           cursor: pointer;
           transition: transform 0.2s;
+          position: relative;
         }
         .story-avatar:hover { transform: scale(1.08); }
         .story-ring {
@@ -163,6 +218,22 @@ export default function StoriesBar() {
           -webkit-line-clamp: 4;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+        .story-item-badge {
+          position: absolute;
+          top: -4px;
+          right: -4px;
+          background: #ec4899;
+          color: #fff;
+          font-size: 10px;
+          font-weight: 700;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border: 2px solid #fff;
         }
         .story-avatar-name {
           font-size: 12px;
@@ -290,6 +361,11 @@ export default function StoriesBar() {
           text-decoration: none;
         }
         .story-viewer-link a:hover { opacity: 0.9; }
+        .story-separator {
+          height: 1px;
+          background: rgba(255,255,255,0.15);
+          margin: 0 12px;
+        }
       `}</style>
 
       <div className="container">
@@ -298,42 +374,47 @@ export default function StoriesBar() {
             <h3>Story</h3>
           </div>
           <div className="stories-bar">
-            {stories.map((story, i) => (
-              <div key={story.id} className="story-avatar" onClick={() => openViewer(i)}>
-                <div className="story-ring">
-                  <div className="story-ring-inner">
-                    {story.type === "image" ? (
-                      <img src={story.content} alt="Story" />
-                    ) : story.type === "text" ? (
-                      <div className="story-text-thumb" style={{ background: storyColors[i % storyColors.length], color: "#fff", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>
-                        {story.content.slice(0, 40)}
-                      </div>
-                    ) : (
-                      <div style={{ width: "100%", height: "100%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", fontSize: 32, color: "#fff" }}>
-                        ▶
-                      </div>
-                    )}
+            {stories.map((story, si) => {
+              const firstItem = story.items?.[0] || story
+              const itemCount = (story.items?.length || 1)
+              return (
+                <div key={story.id} className="story-avatar" onClick={() => openViewer(si)}>
+                  <div className="story-ring">
+                    <div className="story-ring-inner">
+                      {firstItem.type === "image" ? (
+                        <img src={firstItem.content} alt="Story" />
+                      ) : firstItem.type === "text" ? (
+                        <div className="story-text-thumb" style={{ background: storyColors[si % storyColors.length], color: "#fff", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%" }}>
+                          {firstItem.content.slice(0, 40)}
+                        </div>
+                      ) : (
+                        <div style={{ width: "100%", height: "100%", background: "#000", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "50%", fontSize: 32, color: "#fff" }}>
+                          ▶
+                        </div>
+                      )}
+                    </div>
                   </div>
+                  {itemCount > 1 && <div className="story-item-badge">{itemCount}</div>}
+                  <span className="story-avatar-name">
+                    {firstItem.type === "text" ? firstItem.content.slice(0, 18) : "Story"}
+                  </span>
                 </div>
-                <span className="story-avatar-name">
-                  {story.type === "text" ? story.content.slice(0, 18) : "Story"}
-                </span>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </div>
 
-      {viewingIndex !== null && stories[viewingIndex] && (
+      {viewIndex !== null && current && (
         <div className="story-overlay" onClick={closeViewer}>
           <div className="story-viewer" onClick={(e) => e.stopPropagation()}>
             <div className="story-viewer-top">
-              {stories.map((_, i) => (
+              {flatItems.map((_, i) => (
                 <div key={i} className="story-progress-track">
                   <div
                     className="story-progress-fill"
                     style={{
-                      width: i < viewingIndex ? "100%" : i === viewingIndex ? `${Math.min(progress, 100)}%` : "0%",
+                      width: i < viewIndex ? "100%" : i === viewIndex ? `${Math.min(progress, 100)}%` : "0%",
                     }}
                   />
                 </div>
@@ -347,7 +428,7 @@ export default function StoriesBar() {
                     width: 28,
                     height: 28,
                     borderRadius: "50%",
-                    background: storyColors[viewingIndex % storyColors.length],
+                    background: storyColors[current.storyIndex % storyColors.length],
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -356,25 +437,25 @@ export default function StoriesBar() {
                     color: "#fff",
                   }}
                 >
-                  {viewingIndex + 1}
+                  {current.storyIndex + 1}
                 </div>
-                <span>Story {viewingIndex + 1}</span>
+                <span>Story {current.storyIndex + 1}{flatItems.length > 1 ? ` · ${viewIndex + 1}/${flatItems.length}` : ""}</span>
               </div>
               <button className="story-viewer-close" onClick={closeViewer}>✕</button>
             </div>
 
             <div className="story-viewer-body">
-              <div className="story-nav-area story-nav-left" onClick={prevStory} />
-              <div className="story-nav-area story-nav-right" onClick={nextStory} />
+              <div className="story-nav-area story-nav-left" onClick={prevItem} />
+              <div className="story-nav-area story-nav-right" onClick={nextItem} />
 
-              {(stories[viewingIndex].type === "image" || stories[viewingIndex].type === "video") && (
+              {(current.type === "image" || current.type === "video") && (
                 <div style={{ position: "relative", width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  {stories[viewingIndex].type === "image" ? (
-                    <img src={stories[viewingIndex].content} alt="Story" />
+                  {current.type === "image" ? (
+                    <img src={current.content} alt="Story" />
                   ) : (
-                    <video src={stories[viewingIndex].content} autoPlay muted controls style={{ maxWidth: "100%", maxHeight: "100%", borderRadius: 8 }} />
+                    <video src={current.content} autoPlay muted controls style={{ maxWidth: "100%", maxHeight: "100%", borderRadius: 8 }} />
                   )}
-                  {stories[viewingIndex].caption && (
+                  {current.caption && (
                     <div style={{
                       position: "absolute",
                       bottom: 0,
@@ -389,24 +470,24 @@ export default function StoriesBar() {
                       lineHeight: 1.4,
                       borderRadius: "0 0 8px 8px",
                     }}>
-                      {stories[viewingIndex].caption}
+                      {current.caption}
                     </div>
                   )}
                 </div>
               )}
-              {stories[viewingIndex].type === "text" && (
+              {current.type === "text" && (
                 <div
                   className="story-viewer-text"
-                  style={{ background: storyColors[viewingIndex % storyColors.length] }}
+                  style={{ background: storyColors[current.storyIndex % storyColors.length] }}
                 >
-                  {stories[viewingIndex].content}
+                  {current.content}
                 </div>
               )}
             </div>
 
-            {stories[viewingIndex].link && (
+            {current.link && (
               <div className="story-viewer-link">
-                <a href={stories[viewingIndex].link} target="_blank" rel="noopener noreferrer">
+                <a href={current.link} target="_blank" rel="noopener noreferrer">
                   Learn More
                 </a>
               </div>

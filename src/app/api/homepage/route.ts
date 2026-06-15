@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { categories, banners, products, testimonials, brands, blogPosts, stories } from "@/lib/schema";
-import { and, eq, gte } from "drizzle-orm";
+import { categories, banners, products, testimonials, brands, blogPosts, stories, storyItems } from "@/lib/schema";
+import { and, eq, gte, inArray } from "drizzle-orm";
 import { asc, desc } from "drizzle-orm";
 
 function formatProduct(p: any) {
@@ -27,6 +27,22 @@ export async function GET() {
     db.select().from(stories).where(and(eq(stories.active, true), gte(stories.expiresAt, now))).orderBy(desc(stories.createdAt)),
   ]);
 
+  let storiesWithItems: any[] = allStories;
+  if (allStories.length) {
+    const allItems = await db.select().from(storyItems)
+      .where(inArray(storyItems.storyId, allStories.map(s => s.id)))
+      .orderBy(storyItems.sortOrder);
+    const itemsByStory: Record<number, typeof allItems> = {};
+    for (const item of allItems) {
+      if (!itemsByStory[item.storyId]) itemsByStory[item.storyId] = [];
+      itemsByStory[item.storyId].push(item);
+    }
+    storiesWithItems = allStories.map(s => ({
+      ...s,
+      items: itemsByStory[s.id] || [],
+    }));
+  }
+
   const bestSellers = allProducts.filter((p) => p.isBestSeller).slice(0, 8).map(formatProduct);
   const newArrivals = allProducts.filter((p) => p.isNewArrival).slice(0, 8).map(formatProduct);
   const deals = allProducts.slice(0, 6).map(formatProduct);
@@ -51,7 +67,7 @@ export async function GET() {
       rating: t.rating,
     })),
     brands: allBrands.map((b) => ({ name: b.name, image: b.image, link: b.link })),
-    stories: allStories.map((s) => ({
+    stories: storiesWithItems.map((s) => ({
       id: s.id,
       type: s.type,
       content: s.content,
@@ -59,6 +75,12 @@ export async function GET() {
       duration: s.duration,
       link: s.link,
       expiresAt: s.expiresAt,
+      items: (s.items || []).map((item: any) => ({
+        id: item.id,
+        type: item.type,
+        content: item.content,
+        caption: item.caption,
+      })),
     })),
     blogPosts: allBlogPosts.map((p) => ({
       title: p.title,

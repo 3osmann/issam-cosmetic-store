@@ -146,6 +146,15 @@ export const stories = pgTable("stories", {
   expiresAt: timestamp("expires_at").notNull(),
 });
 
+export const storyItems = pgTable("story_items", {
+  id: serial("id").primaryKey(),
+  storyId: integer("story_id").notNull().references(() => stories.id, { onDelete: "cascade" }),
+  type: varchar("type", { length: 20 }).notNull().default("image"),
+  content: text("content").notNull(),
+  caption: text("caption"),
+  sortOrder: integer("sort_order").notNull().default(0),
+});
+
 export const seoSettings = pgTable("seo_settings", {
   id: serial("id").primaryKey(),
   page: varchar("page", { length: 255 }).notNull().unique(),
